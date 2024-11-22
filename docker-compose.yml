@@ -1,11 +1,8 @@
-# ct "docker-compose.yml:temp.yml" && sudo docker compose -f temp.yml up appone_django --build; rm temp.yml
-# envconsul -config=envconsul-config.hcl -- python appone/manage.py migrate
+# ct "docker-compose.yml:temp.yml" && sudo docker compose -f temp.yml up nextjs-ui --build; rm temp.yml
 
 services:
-  # docker compose run --rm appone_vitejs sh -c "cd /app/vitejs/appone && npm install -D autoprefixer"
-  # docker exec appone_vitejs sh -c "cd /" - in running container
-  appone_nextjs:
-    container_name: appone_nextjs
+  nextjs-ui:
+    container_name: nextjs-ui
     image: node:22.8-alpine3.20
     build:
       context: .
@@ -18,7 +15,6 @@ services:
       - '3004:3003'
     volumes:
       - .:/app
-      # - /app/appone/node_modules
     working_dir: /app
     # command: tail -f /dev/null
     environment:

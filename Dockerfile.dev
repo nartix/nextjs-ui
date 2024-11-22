@@ -1,13 +1,7 @@
-# Use the specified Node.js image
 FROM node:22.8-alpine3.20
 
-# Set the working directory
 WORKDIR /app
 
-# Install dependencies for envconsul
-# RUN apk add --no-cache wget unzip
-
-# Set environment variable for envconsul version
 ENV ENVCONSUL_VERSION 0.13.2
 
 # Install wget and unzip, then download and install envconsul
@@ -19,24 +13,8 @@ RUN apk add --no-cache wget unzip \
     && rm -rf envconsul_${ENVCONSUL_VERSION}_linux_amd64.zip; \
     fi
 
-# RUN apk add --no-cache shadow \
-#     && usermod -u 1000 node \
-#     && groupmod -g 1000 node
-
-# RUN chown -R 1000:1000 /app
-
-# # Copy package.json and package-lock.json
-# COPY package*.json ./
-
-# # Install application dependencies
-# RUN npm install
-
-# Copy the rest of the application code
 COPY . .
-# Copy envconsul-config.hcl to the working directory
-# COPY envconsul-config.hcl .
 
-# Expose the port Next.js will run on
 EXPOSE 3000
 
 # Command to run the Next.js application
