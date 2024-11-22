@@ -1,0 +1,15 @@
+{
+  "name": "@nartix/ui-appone",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3003 --turbo",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.11"
+  },
+  "style": "./styles/globals.css"
+}

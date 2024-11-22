@@ -1,0 +1,53 @@
+# Use the specified Node.js image
+FROM node:22.8-alpine3.20
+
+# Set the working directory
+WORKDIR /app
+
+# Install dependencies for envconsul
+# RUN apk add --no-cache wget unzip
+
+# Set environment variable for envconsul version
+ENV ENVCONSUL_VERSION 0.13.2
+
+# Install wget and unzip, then download and install envconsul
+RUN apk add --no-cache wget unzip \
+    && if [ ! -f /usr/local/bin/envconsul ]; then \
+    wget https://releases.hashicorp.com/envconsul/${ENVCONSUL_VERSION}/envconsul_${ENVCONSUL_VERSION}_linux_amd64.zip \
+    && unzip envconsul_${ENVCONSUL_VERSION}_linux_amd64.zip -d /usr/local/bin \
+    && chmod +x /usr/local/bin/envconsul \
+    && rm -rf envconsul_${ENVCONSUL_VERSION}_linux_amd64.zip; \
+    fi
+
+# RUN apk add --no-cache shadow \
+#     && usermod -u 1000 node \
+#     && groupmod -g 1000 node
+
+# RUN chown -R 1000:1000 /app
+
+# # Copy package.json and package-lock.json
+# COPY package*.json ./
+
+# # Install application dependencies
+# RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+# Copy envconsul-config.hcl to the working directory
+# COPY envconsul-config.hcl .
+
+# Expose the port Next.js will run on
+EXPOSE 3000
+
+# Command to run the Next.js application
+# CMD ["/bin/sh", "-c", "if [ ! -d 'appone' ]; then npx create-next-app@latest appone --use-npm --example 'https://github.com/vercel/next-learn/tree/main/basics/learn-starter' && cd appone && npm run dev; else cd appone && npm install && npm run dev; fi"]
+# CMD ["/bin/sh", "-c", "if [ -d 'appone' ]; then \
+#     cd appone && \
+#     npm install && \
+#     envconsul -config /app/envconsul-config.hcl npm run dev; \
+#     else \
+#     echo 'Directory appone does not exist'; \
+#     tail -f /dev/null; \
+#     fi"]
+# run forever
+CMD ["/bin/sh", "-c", "tail -f /dev/null"]

@@ -1,0 +1,34 @@
+{
+  "common": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "loading": "Loading...",
+    "no_action_provided": "No action provided"
+  },
+  "HomePage": {
+    "title": "Hello world!",
+    "about": "Go to the about page"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "auth_failed": "Authentication failed",
+    "no_credentials": "No credentials provided",
+    "error_invalid_credentials": "Invalid username or password.",
+    "error_invalid_response": "Invalid response from authentication server.",
+    "error_fetch_user_info": "Failed to fetch user",
+    "error_in_authorize": "Error in authorize:"
+  },
+  "errors": {
+    "an_error_occurred": "An error occurred.",
+    "error_unexpected": "An unexpected error occurred.",
+    "required": "This field is required.",
+    "email": "Invalid email address.",
+    "min": "This field must be at least {min} characters long.",
+    "max": "This field must be at most {max} characters long.",
+    "password_mismatch": "Passwords do not match.",
+    "failed_to_submit_form": "Failed to submit form. Please try again later."
+  }
+}
