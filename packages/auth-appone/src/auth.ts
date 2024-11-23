@@ -1,14 +1,16 @@
 import { cookies } from 'next/headers';
+import merge from 'lodash.merge';
+
 import { SessionAdaptor, Provider } from '@nartix/auth-appone';
 
 export interface CookieOptions {
   name: string;
   value: string;
-  httpOnly: boolean;
-  secure: boolean;
-  sameSite: 'strict' | 'lax' | 'none';
-  path: string;
-  maxAge: number;
+  httpOnly?: boolean;
+  secure?: boolean;
+  sameSite?: 'strict' | 'lax' | 'none';
+  path?: string;
+  maxAge?: number;
 }
 
 export async function setAuthTokenCookie(
@@ -36,6 +38,58 @@ export interface AuthOptions {
   providers: Provider[];
   sessionAdaptor: SessionAdaptor;
   session?: {
-    maxAge: number;
+    maxAge?: number; // Maximum age of the session in seconds
+    updateAge?: number; // Optional: Frequency (in seconds) to update the session
   };
+  cookie?: Partial<CookieOptions>;
+  setAuthTokenCookie?: (
+    token: string,
+    cookieStore: ReturnType<typeof cookies>,
+    options?: Partial<CookieOptions>
+  ) => Promise<void>; // Method to set auth token cookie
+}
+
+export function processAuthOptions(userOptions: Partial<AuthOptions>): AuthOptions {
+  const defaultOptions: AuthOptions = {
+    providers: [],
+    sessionAdaptor: {} as SessionAdaptor,
+    session: {
+      maxAge: 3600, // Default session max age to 1 hour
+      updateAge: 600, // Default update age to 10 minutes
+    },
+    cookie: {
+      name: 'SESSION', // Default cookie name
+      httpOnly: true, // Default to HTTP only
+      secure: true, // Default to secure
+      sameSite: 'strict', // Default to lax same site policy
+    },
+    setAuthTokenCookie: setAuthTokenCookie,
+  };
+
+  // return {
+  //   ...defaultOptions,
+  //   ...userOptions,
+  //   session: {
+  //     ...defaultOptions.session,
+  //     ...userOptions.session,
+  //   },
+  //   cookie: {
+  //     ...defaultOptions.cookie,
+  //     ...userOptions.cookie,
+  //   },
+  // };
+
+  // Merge user options with defaults
+  const mergedOptions = merge({}, defaultOptions, userOptions);
+
+  // Validate required fields
+  if (!mergedOptions.providers || mergedOptions.providers.length === 0) {
+    throw new Error("At least one provider must be specified in 'AuthOptions'.");
+  }
+
+  if (!mergedOptions.sessionAdaptor || typeof mergedOptions.sessionAdaptor !== 'object') {
+    throw new Error("'sessionAdaptor' must be provided and must be an object.");
+  }
+
+  return mergedOptions;
 }
