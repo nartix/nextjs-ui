@@ -101,6 +101,13 @@ export default function ApiAdaptor(client: any, options = {}): SessionAdaptor {
         throw new Error(`Error creating session: ${response.statusText}`);
       }
       return response.json();
+
+      // const responseData = await response.json();
+
+      // responseData.id = responseData.sessionId;
+      // delete responseData.sessionId;
+
+      // return responseData;
     },
     // async getSessionAndUser(sessionToken: string): Promise<{ session: AdapterSession; user: AdapterUser } | null> {
     //   const response = await fetch(`${apiBaseUrl}/sessions/${encodeURIComponent(sessionToken)}`);

@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import merge from 'lodash.merge';
 
-import { SessionAdaptor, Provider } from '@nartix/auth-appone';
+import { SessionAdaptor, Provider, authenticateWithProvider } from '@nartix/auth-appone';
 
 export interface CookieOptions {
   name: string;
@@ -38,6 +38,7 @@ export interface AuthOptions {
   providers: Provider[];
   sessionAdaptor: SessionAdaptor;
   session?: {
+    sessionId?: string; // Session ID field name
     maxAge?: number; // Maximum age of the session in seconds
     updateAge?: number; // Optional: Frequency (in seconds) to update the session
   };
@@ -47,13 +48,15 @@ export interface AuthOptions {
     cookieStore: ReturnType<typeof cookies>,
     options?: Partial<CookieOptions>
   ) => Promise<void>; // Method to set auth token cookie
+  authenticateWithProvider?: typeof authenticateWithProvider;
 }
 
-export function processAuthOptions(userOptions: Partial<AuthOptions>): AuthOptions {
+export async function auth(userOptions: Partial<AuthOptions>): Promise<AuthOptions> {
   const defaultOptions: AuthOptions = {
     providers: [],
     sessionAdaptor: {} as SessionAdaptor,
     session: {
+      sessionId: 'sessionId',
       maxAge: 3600, // Default session max age to 1 hour
       updateAge: 600, // Default update age to 10 minutes
     },
@@ -64,6 +67,7 @@ export function processAuthOptions(userOptions: Partial<AuthOptions>): AuthOptio
       sameSite: 'strict', // Default to lax same site policy
     },
     setAuthTokenCookie: setAuthTokenCookie,
+    authenticateWithProvider: authenticateWithProvider,
   };
 
   // return {
