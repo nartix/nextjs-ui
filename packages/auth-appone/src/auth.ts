@@ -14,17 +14,7 @@ export interface CookieOptions {
 }
 
 export async function setCookie(token: string, cookieStore: ReturnType<typeof cookies>, options: Partial<CookieOptions> = {}) {
-  // const defaultOptions: CookieOptions = {
-  //   name: 'SESSION',
-  //   value: btoa(token),
-  //   httpOnly: true,
-  //   secure: true,
-  //   sameSite: 'strict',
-  //   path: '/',
-  //   maxAge: 86400,
-  // };
-
-  // const cookieOptions = { ...defaultOptions, ...options };
+  // Set the cookie value to the base64 encoded token
   options.value = btoa(token);
 
   const store = await cookieStore;
@@ -36,8 +26,8 @@ export interface AuthOptions {
   sessionAdaptor: SessionAdaptor;
   session: {
     sessionId?: string; // Session ID field name
-    maxAge?: number; // Maximum age of the session in seconds
-    updateAge?: number; // Optional: Frequency (in seconds) to update the session
+    maxAge?: number;
+    updateAge?: number;
   };
   cookie?: Partial<CookieOptions>;
   setCookie?: (token: string, cookieStore: ReturnType<typeof cookies>, options?: Partial<CookieOptions>) => Promise<void>; // Method to set auth token cookie
@@ -55,28 +45,15 @@ export function auth(userOptions: Partial<AuthOptions>): AuthOptions {
     },
     cookie: {
       name: 'SESSION', // Default cookie name
-      httpOnly: true, // Default to HTTP only
-      secure: false, // Default to secure
-      sameSite: 'strict', // Default to lax same site policy
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict',
       path: '/',
       maxAge: 86400, // Default to 24 hours
     },
     setCookie: setCookie,
     authenticateWithProvider: authenticateWithProvider,
   };
-
-  // return {
-  //   ...defaultOptions,
-  //   ...userOptions,
-  //   session: {
-  //     ...defaultOptions.session,
-  //     ...userOptions.session,
-  //   },
-  //   cookie: {
-  //     ...defaultOptions.cookie,
-  //     ...userOptions.cookie,
-  //   },
-  // };
 
   // Merge user options with defaults
   const mergedOptions = merge({}, defaultOptions, userOptions);

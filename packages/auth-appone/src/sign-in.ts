@@ -13,12 +13,12 @@ export const signIn = async (authOptions: AuthOptions, credentials: unknown, pro
     return null;
   }
 
-  if (cookie?.maxAge) {
-    const sessionData = await sessionAdaptor.createSession(user, cookie?.maxAge);
+  // Create session and set cookie
+  const sessionData = await sessionAdaptor.createSession(user, session.maxAge!);
+  const sessionToken = sessionData[session.sessionId!];
 
-    if (session.sessionId) {
-      await setCookie(sessionData[session.sessionId], cookies(), cookie);
-    }
+  if (sessionToken) {
+    await setCookie(sessionToken, cookies(), cookie);
   }
 
   console.log('session', session);
