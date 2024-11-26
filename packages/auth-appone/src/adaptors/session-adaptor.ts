@@ -1,6 +1,6 @@
 export interface SessionAdaptor {
   getSession?(sessionToken: string): Promise<SessionObj | null>;
-  createSession(session: SessionObj): Promise<SessionObj>;
+  createSession(userData: Record<string, any>, expires: number): Promise<SessionObj>;
   deleteSession(sessionToken: string): Promise<void>;
   updateSession(session: Partial<SessionObj> & { sessionToken: string }): Promise<SessionObj | null>;
 }

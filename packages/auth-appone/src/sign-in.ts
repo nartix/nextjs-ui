@@ -1,38 +1,25 @@
-import { v4 as uuidv4 } from 'uuid';
 import { cookies } from 'next/headers';
-import { Provider, authenticateWithProvider, setCookie, auth } from '@nartix/auth-appone';
-import { SessionAdaptor, SessionObj } from '@nartix/auth-appone/src/adaptors/session-adaptor';
+import { setCookie, ProviderType } from '@nartix/auth-appone';
+import { AuthOptions } from './auth';
 
-export const signIn = async (provider: Provider, credentials: unknown, sessionAdaptor: SessionAdaptor) => {
-  const user = await authenticateWithProvider(provider, credentials);
+export const signIn = async (authOptions: AuthOptions, credentials: unknown, providerId: ProviderType) => {
+  const { providers, sessionAdaptor, authenticateWithProvider, cookie, session } = authOptions;
 
-  // Get the current time in milliseconds (UNIX epoch time)
-  const creationTime = Date.now();
+  const user = await authenticateWithProvider(providers, providerId, credentials);
 
-  // Define the max inactive interval (30 minutes in seconds)
-  const maxInactiveInterval = 1800;
-
-  // Calculate the expiry time in milliseconds
-  const expiryTime = creationTime + maxInactiveInterval * 1000;
+  console.log('cookie', cookie);
 
   if (!user) {
     return null;
   }
 
-  const sessionObj: SessionObj = {
-    primaryId: uuidv4(),
-    sessionId: uuidv4(),
-    creationTime: creationTime,
-    expiryTime: expiryTime, // 24 hours
-    lastAccessTime: creationTime,
-    maxInactiveInterval: maxInactiveInterval, // 1 hour
-    userId: user.id,
-    principalName: user.username,
-  };
+  if (cookie?.maxAge) {
+    const sessionData = await sessionAdaptor.createSession(user, cookie?.maxAge);
 
-  const session = await sessionAdaptor.createSession(sessionObj);
-
-  await setCookie(session.sessionId, cookies());
+    if (session.sessionId) {
+      await setCookie(sessionData[session.sessionId], cookies(), cookie);
+    }
+  }
 
   console.log('session', session);
 

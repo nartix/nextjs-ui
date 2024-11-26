@@ -2,9 +2,9 @@
 
 import Container from '@/app/(common)/components/ui/Containers';
 import FormBuilder, { ButtonProps } from '@/app/(common)/components/FormBuilder';
-import { loginAction } from '@/app/(auth)/actions/loginAction';
+import { loginAction } from '@/app/[locale]/(auth)/actions/loginAction';
 import { loginFields } from '@/app/(common)/form/formFields';
-import { loginSchema } from '@/app/(auth)/form/schemas';
+import { loginSchema } from '@/app/[locale]/(auth)/form/schemas';
 import { Suspense } from 'react';
 
 export default function Login() {

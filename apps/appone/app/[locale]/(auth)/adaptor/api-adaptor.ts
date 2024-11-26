@@ -90,16 +90,37 @@ export default function ApiAdaptor(client: any, options = {}): SessionAdaptor {
     //     throw new Error(`Error unlinking account: ${response.statusText}`);
     //   }
     // },
-    async createSession(session: SessionObj): Promise<SessionObj> {
-      console.log('session', session);
+    async createSession(userData, expires): Promise<SessionObj> {
+      // Get the current time in milliseconds (UNIX epoch time)
+      const creationTime = Date.now();
+
+      // Define the max inactive interval (30 minutes in seconds)
+      const maxInactiveInterval = expires || 1800;
+
+      // Calculate the expiry time in milliseconds
+      const expiryTime = creationTime + maxInactiveInterval * 1000;
+
+      const sessionObj = {
+        primaryId: uuidv4(),
+        sessionId: uuidv4(),
+        creationTime: creationTime,
+        expiryTime: expiryTime,
+        lastAccessTime: creationTime,
+        maxInactiveInterval: maxInactiveInterval,
+        userId: userData.id,
+        principalName: userData.username,
+      };
+      console.log('session', sessionObj);
       const response = await fetchWrapper(`${apiBaseUrl}/sessions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(session),
+        body: JSON.stringify(sessionObj),
       });
+
       if (!response.ok) {
         throw new Error(`Error creating session: ${response.statusText}`);
       }
+
       return response.json();
 
       // const responseData = await response.json();

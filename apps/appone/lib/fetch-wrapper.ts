@@ -1,6 +1,6 @@
 'use server';
 
-import { getServerSideToken } from '../app/[locale]/(auth)/lib/token-manager';
+import { getServerSideToken } from '@/app/[locale]/(auth)/lib/token-manager';
 
 interface FetchOptions extends RequestInit {
   headers?: HeadersInit;

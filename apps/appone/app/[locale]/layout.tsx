@@ -11,7 +11,7 @@ import { routing } from '@/i18n/routing';
 
 import '@/styles/globals.css';
 
-import { Providers } from '@/app/providers';
+import { Providers } from './../providers';
 
 import { siteConfig } from '@/config/site';
 import { fontSans } from '@/config/fonts';

@@ -1,19 +1,16 @@
 'use server';
 
-import { ActionResponse } from '@/components/common/FormBuilder';
-import { FormDataValues } from '@/components/common/FormBuilder';
 import { getTranslations } from 'next-intl/server';
-
 import { signIn } from '@nartix/auth-appone';
 
-import { credentialsProvider } from '@/app/[locale]/(auth)/provider/credentials-provider';
-
-import ApiAdaptor from '@/app/[locale]/(auth)/adaptor/api-adaptor';
+import { authConfig } from '@/app/[locale]/(auth)/auth-options';
+import { ActionResponse } from '@/components/common/FormBuilder';
+import { FormDataValues } from '@/components/common/FormBuilder';
 
 export async function loginAction(formData: FormDataValues): Promise<ActionResponse> {
   const t = await getTranslations();
 
-  const user = await signIn(credentialsProvider, { username: formData.username, password: formData.password }, ApiAdaptor(null));
+  const user = await signIn(authConfig, { username: formData.username, password: formData.password }, 'credentials');
   console.log('user', user);
 
   if (!user) {

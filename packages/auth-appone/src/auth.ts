@@ -10,7 +10,7 @@ export interface CookieOptions {
   secure?: boolean;
   sameSite?: 'strict' | 'lax' | 'none';
   path?: string;
-  maxAge?: number;
+  maxAge: number;
 }
 
 export async function setCookie(token: string, cookieStore: ReturnType<typeof cookies>, options: Partial<CookieOptions> = {}) {
@@ -34,17 +34,17 @@ export async function setCookie(token: string, cookieStore: ReturnType<typeof co
 export interface AuthOptions {
   providers: Provider[];
   sessionAdaptor: SessionAdaptor;
-  session?: {
+  session: {
     sessionId?: string; // Session ID field name
     maxAge?: number; // Maximum age of the session in seconds
     updateAge?: number; // Optional: Frequency (in seconds) to update the session
   };
   cookie?: Partial<CookieOptions>;
   setCookie?: (token: string, cookieStore: ReturnType<typeof cookies>, options?: Partial<CookieOptions>) => Promise<void>; // Method to set auth token cookie
-  authenticateWithProvider?: typeof authenticateWithProvider;
+  authenticateWithProvider: typeof authenticateWithProvider;
 }
 
-export async function auth(userOptions: Partial<AuthOptions>): Promise<AuthOptions> {
+export function auth(userOptions: Partial<AuthOptions>): AuthOptions {
   const defaultOptions: AuthOptions = {
     providers: [],
     sessionAdaptor: {} as SessionAdaptor,
@@ -56,7 +56,7 @@ export async function auth(userOptions: Partial<AuthOptions>): Promise<AuthOptio
     cookie: {
       name: 'SESSION', // Default cookie name
       httpOnly: true, // Default to HTTP only
-      secure: true, // Default to secure
+      secure: false, // Default to secure
       sameSite: 'strict', // Default to lax same site policy
       path: '/',
       maxAge: 86400, // Default to 24 hours
@@ -90,5 +90,5 @@ export async function auth(userOptions: Partial<AuthOptions>): Promise<AuthOptio
     throw new Error("'sessionAdaptor' must be provided and must be an object.");
   }
 
-  return mergedOptions;
+  return mergedOptions as Required<AuthOptions>;
 }
