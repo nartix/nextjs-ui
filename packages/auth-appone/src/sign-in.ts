@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { cookies } from 'next/headers';
-import { Provider, authenticateWithProvider, setAuthTokenCookie } from '@nartix/auth-appone';
+import { Provider, authenticateWithProvider, setCookie, auth } from '@nartix/auth-appone';
 import { SessionAdaptor, SessionObj } from '@nartix/auth-appone/src/adaptors/session-adaptor';
 
 export const signIn = async (provider: Provider, credentials: unknown, sessionAdaptor: SessionAdaptor) => {
@@ -32,7 +32,7 @@ export const signIn = async (provider: Provider, credentials: unknown, sessionAd
 
   const session = await sessionAdaptor.createSession(sessionObj);
 
-  await setAuthTokenCookie(session.sessionId, cookies());
+  await setCookie(session.sessionId, cookies());
 
   console.log('session', session);
 

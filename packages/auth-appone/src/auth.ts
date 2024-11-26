@@ -13,25 +13,22 @@ export interface CookieOptions {
   maxAge?: number;
 }
 
-export async function setAuthTokenCookie(
-  token: string,
-  cookieStore: ReturnType<typeof cookies>,
-  options: Partial<CookieOptions> = {}
-) {
-  const defaultOptions: CookieOptions = {
-    name: 'SESSION',
-    value: btoa(token),
-    httpOnly: true,
-    secure: true,
-    sameSite: 'strict',
-    path: '/',
-    maxAge: 86400,
-  };
+export async function setCookie(token: string, cookieStore: ReturnType<typeof cookies>, options: Partial<CookieOptions> = {}) {
+  // const defaultOptions: CookieOptions = {
+  //   name: 'SESSION',
+  //   value: btoa(token),
+  //   httpOnly: true,
+  //   secure: true,
+  //   sameSite: 'strict',
+  //   path: '/',
+  //   maxAge: 86400,
+  // };
 
-  const cookieOptions = { ...defaultOptions, ...options };
+  // const cookieOptions = { ...defaultOptions, ...options };
+  options.value = btoa(token);
 
   const store = await cookieStore;
-  store.set(cookieOptions);
+  store.set(options as CookieOptions);
 }
 
 export interface AuthOptions {
@@ -43,11 +40,7 @@ export interface AuthOptions {
     updateAge?: number; // Optional: Frequency (in seconds) to update the session
   };
   cookie?: Partial<CookieOptions>;
-  setAuthTokenCookie?: (
-    token: string,
-    cookieStore: ReturnType<typeof cookies>,
-    options?: Partial<CookieOptions>
-  ) => Promise<void>; // Method to set auth token cookie
+  setCookie?: (token: string, cookieStore: ReturnType<typeof cookies>, options?: Partial<CookieOptions>) => Promise<void>; // Method to set auth token cookie
   authenticateWithProvider?: typeof authenticateWithProvider;
 }
 
@@ -65,8 +58,10 @@ export async function auth(userOptions: Partial<AuthOptions>): Promise<AuthOptio
       httpOnly: true, // Default to HTTP only
       secure: true, // Default to secure
       sameSite: 'strict', // Default to lax same site policy
+      path: '/',
+      maxAge: 86400, // Default to 24 hours
     },
-    setAuthTokenCookie: setAuthTokenCookie,
+    setCookie: setCookie,
     authenticateWithProvider: authenticateWithProvider,
   };
 
