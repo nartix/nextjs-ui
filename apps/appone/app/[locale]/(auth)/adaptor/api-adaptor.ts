@@ -18,11 +18,12 @@ export default function ApiAdaptor(client: any, options = {}): SessionAdaptor {
     //   }
     //   return response.json();
     // },
-    // async getUser(id: string): Promise<AdapterUser | null> {
-    //   const response = await fetchWrapper(`${apiBaseUrl}/users/${id}`);
-    //   if (!response.ok) return null;
-    //   return response.json();
-    // },
+    async getUser(id: string | null): Promise<Record<string, any> | null> {
+      if (!id) return null;
+      const response = await fetchWrapper(`${apiBaseUrl}/users/${id}`);
+      if (!response.ok) return null;
+      return response.json();
+    },
     // async getUserByEmail(email: string): Promise<AdapterUser | null> {
     //   const response = await fetch(`${apiBaseUrl}/findByEmail?email=${encodeURIComponent(email)}`);
     //   if (!response.ok) {
@@ -90,6 +91,26 @@ export default function ApiAdaptor(client: any, options = {}): SessionAdaptor {
     //     throw new Error(`Error unlinking account: ${response.statusText}`);
     //   }
     // },
+    async getSessionAndUser(sessionToken: string): Promise<SessionObj | null> {
+      const decodedToken = atob(sessionToken);
+
+      const response = await fetchWrapper(
+        `${apiBaseUrl}/sessions/search/findBySessionId?sessionId=${encodeURIComponent(decodedToken)}`
+      );
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const session = await response.json();
+
+      const user = await this.getUser(session.userId);
+      if (!user) {
+        return null;
+      }
+
+      return { ...session, user: user };
+    },
     async createSession(userData, expires): Promise<SessionObj> {
       // Get the current time in milliseconds (UNIX epoch time)
       const creationTime = Date.now();

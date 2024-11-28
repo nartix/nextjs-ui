@@ -1,8 +1,9 @@
 export interface SessionAdaptor {
-  getSession?(sessionToken: string): Promise<SessionObj | null>;
+  getSessionAndUser(sessionToken: string): Promise<SessionObj | null>;
   createSession(userData: Record<string, any>, expires: number): Promise<SessionObj>;
   deleteSession(sessionToken: string): Promise<void>;
   updateSession(session: Partial<SessionObj> & { sessionToken: string }): Promise<SessionObj | null>;
+  getUser(id: string): Promise<Record<string, any> | null>;
 }
 
 export interface Session {

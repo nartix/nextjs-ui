@@ -13,12 +13,17 @@ export interface CookieOptions {
   maxAge: number;
 }
 
-export async function setCookie(token: string, cookieStore: ReturnType<typeof cookies>, options: Partial<CookieOptions> = {}) {
+export async function setCookie(token: string, options: Partial<CookieOptions> = {}): Promise<void> {
   // Set the cookie value to the base64 encoded token
   options.value = btoa(token);
-
-  const store = await cookieStore;
+  const store = await cookies();
   store.set(options as CookieOptions);
+}
+
+export async function getCookie(name: string): Promise<string | null> {
+  const store = await cookies();
+  const cookie = store.get(name);
+  return cookie ? cookie.value : null;
 }
 
 export interface AuthOptions {
@@ -29,8 +34,10 @@ export interface AuthOptions {
     maxAge?: number;
     updateAge?: number;
   };
-  cookie?: Partial<CookieOptions>;
-  setCookie?: (token: string, cookieStore: ReturnType<typeof cookies>, options?: Partial<CookieOptions>) => Promise<void>; // Method to set auth token cookie
+  cookie: Partial<CookieOptions>;
+  // setCookie?: (token: string, options?: Partial<CookieOptions>) => Promise<void>;
+  setCookie: typeof setCookie;
+  getCookie: typeof getCookie;
   authenticateWithProvider: typeof authenticateWithProvider;
 }
 
@@ -52,6 +59,7 @@ export function auth(userOptions: Partial<AuthOptions>): AuthOptions {
       maxAge: 86400, // Default to 24 hours
     },
     setCookie: setCookie,
+    getCookie: getCookie,
     authenticateWithProvider: authenticateWithProvider,
   };
 

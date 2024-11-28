@@ -1,22 +1,21 @@
-// import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
-// import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-
+import { getServerSession } from '@nartix/auth-appone';
 import Container from '@/components/common/ui/Container';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authConfig } from '@/app/[locale]/(auth)/auth-options';
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(authConfig);
+  const user = session?.user;
 
   console.log('Session:', session);
-  console.log('Home');
 
   const t = await getTranslations('HomePage');
 
   return (
     <Container as='main' className='flex-grow pt-10 px-6'>
-      <h1>App One{t('title')}</h1>
+      <h1>
+        App One {t('title')} Welcome {user ? user.username : 'Guest'}
+      </h1>
       <p>
         Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
         labore et dolore magna aliqua. Purus gravida quis blandit turpis. Augue neque gravida in fermentum et sollicitudin ac

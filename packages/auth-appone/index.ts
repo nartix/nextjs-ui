@@ -5,3 +5,4 @@ export * from './src/provider';
 export * from './src/sign-in';
 export * from './src/providers/credential-provider';
 export * from './src/adaptors/session-adaptor';
+export * from './src/session/get-server-session';

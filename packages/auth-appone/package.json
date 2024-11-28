@@ -9,6 +9,13 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
-    "typescript": "latest"
+    "typescript": "latest",
+    "@types/lodash.merge": "^4.6.9"
+  },
+  "dependencies": {
+    "lodash.merge": "^4.6.2"
+  },
+  "peerDependencies": {
+    "next": ">=15.0.0"
   }
 }
