@@ -13,8 +13,6 @@ const fetchWrapper = async (url: string, options: FetchOptions = {}): Promise<Re
   // Get the token only if Authorization header is not set
   const token = hasAuthHeader ? '' : await getServerSideToken();
 
-  console.log('token:', token);
-
   // Set the default headers
   const defaultHeaders: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
 

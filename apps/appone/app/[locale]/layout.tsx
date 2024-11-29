@@ -1,4 +1,3 @@
-// import { getMessages } from 'next-intl/server';
 import { Metadata, Viewport } from 'next';
 import React from 'react';
 import clsx from 'clsx';
@@ -12,10 +11,8 @@ import { routing } from '@/i18n/routing';
 import '@/styles/globals.css';
 
 import { Providers } from './../providers';
-
 import { siteConfig } from '@/config/site';
 import { fontSans } from '@/config/fonts';
-
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 

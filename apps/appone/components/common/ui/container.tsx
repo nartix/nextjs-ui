@@ -1,4 +1,5 @@
 import { ReactNode, ElementType, CSSProperties } from 'react';
+import { cn } from '@/lib/utils';
 
 interface ContainerProps {
   children: ReactNode;
@@ -34,7 +35,8 @@ const Container = ({
   };
 
   // Combine classes
-  const combinedClasses = `container mx-auto ${sizeClasses[size]} ${className}`;
+  // const combinedClasses = `container mx-auto ${sizeClasses[size]} ${className}`;
+  const combinedClasses = cn('container mx-auto', sizeClasses[size], className);
 
   return (
     <Component className={combinedClasses} style={style} {...rest}>

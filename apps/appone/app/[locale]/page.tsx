@@ -1,18 +1,18 @@
+import React from 'react';
 import { getTranslations } from 'next-intl/server';
 import { getServerSession } from '@nartix/auth-appone';
-import Container from '@/components/common/ui/Container';
+import { ContentContainer } from '@/components/common/ui/content-container';
+// import { ContentSkeleton } from '@/components/common/ui/skeleton/skeleton-content';
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
 
-export default async function Home() {
+async function HomeContent() {
   const session = await getServerSession(authConfig);
   const user = session?.user;
-
-  console.log('Session:', session);
 
   const t = await getTranslations('HomePage');
 
   return (
-    <Container as='main' className='flex-grow pt-10 px-6'>
+    <div>
       <h1>
         App One {t('title')} Welcome {user ? user.username : 'Guest'}
       </h1>
@@ -29,8 +29,19 @@ export default async function Home() {
         pretium nibh. Vel pharetra vel turpis nunc eget lorem dolor sed viverra. Sollicitudin tempor id eu nisl nunc mi ipsum
         faucibus. Sed id semper risus in hendrerit gravida rutrum. Eget nulla facilisi etiam dignissim. Erat imperdiet sed euismod
         nisi. Risus in hendrerit gravida rutrum quisque non tellus orci ac. Tempor orci dapibus ultrices in iaculis nunc sed augue
-        lacus. In pellentesque massa placerat duis ultricies. Sit amet massa vitae tortor condimentum. Morbi tincidunt augue
+        lacus. In pellentesque massa placerat duis ultricies. Sit amet massa vitae tortor condimentum. Morbi tincidunt augue.
       </p>
-    </Container>
+    </div>
+  );
+}
+
+export default async function Home() {
+  return (
+    <>
+      <ContentContainer>
+        <HomeContent />
+      </ContentContainer>
+      {/* <ContentSkeleton /> */}
+    </>
   );
 }

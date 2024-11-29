@@ -14,7 +14,7 @@ import {
 
 // link from nextjs as NextLink
 // import Link from 'next/link';
-import Link from '@/components/common/ui/Link';
+import Link from '@/components/common/ui/link';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
