@@ -12,9 +12,8 @@ import {
   Button,
 } from '@nextui-org/react';
 
-// link from nextjs as NextLink
-// import Link from 'next/link';
 import Link from '@/components/common/ui/link';
+import { UserNavContent } from '@/components/common/user/user-nav-content';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

@@ -1,13 +1,14 @@
 import React from 'react';
 import { getTranslations } from 'next-intl/server';
-import { getServerSession } from '@nartix/auth-appone';
+import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
 import { ContentContainer } from '@/components/common/ui/content-container';
 // import { ContentSkeleton } from '@/components/common/ui/skeleton/skeleton-content';
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
 
 async function HomeContent() {
-  const session = await getServerSession(authConfig);
+  const session = await getServerSession();
   const user = session?.user;
+  console.log('session from HomeContent', session?.sessionId || 'Guest');
 
   const t = await getTranslations('HomePage');
 
