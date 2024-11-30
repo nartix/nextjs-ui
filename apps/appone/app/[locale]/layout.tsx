@@ -15,6 +15,7 @@ import { siteConfig } from '@/config/site';
 import { fontSans } from '@/config/fonts';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
+import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
 
 export const metadata: Metadata = {
   title: {
@@ -54,11 +55,15 @@ export default async function LocaleLayout({
   // side is the easiest way to get started
   const messages = await getMessages();
 
+  // const session = await getServerSession();
+  // console.log('session from root LocaleLayout', session);
+
   return (
     <html suppressHydrationWarning={true} lang={locale}>
       <head />
       <body className={clsx('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
         <Providers
+          // session={session}
           locale={locale}
           messages={messages}
           themeProps={{ attribute: 'class', defaultTheme: 'light', children: children }}
