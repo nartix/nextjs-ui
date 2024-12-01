@@ -14,6 +14,7 @@ import {
 
 import Link from '@/components/common/ui/link';
 import { useSession } from '@/app/[locale]/(auth)/context/session-context';
+import { logoutAction } from '@/app/[locale]/(auth)/actions/logout-action';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -68,9 +69,11 @@ export default function Header() {
       <NavbarContent justify='end'>
         {user ? (
           <NavbarItem>
-            <Button as={Link} color='primary' href='/logout' variant='flat'>
-              Logout
-            </Button>
+            <form action={logoutAction}>
+              <Button color='primary' variant='flat' type='submit'>
+                Logout
+              </Button>
+            </form>
           </NavbarItem>
         ) : (
           <>

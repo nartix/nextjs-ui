@@ -2,22 +2,29 @@ import { setCookie, ProviderType } from '@nartix/auth-appone';
 import { AuthOptions } from './auth';
 
 // cookies can only be set in server action or page handlers in Next.js
-export const signOut = async (authOptions: AuthOptions, credentials: unknown, providerId: ProviderType) => {
-  const { providers, sessionAdaptor, authenticateWithProvider, cookie, session } = authOptions;
+export const signOut = async (authOptions: AuthOptions) => {
+  const { sessionAdaptor, cookie, getCookie, signOutOptions } = authOptions;
 
-  const user = await authenticateWithProvider(providers, providerId, credentials);
+  const sessionToken = await getCookie(cookie.name!);
 
-  if (!user) {
-    return null;
+  if (!sessionToken) {
+    return signOutOptions;
   }
 
-  // Create session and set cookie
-  const sessionData = await sessionAdaptor.createSession(user, session.maxAge!);
-  const sessionToken = sessionData[session.sessionId!];
-
-  if (sessionToken) {
-    await setCookie(sessionToken, cookie);
+  // Delete the session from the database
+  try {
+    await sessionAdaptor.deleteSession(atob(sessionToken));
+  } catch (error) {
+    console.error('Error deleting session:', error);
   }
 
-  return user;
+  // Clear the cookie by setting its value to an empty string and a past expiry date
+  await setCookie('', {
+    ...cookie,
+    value: '',
+    maxAge: 0, // Expire immediately
+  });
+
+  console.log('User signed out successfully.');
+  return signOutOptions;
 };

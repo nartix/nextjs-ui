@@ -34,6 +34,9 @@ export interface AuthOptions {
     maxAge?: number;
     updateAge?: number;
   };
+  signOutOptions?: {
+    redirectUrl?: string;
+  };
   cookie: Partial<CookieOptions>;
   // setCookie?: (token: string, options?: Partial<CookieOptions>) => Promise<void>;
   setCookie: typeof setCookie;
@@ -43,6 +46,9 @@ export interface AuthOptions {
 
 export function auth(userOptions: Partial<AuthOptions>): AuthOptions {
   const defaultOptions: AuthOptions = {
+    signOutOptions: {
+      redirectUrl: '/',
+    },
     providers: [],
     sessionAdaptor: {} as SessionAdaptor,
     session: {

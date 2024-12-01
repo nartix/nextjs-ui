@@ -175,11 +175,23 @@ export default function ApiAdaptor(client: any, options = {}): SessionAdaptor {
       return response.json();
     },
     async deleteSession(sessionToken: string): Promise<void> {
-      const response = await fetchWrapper(`${apiBaseUrl}/sessions/${encodeURIComponent(sessionToken)}`, {
-        method: 'DELETE',
-      });
+      console.log('delete sessionToken', sessionToken);
+      const response = await fetchWrapper(
+        `${apiBaseUrl}/sessions/search/deleteBySessionId?sessionId=${encodeURIComponent(sessionToken)}`,
+        {
+          method: 'GET',
+          headers: {
+            Accpet: 'application/json',
+          },
+        }
+      );
+      console.log(response);
+      // API always returns a 404 if delete successful or not
+      if (response.status === 404) {
+        console.log('Session not found');
+      }
       if (!response.ok) {
-        throw new Error(`Error deleting session: ${response.statusText}`);
+        console.error(`Error deleting session: ${response.statusText}`);
       }
     },
   };
