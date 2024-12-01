@@ -13,10 +13,14 @@ import {
 } from '@nextui-org/react';
 
 import Link from '@/components/common/ui/link';
-import { UserNavContent } from '@/components/common/user/user-nav-content';
+import { useSession } from '@/app/[locale]/(auth)/context/session-context';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const session = useSession();
+  const user = session?.user || null;
+
+  console.log('Client session', session);
 
   console.log('Header rendered');
 
@@ -62,14 +66,24 @@ export default function Header() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify='end'>
-        <NavbarItem className='hidden lg:flex'>
-          <Link href='/login'>Login</Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Button as={Link} color='primary' href='#' variant='flat'>
-            Sign Up
-          </Button>
-        </NavbarItem>
+        {user ? (
+          <NavbarItem>
+            <Button as={Link} color='primary' href='/logout' variant='flat'>
+              Logout
+            </Button>
+          </NavbarItem>
+        ) : (
+          <>
+            <NavbarItem className='hidden lg:flex'>
+              <Link href='/login'>Login</Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Button as={Link} color='primary' href='/signup' variant='flat'>
+                Sign Up
+              </Button>
+            </NavbarItem>
+          </>
+        )}
       </NavbarContent>
       <NavbarMenu>
         {menuItems.map((item, index) => (

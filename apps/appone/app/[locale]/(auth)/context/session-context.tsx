@@ -8,9 +8,9 @@ const SessionContext = createContext<SessionObj | null>(null);
 // Custom hook for consuming the context
 export function useSession() {
   const context = useContext(SessionContext);
-  if (!context) {
-    throw new Error('useSession must be used within a SessionProvider');
-  }
+  // if (!context) {
+  //   throw new Error('useSession must be used within a SessionProvider');
+  // }
   return context;
 }
 

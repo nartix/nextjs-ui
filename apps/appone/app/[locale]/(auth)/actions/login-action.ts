@@ -11,7 +11,6 @@ export async function loginAction(formData: FormDataValues): Promise<ActionRespo
   const t = await getTranslations();
 
   const user = await signIn(authConfig, { username: formData.username, password: formData.password }, 'credentials');
-  console.log('user', user);
 
   if (!user) {
     return { success: false, message: t('auth.error_invalid_credentials') };

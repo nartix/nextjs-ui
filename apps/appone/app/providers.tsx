@@ -7,25 +7,27 @@ import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { ThemeProviderProps } from 'next-themes';
 import { AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
 // import { SessionProvider } from 'next-auth/react';
-// import { SessionProvider } from '@/app/[locale]/(auth)/context/session-context';
+import { SessionProvider } from '@/app/[locale]/(auth)/context/session-context';
+import { SessionObj } from '@nartix/auth-appone';
 
 export interface ProvidersProps {
   children: React.ReactNode;
   themeProps?: ThemeProviderProps;
   messages?: AbstractIntlMessages;
   locale?: string;
+  session: SessionObj | null;
 }
 
-export function Providers({ children, themeProps, messages, locale }: ProvidersProps) {
+export function Providers({ children, themeProps, messages, locale, session }: ProvidersProps) {
   const router = useRouter();
 
   return (
-    // <SessionProvider value={session}>
-    <NextIntlClientProvider messages={messages} locale={locale}>
-      <NextUIProvider navigate={router.push}>
-        <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
-      </NextUIProvider>
-    </NextIntlClientProvider>
-    // </SessionProvider>
+    <SessionProvider value={session}>
+      <NextIntlClientProvider messages={messages} locale={locale}>
+        <NextUIProvider navigate={router.push}>
+          <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+        </NextUIProvider>
+      </NextIntlClientProvider>
+    </SessionProvider>
   );
 }

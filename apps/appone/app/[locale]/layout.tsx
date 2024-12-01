@@ -56,14 +56,14 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   // preload session
-  // const session = await getServerSession();
+  const session = await getServerSession();
 
   return (
     <html suppressHydrationWarning={true} lang={locale}>
       <head />
       <body className={clsx('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
         <Providers
-          // session={session}
+          session={session}
           locale={locale}
           messages={messages}
           themeProps={{ attribute: 'class', defaultTheme: 'light', children: children }}
