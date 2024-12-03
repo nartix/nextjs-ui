@@ -12,6 +12,8 @@ import { nextIntlMiddleware } from '@/middlewares/nextintl-middleware';
 
 export async function middleware(req: NextRequest) {
   // Combine all middleware functions
+  // nextIntlMiddleware must be last in the chain
+  // as it returns a response object
   const combined = combineMiddlewares(logger, localeLogger, nextIntlMiddleware);
 
   // Execute the combined middleware chain
