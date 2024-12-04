@@ -3,7 +3,7 @@
 import { NextRequest } from 'next/server';
 import { AuthOptions } from './auth';
 
-export async function authenticationMiddleware(req: NextRequest, authOptions: Partial<AuthOptions>): Promise<void> {
+export const authenticationMiddleware = async (req: NextRequest, authOptions: AuthOptions): Promise<void> => {
   console.log('authone authenticationMiddleware authOptions', authOptions);
   const { getCookie, setCookie, sessionAdaptor, session, cookie } = authOptions;
 
@@ -18,4 +18,4 @@ export async function authenticationMiddleware(req: NextRequest, authOptions: Pa
   //   console.log('sessionToken from authenticate middleware', sessionToken);
 
   return;
-}
+};

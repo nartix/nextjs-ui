@@ -1,3 +1,5 @@
+'user server';
+
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
 import { authenticationMiddleware as authMiddleware } from '@nartix/auth-appone';
 import { NextRequest } from 'next/server';

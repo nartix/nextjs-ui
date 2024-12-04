@@ -1,3 +1,5 @@
+'use server';
+
 import { routing } from '@/i18n/routing';
 import { NextRequest } from 'next/server';
 

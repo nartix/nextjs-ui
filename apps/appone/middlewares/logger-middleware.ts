@@ -1,3 +1,5 @@
+'user server';
+
 import { NextRequest } from 'next/server';
 
 /**

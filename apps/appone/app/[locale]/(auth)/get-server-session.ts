@@ -1,3 +1,5 @@
+'user server';
+
 import { cache } from 'react';
 import { getServerSession as Session } from '@nartix/auth-appone';
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
