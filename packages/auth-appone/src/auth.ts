@@ -81,5 +81,5 @@ export function auth(userOptions: Partial<AuthOptions>): AuthOptions {
     throw new Error("'sessionAdaptor' must be provided and must be an object.");
   }
 
-  return mergedOptions;
+  return mergedOptions as Required<AuthOptions>;
 }

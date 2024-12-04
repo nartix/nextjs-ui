@@ -56,8 +56,7 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   // preload session
-  // const session = await getServerSession();
-  const session = null;
+  const session = await getServerSession();
 
   return (
     <html suppressHydrationWarning={true} lang={locale}>

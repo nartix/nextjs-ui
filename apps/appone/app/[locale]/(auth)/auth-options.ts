@@ -11,6 +11,4 @@ const authOptions: Partial<AuthOptions> = {
   },
 };
 
-// export { authOptions as testAuthOptions };
-
 export const authConfig = auth(authOptions);
