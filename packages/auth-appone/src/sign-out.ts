@@ -1,8 +1,8 @@
 import { setCookie, ProviderType } from '@nartix/auth-appone';
-import { AuthOptions } from './auth';
+import { AuthOptions } from '@nartix/auth-appone';
 
 // cookies can only be set in server action or page handlers in Next.js
-export const signOut = async (authOptions: AuthOptions) => {
+export async function signOut(authOptions: AuthOptions) {
   const { sessionAdaptor, cookie, getCookie, signOutOptions } = authOptions;
 
   const sessionToken = await getCookie(cookie.name!);
@@ -27,4 +27,4 @@ export const signOut = async (authOptions: AuthOptions) => {
 
   console.log('User signed out successfully.');
   return signOutOptions;
-};
+}

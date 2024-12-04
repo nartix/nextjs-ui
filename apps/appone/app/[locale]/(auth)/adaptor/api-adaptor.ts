@@ -163,8 +163,8 @@ export default function ApiAdaptor(client: any, options = {}): SessionAdaptor {
     //   }
     //   return { session, user };
     // },
-    async updateSession(session: Partial<SessionObj> & { sessionToken: string }): Promise<SessionObj | null> {
-      const response = await fetch(`${apiBaseUrl}/sessions/${encodeURIComponent(session.sessionToken)}`, {
+    async updateSession(session: Partial<SessionObj>): Promise<SessionObj | null> {
+      const response = await fetchWrapper(`${apiBaseUrl}/sessions/${encodeURIComponent(session.sessionToken)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(session),

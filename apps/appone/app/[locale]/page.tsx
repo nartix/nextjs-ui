@@ -3,7 +3,6 @@ import { getTranslations } from 'next-intl/server';
 import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
 import { ContentContainer } from '@/components/common/ui/content-container';
 // import { ContentSkeleton } from '@/components/common/ui/skeleton/skeleton-content';
-import { authConfig } from '@/app/[locale]/(auth)/auth-options';
 
 async function HomeContent() {
   const session = await getServerSession();

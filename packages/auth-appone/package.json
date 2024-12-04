@@ -9,11 +9,11 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
-    "typescript": "latest",
-    "@types/lodash.merge": "^4.6.9"
+    "typescript": "latest"
   },
   "dependencies": {
-    "lodash.merge": "^4.6.2"
+    "@types/deepmerge": "^2.1.0",
+    "deepmerge": "^4.3.1"
   },
   "peerDependencies": {
     "next": ">=15.0.0"

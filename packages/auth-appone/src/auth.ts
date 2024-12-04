@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import merge from 'lodash.merge';
+import deepmerge from 'deepmerge';
 
 import { SessionAdaptor, Provider, authenticateWithProvider } from '@nartix/auth-appone';
 
@@ -42,6 +42,7 @@ export interface AuthOptions {
   setCookie: typeof setCookie;
   getCookie: typeof getCookie;
   authenticateWithProvider: typeof authenticateWithProvider;
+  test?: any;
 }
 
 export function auth(userOptions: Partial<AuthOptions>): AuthOptions {
@@ -68,9 +69,8 @@ export function auth(userOptions: Partial<AuthOptions>): AuthOptions {
     getCookie: getCookie,
     authenticateWithProvider: authenticateWithProvider,
   };
-
   // Merge user options with defaults
-  const mergedOptions = merge({}, defaultOptions, userOptions);
+  const mergedOptions = deepmerge(defaultOptions, userOptions);
 
   // Validate required fields
   if (!mergedOptions.providers || mergedOptions.providers.length === 0) {
@@ -81,5 +81,5 @@ export function auth(userOptions: Partial<AuthOptions>): AuthOptions {
     throw new Error("'sessionAdaptor' must be provided and must be an object.");
   }
 
-  return mergedOptions as Required<AuthOptions>;
+  return mergedOptions;
 }

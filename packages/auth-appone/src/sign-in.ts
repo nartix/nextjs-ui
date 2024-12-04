@@ -2,7 +2,7 @@ import { setCookie, ProviderType } from '@nartix/auth-appone';
 import { AuthOptions } from './auth';
 
 // cookies can only be set in server action or page handlers in Next.js
-export const signIn = async (authOptions: AuthOptions, credentials: unknown, providerId: ProviderType) => {
+export async function signIn(authOptions: AuthOptions, credentials: unknown, providerId: ProviderType) {
   const { providers, sessionAdaptor, authenticateWithProvider, cookie, session } = authOptions;
 
   const user = await authenticateWithProvider(providers, providerId, credentials);
@@ -22,4 +22,4 @@ export const signIn = async (authOptions: AuthOptions, credentials: unknown, pro
   console.log('session', session);
 
   return user;
-};
+}
