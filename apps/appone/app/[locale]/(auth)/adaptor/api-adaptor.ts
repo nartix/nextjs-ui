@@ -163,7 +163,7 @@ export default function ApiAdaptor(client: any, options = {}): SessionAdaptor {
     //   }
     //   return { session, user };
     // },
-    async updateSession(session: Partial<Session> & { sessionToken: string }): Promise<Session | null> {
+    async updateSession(session: Partial<SessionObj> & { sessionToken: string }): Promise<SessionObj | null> {
       const response = await fetch(`${apiBaseUrl}/sessions/${encodeURIComponent(session.sessionToken)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -175,22 +175,20 @@ export default function ApiAdaptor(client: any, options = {}): SessionAdaptor {
       return response.json();
     },
     async deleteSession(sessionToken: string): Promise<void> {
-      console.log('delete sessionToken', sessionToken);
       const response = await fetchWrapper(
         `${apiBaseUrl}/sessions/search/deleteBySessionId?sessionId=${encodeURIComponent(sessionToken)}`,
         {
           method: 'GET',
-          headers: {
-            Accpet: 'application/json',
-          },
+          // headers: {
+          //   Accept: 'application/json',
+          // },
         }
       );
-      console.log(response);
+
       // API always returns a 404 if delete successful or not
       if (response.status === 404) {
-        console.log('Session not found');
-      }
-      if (!response.ok) {
+        console.log('Session delete called successfully');
+      } else if (!response.ok) {
         console.error(`Error deleting session: ${response.statusText}`);
       }
     },

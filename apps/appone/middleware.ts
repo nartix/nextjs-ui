@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { authenticationMiddleware } from '@/middlewares/authentication-middleware';
 import { combineMiddlewares } from '@/lib/combine-middlewares';
 import { localeLogger } from '@/middlewares/locale-logger-middleware';
 import { logger } from '@/middlewares/logger-middleware';
 import { nextIntlMiddleware } from '@/middlewares/nextintl-middleware';
+import { authConfig } from './app/[locale]/(auth)/auth-options';
 
 /**
  * Middleware chain for the app.
@@ -14,7 +16,7 @@ export async function middleware(req: NextRequest) {
   // Combine all middleware functions
   // nextIntlMiddleware must be last in the chain
   // as it returns a response object
-  const combined = combineMiddlewares(logger, localeLogger, nextIntlMiddleware);
+  const combined = combineMiddlewares(logger, localeLogger, authenticationMiddleware, nextIntlMiddleware);
 
   // Execute the combined middleware chain
   return await combined(req);

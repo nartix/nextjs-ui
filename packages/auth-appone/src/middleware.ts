@@ -1,0 +1,21 @@
+'use server';
+
+import { NextRequest } from 'next/server';
+import { AuthOptions } from './auth';
+
+export async function authenticationMiddleware(req: NextRequest, authOptions: Partial<AuthOptions>): Promise<void> {
+  console.log('authone authenticationMiddleware authOptions', authOptions);
+  const { getCookie, setCookie, sessionAdaptor, session, cookie } = authOptions;
+
+  console.log('cookie', cookie);
+
+  //   const sessionToken = atob((await getCookie(cookie.name!)) || '');
+
+  //   if (!sessionToken) {
+  //     return;
+  //   }
+
+  //   console.log('sessionToken from authenticate middleware', sessionToken);
+
+  return;
+}

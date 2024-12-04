@@ -9,3 +9,4 @@ export * from './src/sign-out';
 export * from './src/providers/credential-provider';
 export * from './src/adaptors/session-adaptor';
 export * from './src/session/get-server-session';
+export * from './src/middleware';
