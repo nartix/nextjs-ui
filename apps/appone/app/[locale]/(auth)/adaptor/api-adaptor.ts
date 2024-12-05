@@ -164,14 +164,49 @@ export default function ApiAdaptor(client: any, options = {}): SessionAdaptor {
     //   return { session, user };
     // },
     async updateSession(session: Partial<SessionObj>): Promise<SessionObj | null> {
-      const response = await fetchWrapper(`${apiBaseUrl}/sessions/${encodeURIComponent(session.sessionToken)}`, {
+      if (!session.sessionId) {
+        throw new Error('sessionId is required to update the session.');
+      }
+
+      const existingSessionResponse = await fetchWrapper(
+        `${apiBaseUrl}/sessions/search/findBySessionId?sessionId=${encodeURIComponent(session.sessionId)}`,
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+
+      if (!existingSessionResponse.ok) {
+        console.error(`Error fetching existing session: ${existingSessionResponse.statusText}`);
+        return null;
+      }
+
+      const existingSession: SessionObj = await existingSessionResponse.json();
+
+      // Update the lastAccessTime to the current time
+      const currentTime = Date.now();
+
+      const updatedSession: SessionObj = {
+        ...existingSession,
+        ...session,
+        lastAccessTime: currentTime,
+        locale: 'en',
+        // Optionally update expiryTime based on new maxInactiveInterval
+        expiryTime: currentTime + existingSession.maxInactiveInterval * 1000,
+      };
+
+      // Send the updated session to the server
+      const response = await fetchWrapper(`${apiBaseUrl}/sessions/${encodeURIComponent(updatedSession.primaryId)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(session),
+        body: JSON.stringify(updatedSession),
       });
+
       if (!response.ok) {
-        throw new Error(`Error updating session: ${response.statusText}`);
+        console.error(`Error updating session: ${response.statusText}`);
+        return null;
       }
+
       return response.json();
     },
     async deleteSession(sessionToken: string): Promise<void> {

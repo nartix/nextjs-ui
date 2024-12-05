@@ -21,8 +21,6 @@ export default function Header() {
   const session = useSession();
   const user = session?.user || null;
 
-  console.log('Client session', session);
-
   console.log('Header rendered');
 
   const menuItems = [
