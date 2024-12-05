@@ -190,8 +190,6 @@ export default function ApiAdaptor(client: any, options = {}): SessionAdaptor {
         ...existingSession,
         ...session,
         lastAccessTime: currentTime,
-        locale: 'en',
-        // Optionally update expiryTime based on new maxInactiveInterval
         expiryTime: currentTime + existingSession.maxInactiveInterval * 1000,
       };
 
