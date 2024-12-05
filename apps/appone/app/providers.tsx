@@ -8,7 +8,7 @@ import { ThemeProviderProps } from 'next-themes';
 import { AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
 // import { SessionProvider } from 'next-auth/react';
 import { SessionProvider } from '@/app/[locale]/(auth)/context/session-context';
-import { SessionObj } from '@nartix/auth-appone';
+import { SessionObj } from '@nartix/next-security';
 
 export interface ProvidersProps {
   children: React.ReactNode;

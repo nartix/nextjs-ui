@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import deepmerge from 'deepmerge';
 
-import { SessionAdaptor, Provider, authenticateWithProvider } from '@nartix/auth-appone';
+import { SessionAdaptor, Provider, authenticateWithProvider } from '@nartix/next-security';
 
 export interface CookieOptions {
   name: string;

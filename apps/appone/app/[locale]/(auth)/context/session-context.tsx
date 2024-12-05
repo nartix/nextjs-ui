@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext } from 'react';
-import { SessionObj } from '@nartix/auth-appone';
+import { SessionObj } from '@nartix/next-security';
 
 const SessionContext = createContext<SessionObj | null>(null);
 

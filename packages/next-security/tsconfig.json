@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      // "@nartix/auth-appone/*": ["./src/*"]
+      // "@nartix/next-security/*": ["./src/*"]
       "@/*": ["./src/*"]
     }
   },

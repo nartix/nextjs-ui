@@ -1,6 +1,6 @@
 import ApiAdaptor from '@/app/[locale]/(auth)/adaptor/api-adaptor';
 import { credentialsProvider } from '@/app/[locale]/(auth)/providers/credentials-provider';
-import { AuthOptions, auth } from '@nartix/auth-appone';
+import { AuthOptions, auth } from '@nartix/next-security';
 
 const authOptions: Partial<AuthOptions> = {
   sessionAdaptor: ApiAdaptor({}),

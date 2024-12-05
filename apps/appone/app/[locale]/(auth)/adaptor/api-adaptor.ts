@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import fetchWrapper from '@/lib/fetch-wrapper';
-import { SessionAdaptor, Session, SessionObj } from '@nartix/auth-appone';
+import { SessionAdaptor, SessionObj } from '@nartix/next-security';
 
 export default function ApiAdaptor(client: any, options = {}): SessionAdaptor {
   const apiBaseUrl = `${process.env.API_URL_GLOBAL}/${process.env.API_URL_PREFIX}/${process.env.API_URL_VERSION}`;

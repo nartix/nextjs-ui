@@ -1,4 +1,4 @@
-import { AuthOptions } from '@nartix/auth-appone';
+import { AuthOptions } from '@nartix/next-security';
 
 export const getServerSession = async (authOptions: AuthOptions) => {
   const { cookie, getCookie, sessionAdaptor } = authOptions;

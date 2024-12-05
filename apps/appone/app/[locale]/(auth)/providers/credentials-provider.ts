@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { Credentials, Provider } from '@nartix/auth-appone';
+import { Credentials, Provider } from '@nartix/next-security';
 
 import fetchWrapper from '@/lib/fetch-wrapper';
 

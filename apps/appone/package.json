@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@nartix/auth-appone": "*",
+    "@nartix/next-security": "*",
     "@nartix/ui-appone": "*"
   },
   "devDependencies": {

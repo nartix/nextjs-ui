@@ -26,7 +26,7 @@ export const config = {
     // '/app/[locale]/(auth)/auth-options.ts',
     //   '/node_modules/**',
     //   '/node_modules/function-bind/**',
-    //   // './../../packages/auth-appone/src/**',
+    // './../../packages/auth-appone/src/**',
     //   '/middlewares/**', // Allows a single file '/node_modules/function-bind/**', // Allows anything in the function-bind module
   ],
   // Match only internationalized pathnames

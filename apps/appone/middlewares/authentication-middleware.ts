@@ -1,7 +1,7 @@
 'user server';
 
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
-import { authenticationMiddleware as authMiddleware } from '@nartix/auth-appone';
+import { authenticationMiddleware as authMiddleware } from '@nartix/next-security';
 import { NextRequest } from 'next/server';
 import { isLocaleSupported } from '@/middlewares/locale-logger-middleware';
 
