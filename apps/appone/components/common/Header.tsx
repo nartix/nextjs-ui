@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   Navbar,
   NavbarBrand,
@@ -17,11 +18,13 @@ import { useSession } from '@/app/[locale]/(auth)/context/session-context';
 import { logoutAction } from '@/app/[locale]/(auth)/actions/logout-action';
 
 export default function Header() {
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const session = useSession();
   const user = session?.user || null;
 
   console.log('Header rendered');
+  console.log('Pathname', usePathname());
 
   const menuItems = [
     'Profile',
@@ -48,13 +51,13 @@ export default function Header() {
       </NavbarContent>
 
       <NavbarContent className='hidden sm:flex gap-4' justify='center'>
-        <NavbarItem>
-          <Link color='foreground' href='#'>
+        <NavbarItem isActive={pathname === '/en/test'}>
+          <Link color='foreground' href='/test'>
             Features
           </Link>
         </NavbarItem>
-        <NavbarItem isActive>
-          <Link href='#' aria-current='page'>
+        <NavbarItem>
+          <Link href='#' color='foreground'>
             Customers
           </Link>
         </NavbarItem>

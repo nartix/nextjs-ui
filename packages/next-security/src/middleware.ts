@@ -18,14 +18,17 @@ export const nextSecurityMiddleware = async (
 
   console.log('sessionObject', sessionObj);
 
-  const dbSessionObject = await sessionAdaptor.updateSession({
+  const updatedSessionObject = await sessionAdaptor.updateSession({
     ...sessionObj,
     [authOptions.session.sessionId!]: sessionToken,
   });
 
-  // console.log('sessionObj from authenticate middleware:', sessionObj);
+  const sessionTokenFromUpdatedSession = updatedSessionObject ? updatedSessionObject[authOptions.session.sessionId!] : null;
 
-  //   console.log('sessionToken from authenticate middleware', sessionToken);
+  // update cookie maxAge if session was updated
+  if (sessionTokenFromUpdatedSession) {
+    await setCookie(sessionTokenFromUpdatedSession, cookie);
+  }
 
   return;
 };

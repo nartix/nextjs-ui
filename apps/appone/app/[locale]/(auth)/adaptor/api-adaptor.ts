@@ -1,3 +1,4 @@
+import 'server-only';
 import { v4 as uuidv4 } from 'uuid';
 
 import fetchWrapper from '@/lib/fetch-wrapper';
@@ -163,49 +164,83 @@ export default function ApiAdaptor(client: any, options = {}): SessionAdaptor {
     //   }
     //   return { session, user };
     // },
+    // async updateSession(session: Partial<SessionObj>): Promise<SessionObj | null> {
+    //   if (!session.sessionId) {
+    //     throw new Error('sessionId is required to update the session.');
+    //   }
+
+    //   const existingSessionResponse = await fetchWrapper(
+    //     `${apiBaseUrl}/sessions/search/findBySessionId?sessionId=${encodeURIComponent(session.sessionId)}`,
+    //     {
+    //       method: 'GET',
+    //       headers: { 'Content-Type': 'application/json' },
+    //     }
+    //   );
+
+    //   if (!existingSessionResponse.ok) {
+    //     console.error(`Error fetching existing session: ${existingSessionResponse.statusText}`);
+    //     return null;
+    //   }
+
+    //   const existingSession: SessionObj = await existingSessionResponse.json();
+
+    //   // Update the lastAccessTime to the current time
+    //   const currentTime = Date.now();
+
+    //   const updatedSession: SessionObj = {
+    //     ...existingSession,
+    //     ...session,
+    //     lastAccessTime: currentTime,
+    //     expiryTime: currentTime + existingSession.maxInactiveInterval * 1000,
+    //   };
+
+    //   // Send the updated session to the server
+    //   const response = await fetchWrapper(`${apiBaseUrl}/sessions/${encodeURIComponent(updatedSession.primaryId)}`, {
+    //     method: 'PUT',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify(updatedSession),
+    //   });
+
+    //   if (!response.ok) {
+    //     console.error(`Error updating session: ${response.statusText}`);
+    //     return null;
+    //   }
+
+    //   return response.json();
+    // },
     async updateSession(session: Partial<SessionObj>): Promise<SessionObj | null> {
       if (!session.sessionId) {
         throw new Error('sessionId is required to update the session.');
       }
 
-      const existingSessionResponse = await fetchWrapper(
-        `${apiBaseUrl}/sessions/search/findBySessionId?sessionId=${encodeURIComponent(session.sessionId)}`,
-        {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
+      const apiEndpoint = `${apiBaseUrl}/auth/sessions/update`;
+
+      try {
+        const response = await fetchWrapper(apiEndpoint, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            sessionId: session.sessionId,
+            ipAddress: session.ipAddress,
+            urlPath: session.urlPath,
+            userAgent: session.userAgent,
+          }),
+        });
+
+        if (!response.ok) {
+          console.error(`Error updating session: ${response.statusText}`);
+          return null;
         }
-      );
 
-      if (!existingSessionResponse.ok) {
-        console.error(`Error fetching existing session: ${existingSessionResponse.statusText}`);
+        const updatedSession: SessionObj = await response.json();
+        console.log('Session updated successfully:', updatedSession);
+        return updatedSession;
+      } catch (error) {
+        console.error('Error occurred while updating the session:', error);
         return null;
       }
-
-      const existingSession: SessionObj = await existingSessionResponse.json();
-
-      // Update the lastAccessTime to the current time
-      const currentTime = Date.now();
-
-      const updatedSession: SessionObj = {
-        ...existingSession,
-        ...session,
-        lastAccessTime: currentTime,
-        expiryTime: currentTime + existingSession.maxInactiveInterval * 1000,
-      };
-
-      // Send the updated session to the server
-      const response = await fetchWrapper(`${apiBaseUrl}/sessions/${encodeURIComponent(updatedSession.primaryId)}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedSession),
-      });
-
-      if (!response.ok) {
-        console.error(`Error updating session: ${response.statusText}`);
-        return null;
-      }
-
-      return response.json();
     },
     async deleteSession(sessionToken: string): Promise<void> {
       const response = await fetchWrapper(

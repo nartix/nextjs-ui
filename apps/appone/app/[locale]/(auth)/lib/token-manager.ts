@@ -77,7 +77,7 @@ const CLOCK_SKEW_BUFFER = 60 * 1000; // 60 seconds buffer
  * Fetches a valid token from the API, always fetching a new token if needed.
  */
 export async function getServerSideToken(): Promise<string> {
-  console.log('getServerSideToken', accessToken, tokenExpiry);
+  // console.log('getServerSideToken', accessToken, tokenExpiry);
   if (accessToken && tokenExpiry && Date.now() < tokenExpiry) {
     return accessToken;
   }
