@@ -17,14 +17,18 @@ export const credentialsProvider: Provider = {
     }
 
     try {
-      const response = await fetchWrapper(`${API_BASE_URL}/${API_PREFIX}/${API_VERSION}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: credentials.username,
-          password: credentials.password,
-        }),
-      });
+      const response = await fetchWrapper(
+        `${API_BASE_URL}/${API_PREFIX}/${API_VERSION}/auth/login`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: credentials.username,
+            password: credentials.password,
+          }),
+        },
+        false
+      );
 
       if (!response.ok) {
         return null;

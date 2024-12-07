@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@nartix/next-security": "*",
-    "@nartix/ui-appone": "*"
+    "@nartix/ui-appone": "*",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@types/negotiator": "^0.6.3"

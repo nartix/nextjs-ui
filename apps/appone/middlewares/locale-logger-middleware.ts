@@ -1,8 +1,7 @@
 'use server';
 
-import { routing } from '@/i18n/routing';
 import { NextRequest } from 'next/server';
-
+import { routing } from '@/i18n/routing';
 /**
  * Locale Logger Middleware
  * Logs the locale extracted from the request URL.
