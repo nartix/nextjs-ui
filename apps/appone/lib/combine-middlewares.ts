@@ -50,16 +50,16 @@ import { NextRequest, NextResponse } from 'next/server';
 //   };
 // }
 
-import { MiddlewareResult, CustomMiddleware } from '@/types/middleware-result';
+import { MiddlewareResult, MiddlewareHandler } from '@/types/middleware-handler';
 
-export function combineMiddlewares(...middlewares: CustomMiddleware[]) {
+export function combineMiddlewares(...middlewares: MiddlewareHandler[]) {
   return async (req: NextRequest): Promise<NextResponse | Response> => {
     let aggregatedResponse: NextResponse | undefined = undefined;
 
     for (const middleware of middlewares) {
       const result: MiddlewareResult = await middleware(req, aggregatedResponse ?? NextResponse.next());
 
-      if ((result.response instanceof NextResponse || result.response instanceof Response) && result.propagate === false) {
+      if ((result.response instanceof NextResponse || result.response instanceof Response) && result.next === false) {
         return result.response;
       } else {
         if (result.response instanceof NextResponse) {
