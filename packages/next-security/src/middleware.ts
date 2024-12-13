@@ -46,8 +46,5 @@ export const nextSecurityMiddleware = async (
     return { response: csrfResponse, propagate: true };
   }
 
-  // Continue with the rest of the nextSecurityMiddleware logic if needed
-  // ...
-
   return { propagate: true };
 };

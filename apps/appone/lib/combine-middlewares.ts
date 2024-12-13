@@ -53,7 +53,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { MiddlewareResult, MiddlewareHandler } from '@/types/middleware-handler';
 
 export function combineMiddlewares(...middlewares: MiddlewareHandler[]) {
-  return async (req: NextRequest): Promise<NextResponse | Response> => {
+  if (middlewares.length === 0) {
+    return async () => NextResponse.next();
+  }
+  return async (req: NextRequest, res: NextResponse = NextResponse.next()): Promise<NextResponse | Response> => {
     let aggregatedResponse: NextResponse | undefined = undefined;
 
     for (const middleware of middlewares) {

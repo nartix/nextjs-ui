@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { getCsrf } from '@nartix/csrf-core';
 
 export const nextCsrfMiddleware = async (
@@ -16,21 +15,13 @@ export const nextCsrfMiddleware = async (
 ): Promise<NextResponse> => {
   try {
     const csrf = await getCsrf(options);
-    const store = await cookies();
     const cookieName = options.cookieName ?? 'CSRF-TOKEN';
     const headerName = options.headerName ?? 'X-CSRF-TOKEN';
-    const csrfCookie = store.get(cookieName);
+    const csrfCookie = req.cookies.get(cookieName);
 
     if (!csrfCookie) {
       const token = btoa(await csrf.generateToken());
-      const cookieOptions: { name: string; value: string; maxAge?: number } = {
-        name: cookieName,
-        value: token,
-      };
-      if (options.maxAge !== undefined) {
-        cookieOptions.maxAge = options.maxAge;
-      }
-      store.set(cookieOptions);
+      res.cookies.set(cookieName, token, { maxAge: options.maxAge });
     } else {
       res.headers.set(headerName, csrfCookie.value);
     }
