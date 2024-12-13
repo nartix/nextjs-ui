@@ -9,13 +9,13 @@ export const nextSecurityMiddleware = async (
   res: NextResponse,
   authOptions: AuthOptions,
   sessionObj: SessionObj = {}
-): Promise<{ response?: NextResponse; propagate?: boolean }> => {
+): Promise<{ response?: NextResponse; next?: boolean }> => {
   const { getCookie, setCookie, sessionAdaptor, session, cookie, csrf } = authOptions;
 
   const sessionToken = atob((await getCookie(cookie.name!)) || '');
 
   if (!sessionToken) {
-    return { propagate: true };
+    return { next: true };
   }
 
   // console.log('sessionObject', sessionObj);
@@ -41,10 +41,5 @@ export const nextSecurityMiddleware = async (
     maxAge: cookie.maxAge,
   });
 
-  // If nextCsrfMiddleware has modified the response, return it
-  if (csrfResponse) {
-    return { response: csrfResponse, propagate: true };
-  }
-
-  return { propagate: true };
+  return { response: csrfResponse, next: true };
 };

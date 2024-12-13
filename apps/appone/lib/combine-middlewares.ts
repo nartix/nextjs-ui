@@ -70,7 +70,11 @@ export function combineMiddlewares(...middlewares: MiddlewareHandler[]) {
             aggregatedResponse = result.response;
           } else {
             result.response.headers.forEach((value, key) => {
-              aggregatedResponse!.headers.set(key, value);
+              if (key.toLowerCase() === 'x-middleware-set-cookie') {
+                aggregatedResponse!.headers.append(key, value);
+              } else {
+                aggregatedResponse!.headers.set(key, value);
+              }
             });
           }
         }
