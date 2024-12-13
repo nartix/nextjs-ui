@@ -6,7 +6,7 @@ import { routing } from '@/i18n/routing';
  * Locale Logger Middleware
  * Logs the locale extracted from the request URL.
  */
-export function localeLogger(req: NextRequest): void {
+export async function localeLoggerMiddleware(req: NextRequest): Promise<void> {
   const pathname = req.nextUrl.pathname;
 
   console.log(`Detected locale: ${extractLocale(pathname)}`);
@@ -32,7 +32,7 @@ export function isLocaleSupported(pathname: string): boolean {
  * @param pathname - The pathname to extract the locale from.
  * @returns The extracted locale.
  */
-function extractLocale(pathname: string): string {
+export function extractLocale(pathname: string): string {
   const [, locale] = pathname.split('/');
   return locale;
 }

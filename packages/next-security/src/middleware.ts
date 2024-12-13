@@ -1,22 +1,24 @@
 'use server';
 
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { AuthOptions, SessionObj } from '@nartix/next-security';
+import { nextCsrfMiddleware } from '@nartix/next-csrf';
 
 export const nextSecurityMiddleware = async (
   req: NextRequest,
+  res: NextResponse,
   authOptions: AuthOptions,
   sessionObj: SessionObj = {}
-): Promise<void> => {
-  const { getCookie, setCookie, sessionAdaptor, session, cookie } = authOptions;
+): Promise<{ response?: NextResponse; propagate?: boolean }> => {
+  const { getCookie, setCookie, sessionAdaptor, session, cookie, csrf } = authOptions;
 
   const sessionToken = atob((await getCookie(cookie.name!)) || '');
 
   if (!sessionToken) {
-    return;
+    return { propagate: true };
   }
 
-  console.log('sessionObject', sessionObj);
+  // console.log('sessionObject', sessionObj);
 
   const updatedSessionObject = await sessionAdaptor.updateSession({
     ...sessionObj,
@@ -30,5 +32,22 @@ export const nextSecurityMiddleware = async (
     await setCookie(sessionTokenFromUpdatedSession, cookie);
   }
 
-  return;
+  const csrfResponse = await nextCsrfMiddleware(req, res, {
+    secret: authOptions.secret!,
+    algorithm: csrf.algorithm,
+    tokenByteLength: csrf.tokenByteLength,
+    cookieName: csrf.cookieName,
+    headerName: csrf.headerName,
+    maxAge: cookie.maxAge,
+  });
+
+  // If nextCsrfMiddleware has modified the response, return it
+  if (csrfResponse) {
+    return { response: csrfResponse, propagate: true };
+  }
+
+  // Continue with the rest of the nextSecurityMiddleware logic if needed
+  // ...
+
+  return { propagate: true };
 };

@@ -235,7 +235,6 @@ export default function ApiAdaptor(client: any, options = {}): SessionAdaptor {
         }
 
         const updatedSession: SessionObj = await response.json();
-        console.log('Session updated successfully:', updatedSession);
         return updatedSession;
       } catch (error) {
         console.error('Error occurred while updating the session:', error);

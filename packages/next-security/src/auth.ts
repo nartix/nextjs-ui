@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import deepmerge from 'deepmerge';
+import { generateToken, verifyToken, getHmacKey } from '@nartix/csrf-core';
 
 import { SessionAdaptor, Provider, authenticateWithProvider } from '@nartix/next-security';
 
@@ -27,6 +28,7 @@ export async function getCookie(name: string): Promise<string | null> {
 }
 
 export interface AuthOptions {
+  secret?: string;
   providers: Provider[];
   sessionAdaptor: SessionAdaptor;
   session: {
@@ -42,7 +44,15 @@ export interface AuthOptions {
   setCookie: typeof setCookie;
   getCookie: typeof getCookie;
   authenticateWithProvider: typeof authenticateWithProvider;
-  test?: any;
+  csrf: {
+    cookieName?: string;
+    headerName?: string;
+    algorithm?: 'SHA-1' | 'SHA-256' | 'SHA-384' | 'SHA-512';
+    tokenByteLength?: number;
+    getKeyFromSecret: typeof getHmacKey;
+    generateToken: typeof generateToken;
+    verifyToken: typeof verifyToken;
+  };
 }
 
 export function auth(userOptions: Partial<AuthOptions>): AuthOptions {
@@ -68,9 +78,27 @@ export function auth(userOptions: Partial<AuthOptions>): AuthOptions {
     setCookie: setCookie,
     getCookie: getCookie,
     authenticateWithProvider: authenticateWithProvider,
+    csrf: {
+      algorithm: 'SHA-256',
+      cookieName: 'CSRF-TOKEN',
+      tokenByteLength: 32,
+      getKeyFromSecret: getHmacKey,
+      generateToken: generateToken,
+      verifyToken: verifyToken,
+    },
   };
+
+  // Check for NEXT_SECURITY_SECRET environment variable
+  const secret = process.env.NEXT_SECURITY_SECRET || userOptions.secret;
+  if (!secret) {
+    throw new Error("A secret must be specified either in the environment variable 'NEXT_SECURITY_SECRET' or in 'AuthOptions'.");
+  }
+
   // Merge user options with defaults
   const mergedOptions = deepmerge(defaultOptions, userOptions);
+
+  // Set the secret in merged options
+  mergedOptions.secret = secret;
 
   // Validate required fields
   if (!mergedOptions.providers || mergedOptions.providers.length === 0) {

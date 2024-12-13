@@ -1,23 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authenticationMiddleware } from '@/middlewares/authentication-middleware';
 import { combineMiddlewares } from '@/lib/combine-middlewares';
-import { localeLogger } from '@/middlewares/locale-logger-middleware';
-import { logger } from '@/middlewares/logger-middleware';
+import { localeLoggerMiddleware, isLocaleSupported } from '@/middlewares/locale-logger-middleware';
+import { loggerMiddleware } from '@/middlewares/logger-middleware';
 import { nextIntlMiddleware } from '@/middlewares/nextintl-middleware';
+import { routing } from '@/i18n/routing';
+import { auth } from '@nartix/next-security';
 
-/**
- * Middleware chain for the app.
- * @param req - The incoming request object.
- * @returns The response object.
- */
+const publicPages: any[] = ['/', '/login'];
+const locales = routing.locales;
+console.log('locales', locales);
+
+// export const nextIntlMiddleware = createMiddleware(routing);
+
+const publicPathnameRegex = RegExp(
+  `^(/(${locales.join('|')}))?(${publicPages.flatMap((p) => (p === '/' ? ['', '/'] : p)).join('|')})/?$`,
+  'i'
+);
 
 export default async function middleware(req: NextRequest) {
-  // Combine all middleware functions
-  // nextIntlMiddleware must be last in the chain
-  // as it returns a response object
-  const combined = combineMiddlewares(logger, localeLogger, authenticationMiddleware, nextIntlMiddleware);
-
-  // Execute the combined middleware chain
+  // const combined = combineMiddlewares(nextIntlMiddleware, loggerMiddleware, localeLoggerMiddleware, authenticationMiddleware);
+  const combined = combineMiddlewares(nextIntlMiddleware, loggerMiddleware, authenticationMiddleware);
   return await combined(req);
 }
 
@@ -30,5 +33,8 @@ export const config = {
     //   '/middlewares/**', // Allows a single file '/node_modules/function-bind/**', // Allows anything in the function-bind module
   ],
   // Match only internationalized pathnames
-  matcher: ['/', '/(fr|en)/:path*', '/((?!_next|_vercel|.*\\..*|api|favicon.ico|sitemap.xml|robots.txt).*)'],
+
+  // '/(fr|en)/:path*'
+  // '/', `/${locales.join('|')}/:path*`,
+  matcher: ['/((?!_next|_vercel|.*\\..*|api|favicon.ico|sitemap.xml|robots.txt).*)'],
 };

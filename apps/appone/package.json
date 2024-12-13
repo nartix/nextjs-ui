@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "envconsul -config=/app/envconsul-config.hcl next dev",
+    "dev": "envconsul -config=/app/envconsul-config.hcl next dev ",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@nartix/next-security": "*",
+    "@nartix/csrf-core": "*",
     "@nartix/ui-appone": "*",
     "server-only": "^0.0.1"
   },

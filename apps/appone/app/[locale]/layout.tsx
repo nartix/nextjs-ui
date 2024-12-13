@@ -13,8 +13,8 @@ import '@/styles/globals.css';
 import { Providers } from './../providers';
 import { siteConfig } from '@/config/site';
 import { fontSans } from '@/config/fonts';
-import Header from '@/components/common/Header';
-import Footer from '@/components/common/Footer';
+import { Header } from '@/components/common/Header';
+import { Footer } from '@/components/common/Footer';
 import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
 
 export const metadata: Metadata = {
@@ -69,7 +69,7 @@ export default async function LocaleLayout({
           themeProps={{ attribute: 'class', defaultTheme: 'light', children: children }}
         >
           <div className='relative flex flex-col h-screen'>
-            <Header />
+            <Header locale={locale} />
             {children}
             <Footer />
           </div>

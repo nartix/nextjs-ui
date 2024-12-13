@@ -1,5 +1,5 @@
 {
-  "name": "@nartix/next-security",
+  "name": "@nartix/next-csrf",
   "version": "0.1.0",
   "type": "module",
   "private": true,

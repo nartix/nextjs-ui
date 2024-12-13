@@ -12,35 +12,53 @@ import {
   // Link,
   Button,
 } from '@nextui-org/react';
+// import NextLink from 'next/link';
 
-import Link from '@/components/common/ui/link';
+import { Link } from '@/components/common/ui/link';
 import { useSession } from '@/app/[locale]/(auth)/context/session-context';
 import { logoutAction } from '@/app/[locale]/(auth)/actions/logout-action';
 
-export default function Header() {
+interface HeaderProps {
+  locale: string;
+}
+
+export function Header({ locale }: HeaderProps) {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const session = useSession();
   const user = session?.user || null;
-
-  console.log('Header rendered');
-  console.log('Pathname', usePathname());
+  const router = useRouter();
 
   const menuItems = [
-    'Profile',
-    'Dashboard',
-    'Activity',
-    'Analytics',
-    'System',
-    'Deployments',
-    'My Settings',
-    'Team Settings',
-    'Help & Feedback',
-    'Log Out',
+    { label: 'Profile', href: '/test' },
+    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Activity', href: '/activity' },
+    { label: 'Analytics', href: '/analytics' },
+    { label: 'System', href: '/system' },
+    user
+      ? {
+          label: 'Log Out',
+          href: '/logout',
+          action: async () => {
+            // const formData = new FormData();
+            setIsMenuOpen(false);
+            await logoutAction();
+            router.refresh();
+          },
+        }
+      : { label: 'Log In', href: '/login' },
+  ];
+
+  const localeUrlPrefix = locale ? `/${locale}` : '';
+
+  const mainMenuItems = [
+    { label: 'Features', href: '/test' },
+    { label: 'Customers', href: '#' },
+    { label: 'Integrations', href: '#' },
   ];
 
   return (
-    <Navbar onMenuOpenChange={setIsMenuOpen} className='bg-[#f6f8fa]'>
+    <Navbar onMenuOpenChange={setIsMenuOpen} isMenuOpen={isMenuOpen} className='bg-[#f6f8fa]'>
       <NavbarContent>
         <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} className='sm:hidden' />
         <NavbarBrand>
@@ -51,25 +69,18 @@ export default function Header() {
       </NavbarContent>
 
       <NavbarContent className='hidden sm:flex gap-4' justify='center'>
-        <NavbarItem isActive={pathname === '/en/test'}>
-          <Link color='foreground' href='/test'>
-            Features
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link href='#' color='foreground'>
-            Customers
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color='foreground' href='#'>
-            Integrations
-          </Link>
-        </NavbarItem>
+        {mainMenuItems.map((item, index) => (
+          <NavbarItem key={index} isActive={pathname === `${localeUrlPrefix}${item.href}`}>
+            <Link color={pathname === `${localeUrlPrefix}${item.href}` ? undefined : 'foreground'} href={item.href}>
+              {item.label}
+            </Link>
+          </NavbarItem>
+        ))}
       </NavbarContent>
+
       <NavbarContent justify='end'>
         {user ? (
-          <NavbarItem>
+          <NavbarItem key='logout'>
             <form action={logoutAction}>
               <Button color='primary' variant='flat' type='submit'>
                 Logout
@@ -81,7 +92,7 @@ export default function Header() {
             <NavbarItem className='hidden lg:flex'>
               <Link href='/login'>Login</Link>
             </NavbarItem>
-            <NavbarItem>
+            <NavbarItem key='singup'>
               <Button as={Link} color='primary' href='/signup' variant='flat'>
                 Sign Up
               </Button>
@@ -91,14 +102,27 @@ export default function Header() {
       </NavbarContent>
       <NavbarMenu>
         {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
+          <NavbarMenuItem key={`${item.label}-${index}`}>
             <Link
-              color={index === 2 ? 'primary' : index === menuItems.length - 1 ? 'danger' : 'foreground'}
+              color={
+                pathname === `${localeUrlPrefix}${item.href}`
+                  ? 'primary'
+                  : index === menuItems.length - 1
+                    ? 'danger'
+                    : 'foreground'
+              }
               className='w-full'
-              href='#'
-              size='lg'
+              href={item.href}
+              {...(item.action
+                ? {
+                    onClick: async (e) => {
+                      e.preventDefault(); // Prevent default navigation
+                      await item.action();
+                    },
+                  }
+                : { onPress: () => setIsMenuOpen(false) })}
             >
-              {item}
+              {item.label}
             </Link>
           </NavbarMenuItem>
         ))}
