@@ -18,5 +18,5 @@ export const authenticationMiddleware: MiddlewareHandler = async (req, res) => {
     urlPath: req.nextUrl.pathname,
     userAgent: req.headers.get('user-agent') || '',
   };
-  return await nextSecurityMiddleware(req, res!, authConfig, sessionObj);
+  return await nextSecurityMiddleware(req, res, authConfig, sessionObj);
 };

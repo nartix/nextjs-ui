@@ -7,5 +7,6 @@ export const testMiddleware: MiddlewareHandler = async (req, res) => {
 
   res?.cookies.set('test', 'test');
   res?.headers.set('test', 'test');
-  return { next: true };
+  console.log('test middleware');
+  return { response: res!, next: true };
 };

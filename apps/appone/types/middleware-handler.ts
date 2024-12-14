@@ -1,9 +1,8 @@
-// types/middleware-result.ts
 import { NextResponse, NextRequest } from 'next/server';
 
 export interface MiddlewareResult {
-  response?: NextResponse | Response;
-  next?: boolean; // Defaults to true if undefined
+  response: Response | NextResponse;
+  next: boolean; // Defaults to true if undefined
 }
 
-export type MiddlewareHandler = (req: NextRequest, res?: NextResponse) => Promise<MiddlewareResult>;
+export type MiddlewareHandler = (req: NextRequest, res: NextResponse) => Promise<MiddlewareResult>;
