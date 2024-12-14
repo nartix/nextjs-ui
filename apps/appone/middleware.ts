@@ -5,10 +5,10 @@ import { loggerMiddleware } from '@/middlewares/logger-middleware';
 import { nextIntlMiddleware } from '@/middlewares/nextintl-middleware';
 import { testMiddleware } from './middlewares/test-middleware';
 
-export default async function middleware(req: NextRequest, res: NextResponse) {
+export default async function middleware(req: NextRequest) {
   const middlewares = [nextIntlMiddleware, testMiddleware, authenticationMiddleware];
   const combined = combineMiddlewares(...middlewares);
-  return await combined(req, res);
+  return await combined(req, NextResponse.next());
 }
 
 export const config = {

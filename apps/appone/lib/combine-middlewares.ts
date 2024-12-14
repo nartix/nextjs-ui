@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MiddlewareResult, MiddlewareHandler } from '@/types/middleware-handler';
 
-export function combineMiddlewares2(...middlewares: MiddlewareHandler[]) {
+export function combineMiddlewares1(...middlewares: MiddlewareHandler[]) {
   return async (req: NextRequest, res: NextResponse = NextResponse.next()): Promise<NextResponse | Response> => {
     let aggregatedResponse: NextResponse | undefined;
     for (const middleware of middlewares) {
