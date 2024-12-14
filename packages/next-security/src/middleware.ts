@@ -1,5 +1,3 @@
-'use server';
-
 import { NextRequest, NextResponse } from 'next/server';
 import { AuthOptions, SessionObj } from '@nartix/next-security';
 import { nextCsrfMiddleware } from '@nartix/next-csrf';
@@ -10,15 +8,13 @@ export const nextSecurityMiddleware = async (
   authOptions: AuthOptions,
   sessionObj: SessionObj = {}
 ): Promise<{ response?: NextResponse; next?: boolean }> => {
-  const { getCookie, setCookie, sessionAdaptor, session, cookie, csrf } = authOptions;
+  const { sessionAdaptor, cookie, csrf } = authOptions;
 
-  const sessionToken = atob((await getCookie(cookie.name!)) || '');
+  const sessionToken = atob(req.cookies.get(cookie.name!)?.value || '');
 
   if (!sessionToken) {
     return { next: true };
   }
-
-  // console.log('sessionObject', sessionObj);
 
   const updatedSessionObject = await sessionAdaptor.updateSession({
     ...sessionObj,
@@ -27,9 +23,19 @@ export const nextSecurityMiddleware = async (
 
   const sessionTokenFromUpdatedSession = updatedSessionObject ? updatedSessionObject[authOptions.session.sessionId!] : null;
 
-  // update cookie maxAge if session was updated
   if (sessionTokenFromUpdatedSession) {
-    await setCookie(sessionTokenFromUpdatedSession, cookie);
+    cookie.value = btoa(sessionTokenFromUpdatedSession);
+    if (cookie.name) {
+      res.cookies.set(cookie.name, cookie.value, {
+        path: cookie.path,
+        maxAge: cookie.maxAge,
+        httpOnly: cookie.httpOnly,
+        secure: cookie.secure,
+        sameSite: cookie.sameSite,
+      });
+    } else {
+      console.error('Cookie name is undefined');
+    }
   }
 
   const csrfResponse = await nextCsrfMiddleware(req, res, {
@@ -39,6 +45,7 @@ export const nextSecurityMiddleware = async (
     cookieName: csrf.cookieName,
     headerName: csrf.headerName,
     maxAge: cookie.maxAge,
+    secure: cookie.secure,
   });
 
   return { response: csrfResponse, next: true };

@@ -69,9 +69,9 @@ export function combineMiddlewares(...middlewares: MiddlewareHandler[]) {
           if (!aggregatedResponse) {
             aggregatedResponse = result.response;
           } else {
-            result.response.headers.forEach((value, key) => {
-              aggregatedResponse!.headers.set(key, value);
-            });
+            // result.response.headers.forEach((value, key) => {
+            //   aggregatedResponse!.headers.set(key, value);
+            // });
           }
         }
       }

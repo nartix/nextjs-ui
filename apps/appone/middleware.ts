@@ -3,9 +3,10 @@ import { authenticationMiddleware } from '@/middlewares/authentication-middlewar
 import { combineMiddlewares } from '@/lib/combine-middlewares';
 import { loggerMiddleware } from '@/middlewares/logger-middleware';
 import { nextIntlMiddleware } from '@/middlewares/nextintl-middleware';
+import { testMiddleware } from './middlewares/test-middleware';
 
 export default async function middleware(req: NextRequest) {
-  const middlewares = [nextIntlMiddleware, loggerMiddleware, authenticationMiddleware];
+  const middlewares = [nextIntlMiddleware, testMiddleware, authenticationMiddleware];
   const combined = combineMiddlewares(...middlewares);
   return await combined(req);
 }

@@ -12,7 +12,14 @@
     "@nartix/next-security": "*",
     "@nartix/csrf-core": "*",
     "@nartix/ui-appone": "*",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "next-intl": "^3.25.0",
+    "next": "^15.0.3",
+    "autoprefixer": "^10.4.20",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "uuid": "^11.0.3",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/negotiator": "^0.6.3"

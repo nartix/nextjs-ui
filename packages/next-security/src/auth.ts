@@ -1,3 +1,4 @@
+import 'server-only';
 import { cookies } from 'next/headers';
 import deepmerge from 'deepmerge';
 import { generateToken, verifyToken, getHmacKey } from '@nartix/csrf-core';
@@ -14,9 +15,9 @@ export interface CookieOptions {
   maxAge: number;
 }
 
-export async function setCookie(token: string, options: Partial<CookieOptions> = {}): Promise<void> {
+export async function setCookie(payload: string, options: Partial<CookieOptions> = {}): Promise<void> {
   // Set the cookie value to the base64 encoded token
-  options.value = btoa(token);
+  options.value = btoa(payload);
   const store = await cookies();
   store.set(options as CookieOptions);
 }
@@ -81,6 +82,7 @@ export function auth(userOptions: Partial<AuthOptions>): AuthOptions {
     csrf: {
       algorithm: 'SHA-256',
       cookieName: 'CSRF-TOKEN',
+      headerName: 'X-CSRF-TOKEN',
       tokenByteLength: 32,
       getKeyFromSecret: getHmacKey,
       generateToken: generateToken,
