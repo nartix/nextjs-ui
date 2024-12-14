@@ -2,14 +2,12 @@
 
 import { NextResponse } from 'next/server';
 import { MiddlewareHandler } from '@/types/middleware-handler';
-import { isPublicPath, isLocaleSupported } from '@/middlewares/locale-logger-middleware';
+import { isPublicPath, isLocaleSupported } from '@/lib/locale-util';
 
 export const testMiddleware: MiddlewareHandler = async (req, res) => {
-  //set cookie using res
-
   res?.cookies.set('test', 'test');
   res?.headers.set('test', 'test');
-  console.log('test middleware');
+  console.log('test middleware  ', req.nextUrl.pathname);
 
   // Redirect to '/login' if the pathname is '/test'
   // if (req.nextUrl.pathname === '/test') {
@@ -26,6 +24,10 @@ export const testMiddleware: MiddlewareHandler = async (req, res) => {
   // if (isLocaleSupported(req.nextUrl.pathname)) {
   //   console.log('supported locale===================');
   // }
+
+  if (res.headers.get('x-middleware-rewrite')) {
+    console.log('x-middleware-rewrite======================', req.nextUrl.pathname);
+  }
 
   return { response: res!, next: true };
 };

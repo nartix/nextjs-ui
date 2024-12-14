@@ -3,12 +3,9 @@
 import createMiddleware from 'next-intl/middleware';
 import { MiddlewareHandler } from '@/types/middleware-handler';
 import { routing } from '@/i18n/routing';
-import { isLocaleSupported, isPublicPath } from './locale-logger-middleware';
+import { isLocaleSupported, isPublicPath } from '@/lib/locale-util';
 
 export const nextIntlMiddleware: MiddlewareHandler = async (req, res) => {
-  // if locale is supported or public page, then no need to call next-intl middleware
-  if (isLocaleSupported(req.nextUrl.pathname) || isPublicPath(req.nextUrl.pathname)) {
-    return { response: res, next: true };
-  }
+  console.log('nextIntlMiddleware run ======');
   return { response: createMiddleware(routing)(req), next: true };
 };

@@ -4,9 +4,19 @@ import { combineMiddlewares } from '@/lib/combine-middlewares';
 import { loggerMiddleware } from '@/middlewares/logger-middleware';
 import { nextIntlMiddleware } from '@/middlewares/nextintl-middleware';
 import { testMiddleware } from './middlewares/test-middleware';
+import { isLocaleSupported, isPublicPath } from '@/lib/locale-util';
+import { register } from 'module';
 
 export default async function middleware(req: NextRequest) {
-  const middlewares = [nextIntlMiddleware, testMiddleware, authenticationMiddleware];
+  const middlewares = [];
+
+  if (!isPublicPath(req.nextUrl.pathname)) {
+    middlewares.push(nextIntlMiddleware);
+  }
+
+  middlewares.push(testMiddleware);
+  middlewares.push(authenticationMiddleware);
+
   const combined = combineMiddlewares(...middlewares);
   return await combined(req, NextResponse.next());
 }
