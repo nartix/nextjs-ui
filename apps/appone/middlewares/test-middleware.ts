@@ -7,7 +7,7 @@ import { isPublicPath, isLocaleSupported } from '@/lib/locale-util';
 export const testMiddleware: MiddlewareHandler = async (req, res) => {
   res?.cookies.set('test', 'test');
   res?.headers.set('test', 'test');
-  console.log('test middleware  ', req.nextUrl.pathname);
+  console.log('test middleware run ', req.nextUrl.pathname);
 
   // Redirect to '/login' if the pathname is '/test'
   // if (req.nextUrl.pathname === '/test') {
@@ -25,9 +25,9 @@ export const testMiddleware: MiddlewareHandler = async (req, res) => {
   //   console.log('supported locale===================');
   // }
 
-  if (res.headers.get('x-middleware-rewrite')) {
-    console.log('x-middleware-rewrite======================', req.nextUrl.pathname);
-  }
+  // if (res.headers.get('x-middleware-rewrite')) {
+  //   console.log('x-middleware-rewrite======================', req.nextUrl.pathname);
+  // }
 
   return { response: res!, next: true };
 };
