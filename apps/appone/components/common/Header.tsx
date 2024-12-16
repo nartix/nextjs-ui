@@ -9,15 +9,13 @@ import {
   NavbarMenuToggle,
   NavbarMenu,
   NavbarMenuItem,
-  // Link,
   Button,
 } from '@nextui-org/react';
-// import NextLink from 'next/link';
 
-// import { Link } from '@/components/common/ui/link';
+import { Link } from '@/components/common/ui/link';
 import { useSession } from '@/app/[locale]/(auth)/context/session-context';
 import { logoutAction } from '@/app/[locale]/(auth)/actions/logout-action';
-import { Link } from '@/i18n/routing';
+// import { Link as IntlLink } from '@/i18n/routing';
 
 interface HeaderProps {
   locale: string;
