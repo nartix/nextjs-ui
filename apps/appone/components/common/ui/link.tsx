@@ -6,7 +6,6 @@ import {useLink, LinkProps as UIProps} from "@nextui-org/react";
 
 const MyLink = forwardRef<HTMLAnchorElement, UIProps>((props, ref) => {
   const {
-    Component,
     children,
     showAnchorIcon,
     anchorIcon = <LinkIcon className={linkAnchorClasses} />,
@@ -15,11 +14,9 @@ const MyLink = forwardRef<HTMLAnchorElement, UIProps>((props, ref) => {
     ...props,
     ref,
   });
-  
   // onClick causes 307 redirect when used with next intl link
   const { onClick, href,  ...linkProps } = getLinkProps();
   return (
-    
     <NextIntlLink href={props.href || '#'} {...linkProps}>
       <>
         {children}

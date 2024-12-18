@@ -115,7 +115,7 @@ export function Header({ locale }: HeaderProps) {
               {...(item.action
                 ? {
                     onClick: async (e) => {
-                      e.preventDefault(); // Prevent default navigation
+                      e.preventDefault(); 
                       await item.action();
                     },
                   }

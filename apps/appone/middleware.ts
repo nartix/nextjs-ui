@@ -4,8 +4,7 @@ import { combineMiddlewares } from '@/lib/combine-middlewares';
 import { loggerMiddleware } from '@/middlewares/logger-middleware';
 import { nextIntlMiddleware } from '@/middlewares/nextintl-middleware';
 import { testMiddleware } from './middlewares/test-middleware';
-import { isLocaleSupported, isPublicPath } from '@/lib/locale-util';
-import { register } from 'module';
+import { isPublicPath } from '@/lib/locale-util';
 
 export default async function middleware(req: NextRequest) {
   const middlewares = [];
