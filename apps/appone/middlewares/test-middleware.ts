@@ -1,8 +1,10 @@
 'user server';
 
 import { NextResponse } from 'next/server';
-import { MiddlewareHandler } from '@/types/middleware-handler';
+// import { MiddlewareHandler } from '@/types/middleware-handler';
+import { MiddlewareHandler } from '@nartix/next-middleware-chain';
 import { isPublicPath, isLocaleSupported } from '@/lib/locale-util';
+import { edgeToken } from '@nartix/edge-token/src';
 
 export const testMiddleware: MiddlewareHandler = async (req, res) => {
   res?.cookies.set('test', 'test');
@@ -28,6 +30,12 @@ export const testMiddleware: MiddlewareHandler = async (req, res) => {
   // if (res.headers.get('x-middleware-rewrite')) {
   //   console.log('x-middleware-rewrite======================', req.nextUrl.pathname);
   // }
+
+  const csrt = await edgeToken({secret: 'test', algorithm: 'SHA-1'});
+  const token = await csrt.generate({test: 'test'});
+
+  console.log('token ===========', token);
+  console.log('verify token ===========', await csrt.verify(token, {test: 'test'}));
 
   return { response: res!, next: true };
 };

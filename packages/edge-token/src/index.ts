@@ -1,6 +1,6 @@
 import 'server-only';
 
-export interface CsrfOptions {
+export interface Options {
   /**
    * The secret used to derive the HMAC key.
    * Must be a secure, random string.
@@ -19,6 +19,12 @@ export interface CsrfOptions {
    * Defaults to 32 bytes.
    */
   tokenByteLength?: number;
+
+  /**
+   * The character used to separate the token and signature in the serialized token.
+   * Defaults to ".".
+   */
+  seperator?: string;
 
   /**
    * A function to serialize data into a Uint8Array before signing.
@@ -45,17 +51,29 @@ export const defaultDataSerializer = (data: unknown): Uint8Array => {
   }
 };
 
-const defaultOptions: Required<CsrfOptions> = {
+const defaultDataDecoder = (data: Uint8Array): unknown => {
+  const decodedString = new TextDecoder().decode(data);
+  try {
+    const parsedData = JSON.parse(decodedString);
+    return parsedData;
+  } catch (e) {
+    // If it's not JSON, return the decoded string
+    return decodedString;
+  }
+};
+
+const defaultOptions: Required<Options> = {
   secret: '',
   algorithm: 'SHA-256',
   tokenByteLength: 32,
+  seperator: '.',
   dataSerializer: defaultDataSerializer,
 };
 
 /**
  * Merge user provided CsrfOptions with the default options.
  */
-export function mergeExtendedOptions(userOptions: Partial<CsrfOptions>): Required<CsrfOptions> {
+export function mergeExtendedOptions(userOptions: Partial<Options>): Required<Options> {
   return {
     ...defaultOptions,
     ...userOptions,
@@ -71,89 +89,75 @@ export async function getHmacKey(secret: string, algorithm: AlgorithmIdentifier)
   return crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: algorithm }, false, ['sign', 'verify']);
 }
 
-/**
- * Generate a CSRF token, tying it to the provided data by signing
- * the combination of random token bytes and the serialized data.
- */
 export async function generateToken(
   key: CryptoKey,
   data: unknown,
+  validityTime: number,
   tokenByteLength: number,
+  seperator: string,
   serializer: (data: unknown) => Uint8Array
 ): Promise<string> {
   const tokenBytes = new Uint8Array(tokenByteLength);
   crypto.getRandomValues(tokenBytes);
 
-  let combined: Uint8Array;
+  const dataBytes = (data !== undefined && data !== null)
+    ? serializer(data)
+    : new Uint8Array();
 
-  if (data !== undefined && data !== null) {
-    const dataBytes = serializer(data);
-    combined = new Uint8Array(tokenBytes.byteLength + dataBytes.byteLength);
-    combined.set(tokenBytes);
-    combined.set(dataBytes, tokenBytes.byteLength);
-  } else {
-    // No data provided, just sign the token bytes alone
-    combined = tokenBytes;
-  }
+  const combined = new Uint8Array(tokenBytes.byteLength + dataBytes.byteLength);
+  combined.set(tokenBytes);
+  combined.set(dataBytes, tokenBytes.byteLength);
 
-  // Sign the data
-  const signatureBuffer = await crypto.subtle.sign('HMAC', key, combined);
+  const signature = new Uint8Array(await crypto.subtle.sign('HMAC', key, combined));
 
   const tokenBase64 = btoa(String.fromCharCode(...tokenBytes));
-  const signatureBase64 = btoa(String.fromCharCode(...new Uint8Array(signatureBuffer)));
+  const signatureBase64 = btoa(String.fromCharCode(...signature));
 
-  return `${tokenBase64}.${signatureBase64}`;
+  return `${tokenBase64}${seperator}${signatureBase64}`;
 }
 
-/**
- * Verify a CSRF token by re-computing the signature over the
- * combination of the token bytes and the provided data.
- */
 export async function verifyToken(
   key: CryptoKey,
   submitted: string,
   data: unknown,
+  seperator: string,
   serializer: (data: unknown) => Uint8Array
 ): Promise<boolean> {
-  const [tokenBase64, signatureBase64] = submitted.split('.');
+  const [tokenBase64, signatureBase64] = submitted.split(seperator);
   if (!tokenBase64 || !signatureBase64) return false;
 
-  const tokenBytes = Uint8Array.from(atob(tokenBase64), (c) => c.charCodeAt(0));
+  const tokenBytes = Uint8Array.from(atob(tokenBase64), c => c.charCodeAt(0));
+  const dataBytes = (data !== undefined && data !== null)
+    ? serializer(data)
+    : new Uint8Array();
 
-  let combined: Uint8Array;
+  const combined = new Uint8Array(tokenBytes.byteLength + dataBytes.byteLength);
+  combined.set(tokenBytes);
+  combined.set(dataBytes, tokenBytes.byteLength);
 
-  if (data !== undefined && data !== null) {
-    const dataBytes = serializer(data);
-    combined = new Uint8Array(tokenBytes.byteLength + dataBytes.byteLength);
-    combined.set(tokenBytes);
-    combined.set(dataBytes, tokenBytes.byteLength);
-  } else {
-    // No data provided, just verify token bytes alone
-    combined = tokenBytes;
-  }
-
-  const signatureBytes = Uint8Array.from(atob(signatureBase64), (c) => c.charCodeAt(0));
-
+  const signatureBytes = Uint8Array.from(atob(signatureBase64), c => c.charCodeAt(0));
+  
   return crypto.subtle.verify('HMAC', key, signatureBytes, combined);
 }
+
 
 /**
  * Create a CSRF utility object from user options merged with defaults.
  * Users can generate and verify tokens that are tied to optional additional data.
  * Custom data serializers can be provided to handle different data types.
  */
-export async function getCsrf(userOptions: Partial<CsrfOptions>) {
+export async function edgeToken(userOptions: Partial<Options>) {
   const options = mergeExtendedOptions(userOptions);
   const key = await getHmacKey(options.secret, options.algorithm);
 
   return {
     options,
-    async generateToken(data: unknown = ''): Promise<string> {
-      return generateToken(key, data, options.tokenByteLength, options.dataSerializer);
+    async generate(data: unknown = ''): Promise<string> {
+      return generateToken(key, data, 0, options.tokenByteLength, options.seperator, options.dataSerializer);
     },
 
-    async verifyToken(submitted: string, data: unknown = ''): Promise<boolean> {
-      return verifyToken(key, submitted, data, options.dataSerializer);
+    async verify(submitted: string, data: unknown = ''): Promise<boolean> {
+      return verifyToken(key, submitted, data, options.seperator, options.dataSerializer);
     },
   };
 }

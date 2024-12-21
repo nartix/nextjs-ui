@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getCsrf } from '@nartix/csrf-core';
+import { edgeToken } from '@nartix/edge-token/src';
 
 export const nextCsrfMiddleware = async (
   req: NextRequest,
@@ -16,7 +16,7 @@ export const nextCsrfMiddleware = async (
 ): Promise<NextResponse> => {
   res.cookies.set('testcsrf', 'sefsaefsefsefef');
   try {
-    const csrf = await getCsrf(options);
+    const csrf = await edgeToken(options);
     const store = await cookies();
     const cookieName = options.cookieName ?? 'CSRF-TOKEN';
     const headerName = options.headerName ?? 'X-CSRF-TOKEN';

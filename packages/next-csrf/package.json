@@ -12,7 +12,7 @@
     "typescript": "latest"
   },
   "dependencies": {
-    "@nartix/csrf-core": "*",
+    "@nartix/edge-token": "*",
     "@types/deepmerge": "^2.1.0",
     "deepmerge": "^4.3.1",
     "server-only": "^0.0.1"

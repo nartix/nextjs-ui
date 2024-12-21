@@ -41,12 +41,12 @@ export function combineMiddlewares3(...middlewares: MiddlewareHandler[]) {
   };
 }
 
-export function combineMiddlewares(...middlewares: MiddlewareHandler[]) {
+export function createMiddlewareChain(...middlewares: MiddlewareHandler[]) {
   return async (req: NextRequest, res: NextResponse): Promise<NextResponse | Response> => {
     let aggregatedResponse: NextResponse = res;
     for (const middleware of middlewares) {
       const { response, next }: MiddlewareResult = await middleware(req, aggregatedResponse);
-      if ((response instanceof NextResponse || response instanceof Response) && !next) {
+      if (!next && (response instanceof NextResponse || response instanceof Response)) {
         return response;
       }
       if (response instanceof NextResponse) {

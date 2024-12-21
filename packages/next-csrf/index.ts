@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCsrf } from '@nartix/csrf-core';
+import { edgeToken } from '@nartix/edge-token/src';
 
 interface CookieOptions {
   path?: string;
@@ -38,7 +38,7 @@ const nextCsrfMiddleware = async (req: NextRequest, res: NextResponse, options: 
   }
 
   try {
-    const csrf = await getCsrf(mergedOptions);
+    const csrf = await edgeToken(mergedOptions);
     const { cookieName, headerName } = mergedOptions;
     const csrfCookie = req.cookies.get(cookieName!);
 

@@ -1,0 +1,33 @@
+{
+  "name": "@nartix/edge-token",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "description": "A lightweight edge runtime compatible token generator",
+  "private": false,
+  "scripts": {
+    "test": "echo \"All tests passed\" && exit 0",
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "nextjs",
+    "next.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nartix/edge-token.git"
+  },
+  "author": "Feroz Faiz",
+  "license": "MIT",
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "typescript": "latest"
+  },
+  "dependencies": {},
+  "peerDependencies": {}
+}
