@@ -31,11 +31,15 @@ export const testMiddleware: MiddlewareHandler = async (req, res) => {
   //   console.log('x-middleware-rewrite======================', req.nextUrl.pathname);
   // }
 
-  const csrt = await edgeToken({secret: 'test', algorithm: 'SHA-1'});
-  const token = await csrt.generate({test: 'test'});
+  const csrt = await edgeToken({ secret: 'test', algorithm: 'SHA-1' });
+  const token = await csrt.generate('test');
+  const [data, ...rest] = token.split('.');
+  console.log('data decoded edge runtime token ===========', Buffer.from(data, 'base64').toString());
 
   console.log('token ===========', token);
-  console.log('verify token ===========', await csrt.verify(token, {test: 'test'}));
+  // wait for 5 seconds
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  console.log('verify token ===========', await csrt.verify(token, 'test'));
 
   return { response: res!, next: true };
 };
