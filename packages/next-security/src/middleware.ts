@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AuthOptions, SessionObj } from '@nartix/next-security';
-import { nextCsrfMiddleware } from '@nartix/next-csrf';
+import { nextCsrfMiddleware } from '@nartix/next-csrf/src';
 
 export const nextSecurityMiddleware = async (
   req: NextRequest,

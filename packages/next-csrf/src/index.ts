@@ -17,11 +17,13 @@ interface CsrfOptions extends CookieOptions {
   tokenByteLength?: number;
   cookieName?: string;
   headerName?: string;
+  formName?: string;
 }
 
 const DEFAULT_OPTIONS: Partial<CsrfOptions> = {
   cookieName: 'CSRF-TOKEN',
   headerName: 'X-CSRF-TOKEN',
+  formName: '_csrf',
   path: '/',
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
@@ -33,8 +35,8 @@ const DEFAULT_OPTIONS: Partial<CsrfOptions> = {
 const nextCsrfMiddleware = async (req: NextRequest, res: NextResponse, options: CsrfOptions): Promise<NextResponse> => {
   const mergedOptions = { ...DEFAULT_OPTIONS, ...options };
 
-  if (!mergedOptions.headerName || !mergedOptions.cookieName) {
-    throw new Error('Both headerName and cookieName are required in CSRF options');
+  if (!mergedOptions.secret) {
+    throw new Error('CSRF middleware requires a secret');
   }
 
   try {
@@ -43,7 +45,7 @@ const nextCsrfMiddleware = async (req: NextRequest, res: NextResponse, options: 
     const csrfCookie = req.cookies.get(cookieName!);
 
     if (!csrfCookie) {
-      const token = btoa(await csrf.generateToken());
+      const token = btoa(await csrf.generate());
 
       res.cookies.set(cookieName!, token, {
         path: mergedOptions.path,

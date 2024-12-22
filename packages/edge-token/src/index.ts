@@ -89,35 +89,6 @@ export async function getHmacKey(secret: string, algorithm: AlgorithmIdentifier)
   return crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: algorithm }, false, ['sign', 'verify']);
 }
 
-// export async function generateToken(
-//   key: CryptoKey,
-//   data: unknown,
-//   validityTime: number,
-//   tokenByteLength: number,
-//   seperator: string,
-//   serializer: (data: unknown) => Uint8Array
-// ): Promise<string> {
-//   const tokenBytes = new Uint8Array(tokenByteLength);
-//   crypto.getRandomValues(tokenBytes);
-
-//   const dataBytes = (data !== undefined && data !== null)
-//     ? serializer(data)
-//     : new Uint8Array();
-
-//   const combined = new Uint8Array(tokenBytes.byteLength + dataBytes.byteLength);
-//   combined.set(tokenBytes);
-//   combined.set(dataBytes, tokenBytes.byteLength);
-
-//   const signature = new Uint8Array(await crypto.subtle.sign('HMAC', key, combined));
-
-//   const tokenBase64 = btoa(String.fromCharCode(...tokenBytes));
-//   const signatureBase64 = btoa(String.fromCharCode(...signature));
-
-//   console.log('Token String from Char:', String.fromCharCode(...tokenBytes));
-
-//   return `${tokenBase64}${seperator}${signatureBase64}`;
-// }
-
 export async function generateToken(
   key: CryptoKey,
   data: unknown,
@@ -161,104 +132,6 @@ export async function generateToken(
 
   return parts.join(seperator);
 }
-
-// export async function verifyToken(
-//   key: CryptoKey,
-//   submitted: string,
-//   data: unknown,
-//   seperator: string,
-//   serializer: (data: unknown) => Uint8Array
-// ): Promise<boolean> {
-//   const [tokenBase64, signatureBase64] = submitted.split(seperator);
-//   if (!tokenBase64 || !signatureBase64) return false;
-
-//   const tokenBytes = Uint8Array.from(atob(tokenBase64), c => c.charCodeAt(0));
-//   const dataBytes = (data !== undefined && data !== null)
-//     ? serializer(data)
-//     : new Uint8Array();
-
-//   const combined = new Uint8Array(tokenBytes.byteLength + dataBytes.byteLength);
-//   combined.set(tokenBytes);
-//   combined.set(dataBytes, tokenBytes.byteLength);
-
-//   const signatureBytes = Uint8Array.from(atob(signatureBase64), c => c.charCodeAt(0));
-
-//   return crypto.subtle.verify('HMAC', key, signatureBytes, combined);
-// }
-
-// export async function verifyToken(
-//   key: CryptoKey,
-//   submitted: string,
-//   data: unknown,
-//   separator: string,
-//   serializer: (data: unknown) => Uint8Array,
-//   maxAgeMs?: number  // optional parameter if you want expiration checks
-// ): Promise<boolean> {
-//   // Split into parts
-//   const parts = submitted.split(separator);
-
-//   let timeStr: string | undefined;
-//   let randomBase64: string | undefined;
-//   let signatureBase64: string | undefined;
-
-//   if (parts.length === 3) {
-//     // Timed token
-//     timeStr = parts[0] ? atob(parts[0]) : undefined;
-//     randomBase64 = parts[1];
-//     signatureBase64 = parts[2];
-//   } else if (parts.length === 2) {
-//     // Untimed token
-//     randomBase64 = parts[0];
-//     signatureBase64 = parts[1];
-//   } else {
-//     // Invalid token format
-//     return false;
-//   }
-
-//   if (!randomBase64 || !signatureBase64) {
-//     return false;
-//   }
-
-//   // Decode random bytes
-//   const randomBytes = Uint8Array.from(atob(randomBase64), (c) => c.charCodeAt(0));
-//   // Serialize `data`
-//   const dataBytes = (data !== undefined && data !== null)
-//     ? serializer(data)
-//     : new Uint8Array();
-
-//   // Combine random + data
-//   let combined = new Uint8Array(randomBytes.byteLength + dataBytes.byteLength);
-//   combined.set(randomBytes);
-//   combined.set(dataBytes, randomBytes.byteLength);
-
-//   // If time was included, append the same timestamp bytes
-//   if (timeStr) {
-//     const timeBytes = new TextEncoder().encode(timeStr);
-//     const combinedWithTime = new Uint8Array(combined.byteLength + timeBytes.byteLength);
-//     combinedWithTime.set(combined);
-//     combinedWithTime.set(timeBytes, combined.byteLength);
-
-//     combined = combinedWithTime;
-
-//     // Optional expiration check
-//     if (maxAgeMs) {
-//       const tokenTime = parseInt(timeStr, 10);
-//       if (isNaN(tokenTime)) {
-//         return false; // corrupted time
-//       }
-//       const now = Date.now();
-//       if (now - tokenTime > maxAgeMs) {
-//         return false; // token has expired
-//       }
-//     }
-//   }
-
-//   // Decode the signature
-//   const signatureBytes = Uint8Array.from(atob(signatureBase64), (c) => c.charCodeAt(0));
-
-//   // Verify signature
-//   return await crypto.subtle.verify('HMAC', key, signatureBytes, combined);
-// }
 
 export async function verifyToken(
   key: CryptoKey,
@@ -386,12 +259,123 @@ export async function edgeToken(userOptions: Partial<Options>) {
 
   return {
     options,
+
+    /**
+     * Generate a simple token without data and without timing.
+     */
     async generate(data: unknown = ''): Promise<string> {
-      return generateToken(key, data, true, true, options.tokenByteLength, options.seperator, options.dataSerializer);
+      return generateToken(key, data, false, false, options.tokenByteLength, options.seperator, options.dataSerializer);
     },
 
+    /**
+     * Verify a simple token without data and without timing.
+     */
     async verify(submitted: string, data: unknown = ''): Promise<boolean> {
-      return verifyToken(key, submitted, data, true, true, options.seperator, options.dataSerializer, 2000);
+      return verifyToken(
+        key,
+        submitted,
+        data,
+        false,
+        false,
+        options.seperator,
+        options.dataSerializer,
+        undefined // maxAgeMs not applicable
+      );
+    },
+
+    /**
+     * Generate a token with embedded data but without timing.
+     */
+    async generateWithData(data: unknown): Promise<string> {
+      return generateToken(
+        key,
+        data,
+        true, // showData
+        false, // timed
+        options.tokenByteLength,
+        options.seperator,
+        options.dataSerializer
+      );
+    },
+
+    /**
+     * Verify a token with embedded data but without timing.
+     */
+    async verifyWithData(submitted: string, data: unknown): Promise<boolean> {
+      return verifyToken(
+        key,
+        submitted,
+        data,
+        true, // showData
+        false, // timed
+        options.seperator,
+        options.dataSerializer,
+        undefined // maxAgeMs not applicable
+      );
+    },
+
+    /**
+     * Generate a timed token without embedded data.
+     */
+    async generateTimed(data: unknown = ''): Promise<string> {
+      return generateToken(
+        key,
+        data,
+        false, // showData
+        true, // timed
+        options.tokenByteLength,
+        options.seperator,
+        options.dataSerializer
+      );
+    },
+
+    /**
+     * Verify a timed token without embedded data.
+     * @param maxAgeMs The maximum age in milliseconds the token is valid for.
+     */
+    async verifyTimed(submitted: string, data: unknown = '', maxAgeMs: number): Promise<boolean> {
+      return verifyToken(
+        key,
+        submitted,
+        data,
+        false, // showData
+        true, // timed
+        options.seperator,
+        options.dataSerializer,
+        maxAgeMs
+      );
+    },
+
+    /**
+     * Generate a timed token with embedded data.
+     */
+    async generateWithDataTimed(data: unknown): Promise<string> {
+      return generateToken(
+        key,
+        data,
+        true, // showData
+        true, // timed
+        options.tokenByteLength,
+        options.seperator,
+        options.dataSerializer
+      );
+    },
+
+    /**
+     * Verify a timed token with embedded data.
+     * @param maxAgeMs The maximum age in milliseconds the token is valid for.
+     */
+    async verifyWithDataTimed(submitted: string, data: unknown, maxAgeMs: number): Promise<boolean> {
+      return verifyToken(
+        key,
+        submitted,
+        data,
+        true, // showData
+        true, // timed
+        options.seperator,
+        options.dataSerializer,
+        maxAgeMs
+      );
     },
   };
 }
