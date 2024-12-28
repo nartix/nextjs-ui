@@ -9,8 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@nartix/edge-token": "^0.1.0",
-    "@nartix/next-middleware-chain": "^1.0.2",
+    "@nartix/edge-token": "*",
+    "@nartix/next-middleware-chain": "*",
     "@nartix/next-security": "*",
     "@nartix/ui-appone": "*",
     "autoprefixer": "^10.4.20",

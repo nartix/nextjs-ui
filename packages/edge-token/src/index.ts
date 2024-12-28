@@ -69,24 +69,20 @@ export function encodeBase64(data: Uint8Array): string {
  */
 export function decodeBase64(base64: string): Uint8Array {
   try {
-    // Decode the Base64 string to a binary string
     const binaryString = atob(base64);
     const len = binaryString.length;
     const bytes = new Uint8Array(len);
 
-    // Convert each character to its byte value
     for (let i = 0; i < len; i++) {
       bytes[i] = binaryString.charCodeAt(i);
     }
 
     return bytes;
   } catch (error) {
-    // Handle errors (e.g., invalid Base64 string)
     throw new Error('Invalid Base64 string provided for decoding.');
   }
 }
 
-// Define and export the default serializer function
 export const defaultDataSerializer = (data: unknown): Uint8Array => {
   if (typeof data === 'string') {
     return new TextEncoder().encode(data);
@@ -95,7 +91,6 @@ export const defaultDataSerializer = (data: unknown): Uint8Array => {
   } else if (data instanceof Uint8Array) {
     return data;
   } else {
-    // Fallback: Convert to string
     return new TextEncoder().encode(String(data));
   }
 };
@@ -239,7 +234,6 @@ export async function generateToken(
 
   // Append serialized data if showData is true and data exists
   appendPartIf(parts, showData && dataBytes.length > 0, encodeBase64(dataBytes));
-  // appendPartIf(parts, showData, encodeBase64(dataBytes));
 
   // Create timestamp bytes if timed
   const timestampBytes = createTimestampBytes(timed, serializer);
@@ -250,14 +244,12 @@ export async function generateToken(
   // Append timestamp to parts if timed
   appendPartIf(parts, timed, encodeBase64(timestampBytes));
 
-  // Sign the combined data
   const signature = await signData(key, combined);
 
   // Append random bytes and signature to parts
   parts.push(encodeBase64(randomBytes));
   parts.push(encodeBase64(signature));
 
-  // Join all parts using the specified separator
   return parts.join(separator);
 }
 
@@ -407,8 +399,8 @@ export async function verifyToken(
   key: CryptoKey,
   submitted: string,
   data: unknown, // The 'expected' data you want to verify against
-  showData: boolean, // Matches generateToken’s 'showData'
-  timed: boolean, // Matches generateToken’s 'timed'
+  showData: boolean,
+  timed: boolean,
   separator: string,
   serializer: (data: unknown) => Uint8Array,
   maxAgeMs?: number // Optional expiration check in milliseconds
@@ -422,12 +414,11 @@ export async function verifyToken(
 
   const { dataBase64, timeBase64, randomBase64, signatureBase64 } = extractedParts;
 
-  // Decode the random bytes.
   let randomBytes: Uint8Array;
   try {
     randomBytes = decodeBase64(randomBase64);
   } catch {
-    return false; // Invalid Base64 encoding for random bytes
+    return false;
   }
 
   // Handle data bytes.
@@ -460,12 +451,11 @@ export async function verifyToken(
     return false; // Invalid Base64 encoding for signature
   }
 
-  // Verify the signature using the CryptoKey.
   let isVerified: boolean;
   try {
     isVerified = await crypto.subtle.verify('HMAC', key, signatureBytes, finalCombined);
   } catch {
-    return false; // Verification process failed
+    return false;
   }
 
   if (!isVerified) {
@@ -476,7 +466,7 @@ export async function verifyToken(
   if (maxAgeMs && tokenTime) {
     const currentTime = Date.now();
     if (currentTime - tokenTime > maxAgeMs) {
-      return false; // Token expired
+      return false;
     }
   }
 
@@ -525,16 +515,7 @@ export async function edgeToken(userOptions: Partial<Options>) {
      */
     async verify(submitted: string, data: unknown = ''): Promise<boolean> {
       data = isEdgeCase(data) ? '' : data;
-      return verifyToken(
-        key,
-        submitted,
-        data,
-        false,
-        false,
-        options.seperator,
-        options.dataSerializer,
-        undefined // maxAgeMs not applicable
-      );
+      return verifyToken(key, submitted, data, false, false, options.seperator, options.dataSerializer, undefined);
     },
 
     /**
@@ -566,7 +547,7 @@ export async function edgeToken(userOptions: Partial<Options>) {
         false, // timed
         options.seperator,
         options.dataSerializer,
-        undefined // maxAgeMs not applicable
+        undefined
       );
     },
 
