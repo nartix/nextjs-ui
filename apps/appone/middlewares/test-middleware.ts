@@ -32,16 +32,6 @@ export const testMiddleware: MiddlewareHandler = async (req, res) => {
   //   console.log('x-middleware-rewrite======================', req.nextUrl.pathname);
   // }
 
-  // edge token tests
-  // const csrt = await edgeToken({ secret: 'test', algorithm: 'SHA-1' });
-  // const token = await csrt.generateWithData('test');
-  // const [data, ...rest] = token.split('.');
-  // console.log('data decoded edge runtime token ===========', Buffer.from(data, 'base64').toString());
-  // console.log('token ===========', token);
-  // // wait for 5 seconds
-  // await new Promise((resolve) => setTimeout(resolve, 1000));
-  // console.log('verify token ===========', await csrt.verifyWithData(token, 'test'));
-
   const { generateWithDataTimed: generateToken, verifyWithDataTimed: verifyToken } = await edgeToken({ secret: 'test' });
   const token = await generateToken('test;ldlkslefl');
   // await new Promise((resolve) => setTimeout(resolve, 2000));

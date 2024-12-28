@@ -7,7 +7,7 @@
   "description": "An edge runtime compatible token generator",
   "private": false,
   "scripts": {
-    "test": "echo \"All tests passed\" && exit 0",
+    "test": "npx tsx src/tests/edge-token.test.ts",
     "dev": "tsc --watch",
     "build": "tsc"
   },
@@ -32,8 +32,7 @@
   "license": "MIT",
   "devDependencies": {
     "@repo/typescript-config": "*",
-    "typescript": "latest"
-  },
-  "dependencies": {},
-  "peerDependencies": {}
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
 }

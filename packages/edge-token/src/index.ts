@@ -239,6 +239,7 @@ export async function generateToken(
 
   // Append serialized data if showData is true and data exists
   appendPartIf(parts, showData && dataBytes.length > 0, encodeBase64(dataBytes));
+  // appendPartIf(parts, showData, encodeBase64(dataBytes));
 
   // Create timestamp bytes if timed
   const timestampBytes = createTimestampBytes(timed, serializer);
@@ -259,121 +260,6 @@ export async function generateToken(
   // Join all parts using the specified separator
   return parts.join(separator);
 }
-
-// export async function verifyToken(
-//   key: CryptoKey,
-//   submitted: string,
-//   data: unknown, // The 'expected' data you want to verify against
-//   showData: boolean, // Matches generateToken’s 'showData'
-//   timed: boolean, // Matches generateToken’s 'timed'
-//   separator: string,
-//   serializer: (data: unknown) => Uint8Array,
-//   maxAgeMs?: number // Optional expiration check in milliseconds
-// ): Promise<boolean> {
-//   // Split the submitted token string into parts.
-//   const parts = submitted.split(separator);
-
-//   // Because 'showData' and 'timed' can vary, we will parse from left to right.
-//   let idx = 0;
-//   let dataBase64: string | undefined;
-//   let timeBase64: string | undefined;
-//   let randomBase64: string | undefined;
-//   let signatureBase64: string | undefined;
-
-//   // If showData is true, the first part is the base64-encoded data.
-//   if (showData) {
-//     if (idx >= parts.length) return false;
-//     dataBase64 = parts[idx++]?.trim() || '';
-//   }
-
-//   // If timed is true, the next part is the base64-encoded timestamp.
-//   if (timed) {
-//     if (idx >= parts.length) return false;
-//     timeBase64 = parts[idx++]?.trim() || '';
-//   }
-
-//   // Next is always the base64-encoded random bytes.
-//   if (idx >= parts.length) return false;
-//   randomBase64 = parts[idx++]?.trim() || '';
-
-//   // Finally, the last part is the signature.
-//   if (idx >= parts.length) return false;
-//   signatureBase64 = parts[idx++]?.trim() || '';
-
-//   // If there are any leftover parts, format is invalid.
-//   if (idx !== parts.length) return false;
-
-//   // --- Decode / reconstruct everything for signature verification. ---
-
-//   // 1) Decode the random bytes.
-//   const randomBytes = Uint8Array.from(atob(randomBase64), (c) => c.charCodeAt(0));
-
-//   // 2) Handle data. We can either:
-//   //    - (a) decode it directly from the token if showData = true and verify it
-//   //         matches the 'data' parameter (optional integrity check),
-//   //    - (b) if showData = false, or you’re not verifying they match exactly,
-//   //         then just use serializer(data) as in normal tokens.
-//   let dataBytes = new Uint8Array();
-
-//   if (showData && dataBase64) {
-//     // The data was included in the token; decode it.
-//     const extractedDataBytes = Uint8Array.from(atob(dataBase64), (c) => c.charCodeAt(0));
-
-//     // OPTIONAL: Compare extracted data to the `data` you passed in.
-//     const paramDataBytes = data !== undefined && data !== null ? serializer(data) : new Uint8Array();
-
-//     // Simple length + content check (if you need to ensure the token-embedded
-//     // data matches the expected data):
-//     if (extractedDataBytes.length !== paramDataBytes.length) {
-//       return false; // data mismatch
-//     }
-//     for (let i = 0; i < extractedDataBytes.length; i++) {
-//       if (extractedDataBytes[i] !== paramDataBytes[i]) {
-//         return false; // data mismatch
-//       }
-//     }
-
-//     dataBytes = extractedDataBytes;
-//   } else {
-//     // The token does NOT carry data, or we don’t need to show/verify it.
-//     dataBytes = data !== undefined && data !== null ? serializer(data) : new Uint8Array();
-//   }
-
-//   // Combine random + data
-//   let finalCombined = new Uint8Array(randomBytes.byteLength + dataBytes.byteLength);
-//   finalCombined.set(randomBytes);
-//   finalCombined.set(dataBytes, randomBytes.byteLength);
-
-//   // 3) If the token is timed, we must append the same time bytes
-//   //    that were used in the signature.
-//   if (timed && timeBase64) {
-//     const timeStr = atob(timeBase64);
-//     const timeBytes = new TextEncoder().encode(timeStr);
-
-//     const combinedWithTime = new Uint8Array(finalCombined.byteLength + timeBytes.byteLength);
-//     combinedWithTime.set(finalCombined);
-//     combinedWithTime.set(timeBytes, finalCombined.byteLength);
-
-//     finalCombined = combinedWithTime;
-//   }
-
-//   // 4) Decode signature from base64, then verify via crypto.subtle.
-//   const signatureBytes = Uint8Array.from(atob(signatureBase64), (c) => c.charCodeAt(0));
-
-//   const verified = await crypto.subtle.verify('HMAC', key, signatureBytes, finalCombined);
-
-//   if (verified && maxAgeMs && timeBase64) {
-//     const tokenTime = parseInt(atob(timeBase64), 10);
-//     if (isNaN(tokenTime)) {
-//       return false; // corrupted time
-//     }
-//     if (Date.now() - tokenTime > maxAgeMs) {
-//       return false; // token expired
-//     }
-//   }
-
-//   return verified;
-// }
 
 /**
  * Splits and trims the token into its constituent parts.
@@ -442,16 +328,6 @@ function extractTokenParts(
 }
 
 /**
- * Converts a Base64 string to a Uint8Array.
- *
- * @param base64 - The Base64 string to convert.
- * @returns The resulting Uint8Array.
- */
-function base64ToUint8Array(base64: string): Uint8Array {
-  return decodeBase64(base64);
-}
-
-/**
  * Compares two Uint8Arrays for equality.
  *
  * @param a - The first Uint8Array.
@@ -475,7 +351,7 @@ function arraysEqual(a: Uint8Array, b: Uint8Array): boolean {
  */
 function extractTimestamp(timeBase64: string): number | null {
   try {
-    const timeBytes = base64ToUint8Array(timeBase64);
+    const timeBytes = decodeBase64(timeBase64);
     const timeStr = defaultDataDecoder(timeBytes) as string;
     const tokenTime = parseInt(timeStr, 10);
     if (isNaN(tokenTime)) return null;
@@ -485,7 +361,35 @@ function extractTimestamp(timeBase64: string): number | null {
   }
 }
 
-// working =======================
+/**
+ * Handles data bytes by decoding, serializing, and comparing with expected data.
+ *
+ * @param data - The expected data.
+ * @param dataBase64 - The Base64 encoded data from the token.
+ * @param serializer - Function to serialize data.
+ * @returns The decoded data bytes or null if comparison fails.
+ */
+async function handleAndCompareData(
+  data: unknown,
+  dataBase64: string,
+  serializer: (data: unknown) => Uint8Array
+): Promise<Uint8Array | null> {
+  try {
+    const extractedDataBytes = decodeBase64(dataBase64);
+    if (!extractedDataBytes) return null;
+
+    const expectedDataBytes = data !== undefined && data !== null ? serializer(data) : new Uint8Array();
+
+    if (!arraysEqual(extractedDataBytes, expectedDataBytes)) {
+      return null; // Data mismatch
+    }
+
+    return extractedDataBytes;
+  } catch {
+    return null; // Invalid Base64 encoding or other errors
+  }
+}
+
 /**
  * Verifies the integrity and validity of a submitted token.
  *
@@ -499,99 +403,6 @@ function extractTimestamp(timeBase64: string): number | null {
  * @param maxAgeMs - Optional maximum age in milliseconds for token validity.
  * @returns A Promise that resolves to true if the token is valid, false otherwise.
  */
-// export async function verifyToken(
-//   key: CryptoKey,
-//   submitted: string,
-//   data: unknown, // The 'expected' data you want to verify against
-//   showData: boolean, // Matches generateToken’s 'showData'
-//   timed: boolean, // Matches generateToken’s 'timed'
-//   separator: string,
-//   serializer: (data: unknown) => Uint8Array,
-//   maxAgeMs?: number // Optional expiration check in milliseconds
-// ): Promise<boolean> {
-//   // Split and trim the submitted token string into parts.
-//   const parts = splitAndTrimToken(submitted, separator);
-
-//   // Extract token parts based on showData and timed flags.
-//   const extractedParts = extractTokenParts(parts, showData, timed);
-//   if (!extractedParts) return false;
-
-//   const { dataBase64, timeBase64, randomBase64, signatureBase64 } = extractedParts;
-
-//   // Decode the random bytes.
-//   let randomBytes: Uint8Array;
-//   try {
-//     randomBytes = base64ToUint8Array(randomBase64);
-//   } catch {
-//     return false; // Invalid Base64 encoding for random bytes
-//   }
-
-//   // Handle data bytes.
-//   let dataBytes: Uint8Array = new Uint8Array();
-//   if (showData && dataBase64) {
-//     try {
-//       // Decode the data from the token.
-//       const extractedDataBytes = base64ToUint8Array(dataBase64);
-
-//       // Serialize the expected data.
-//       const expectedDataBytes = data !== undefined && data !== null ? serializer(data) : new Uint8Array();
-
-//       // Compare the extracted data with the expected data.
-//       if (!arraysEqual(extractedDataBytes, expectedDataBytes)) {
-//         return false; // Data mismatch
-//       }
-
-//       dataBytes = extractedDataBytes;
-//     } catch {
-//       return false; // Invalid Base64 encoding for data bytes
-//     }
-//   } else {
-//     // The token does NOT carry data, or we don’t need to show/verify it.
-//     dataBytes = data !== undefined && data !== null ? serializer(data) : new Uint8Array();
-//   }
-
-//   // Combine random bytes and data bytes.
-//   let finalCombined = combineUint8Arrays(randomBytes, dataBytes);
-
-//   // Handle timestamp bytes if the token is timed.
-//   if (timed && timeBase64) {
-//     const tokenTime = extractTimestamp(timeBase64);
-//     if (tokenTime === null) return false; // Corrupted or invalid timestamp
-
-//     // Serialize the timestamp as it was during token generation.
-//     const timeBytes = serializer(tokenTime);
-
-//     // Append the timestamp bytes to the combined data.
-//     finalCombined = combineUint8Arrays(finalCombined, timeBytes);
-
-//     // Verify the token's age if maxAgeMs is provided.
-//     if (maxAgeMs !== undefined) {
-//       const currentTime = Date.now();
-//       if (currentTime - tokenTime > maxAgeMs) {
-//         return false; // Token expired
-//       }
-//     }
-//   }
-
-//   // Decode the signature from Base64.
-//   let signatureBytes: Uint8Array;
-//   try {
-//     signatureBytes = base64ToUint8Array(signatureBase64);
-//   } catch {
-//     return false; // Invalid Base64 encoding for signature
-//   }
-
-//   // Verify the signature using the CryptoKey.
-//   let isVerified: boolean;
-//   try {
-//     isVerified = await crypto.subtle.verify('HMAC', key, signatureBytes, finalCombined);
-//   } catch {
-//     return false; // Verification process failed
-//   }
-
-//   return isVerified;
-// }
-
 export async function verifyToken(
   key: CryptoKey,
   submitted: string,
@@ -614,37 +425,19 @@ export async function verifyToken(
   // Decode the random bytes.
   let randomBytes: Uint8Array;
   try {
-    randomBytes = base64ToUint8Array(randomBase64);
+    randomBytes = decodeBase64(randomBase64);
   } catch {
     return false; // Invalid Base64 encoding for random bytes
   }
 
   // Handle data bytes.
-  let dataBytes: Uint8Array = new Uint8Array();
-  if (showData && dataBase64) {
-    try {
-      // Decode the data from the token.
-      const extractedDataBytes = base64ToUint8Array(dataBase64);
-
-      // Serialize the expected data.
-      const expectedDataBytes = data !== undefined && data !== null ? serializer(data) : new Uint8Array();
-
-      // Compare the extracted data with the expected data.
-      if (!arraysEqual(extractedDataBytes, expectedDataBytes)) {
-        return false; // Data mismatch
-      }
-
-      dataBytes = extractedDataBytes;
-    } catch {
-      return false; // Invalid Base64 encoding for data bytes
-    }
-  } else {
-    // The token does NOT carry data, or we don’t need to show/verify it.
-    dataBytes = data !== undefined && data !== null ? serializer(data) : new Uint8Array();
+  const dataBytes = showData && dataBase64 ? await handleAndCompareData(data, dataBase64, serializer) : serializer(data);
+  if (showData && dataBase64 && dataBytes === null) {
+    return false;
   }
 
   // Combine random bytes and data bytes.
-  let finalCombined = combineUint8Arrays(randomBytes, dataBytes);
+  let finalCombined = combineUint8Arrays(randomBytes, dataBytes as Uint8Array);
   let tokenTime: number | null = null;
 
   // Handle timestamp bytes if the token is timed.
@@ -662,7 +455,7 @@ export async function verifyToken(
   // Decode the signature from Base64.
   let signatureBytes: Uint8Array;
   try {
-    signatureBytes = base64ToUint8Array(signatureBase64);
+    signatureBytes = decodeBase64(signatureBase64);
   } catch {
     return false; // Invalid Base64 encoding for signature
   }
@@ -691,6 +484,23 @@ export async function verifyToken(
 }
 
 /**
+ * Determines if the provided data is considered an edge case.
+ *
+ * @param data - The data to check.
+ * @returns True if data is an edge case, false otherwise.
+ */
+export function isEdgeCase(data: any): boolean {
+  // const edgeCases = [undefined, null, '', 0, false, {}, []];
+  if (data === undefined || data === null) return true;
+  if (data === '' || data === 0 || data === false) return true;
+  if (typeof data === 'object') {
+    if (Array.isArray(data)) return data.length === 0;
+    return Object.keys(data).length === 0;
+  }
+  return false;
+}
+
+/**
  * Create a CSRF utility object from user options merged with defaults.
  * Users can generate and verify tokens that are tied to optional additional data.
  * Custom data serializers can be provided to handle different data types.
@@ -706,6 +516,7 @@ export async function edgeToken(userOptions: Partial<Options>) {
      * Generate a simple token without data and without timing.
      */
     async generate(data: unknown = ''): Promise<string> {
+      data = isEdgeCase(data) ? '' : data;
       return generateToken(key, data, false, false, options.tokenByteLength, options.seperator, options.dataSerializer);
     },
 
@@ -713,6 +524,7 @@ export async function edgeToken(userOptions: Partial<Options>) {
      * Verify a simple token without data and without timing.
      */
     async verify(submitted: string, data: unknown = ''): Promise<boolean> {
+      data = isEdgeCase(data) ? '' : data;
       return verifyToken(
         key,
         submitted,
@@ -729,10 +541,11 @@ export async function edgeToken(userOptions: Partial<Options>) {
      * Generate a token with embedded data but without timing.
      */
     async generateWithData(data: unknown): Promise<string> {
+      data = isEdgeCase(data) ? '' : data;
       return generateToken(
         key,
         data,
-        true, // showData
+        data ? true : false, // showData
         false, // timed
         options.tokenByteLength,
         options.seperator,
@@ -744,11 +557,12 @@ export async function edgeToken(userOptions: Partial<Options>) {
      * Verify a token with embedded data but without timing.
      */
     async verifyWithData(submitted: string, data: unknown): Promise<boolean> {
+      data = isEdgeCase(data) ? '' : data;
       return verifyToken(
         key,
         submitted,
         data,
-        true, // showData
+        data ? true : false, // showData
         false, // timed
         options.seperator,
         options.dataSerializer,
@@ -760,6 +574,7 @@ export async function edgeToken(userOptions: Partial<Options>) {
      * Generate a timed token without embedded data.
      */
     async generateTimed(data: unknown = ''): Promise<string> {
+      data = isEdgeCase(data) ? '' : data;
       return generateToken(
         key,
         data,
@@ -776,6 +591,7 @@ export async function edgeToken(userOptions: Partial<Options>) {
      * @param maxAgeMs The maximum age in milliseconds the token is valid for.
      */
     async verifyTimed(submitted: string, data: unknown = '', maxAgeMs: number): Promise<boolean> {
+      data = isEdgeCase(data) ? '' : data;
       return verifyToken(
         key,
         submitted,
@@ -792,10 +608,11 @@ export async function edgeToken(userOptions: Partial<Options>) {
      * Generate a timed token with embedded data.
      */
     async generateWithDataTimed(data: unknown): Promise<string> {
+      data = isEdgeCase(data) ? '' : data;
       return generateToken(
         key,
         data,
-        true, // showData
+        data ? true : false, // showData
         true, // timed
         options.tokenByteLength,
         options.seperator,
@@ -808,11 +625,12 @@ export async function edgeToken(userOptions: Partial<Options>) {
      * @param maxAgeMs The maximum age in milliseconds the token is valid for.
      */
     async verifyWithDataTimed(submitted: string, data: unknown, maxAgeMs: number): Promise<boolean> {
+      data = isEdgeCase(data) ? '' : data;
       return verifyToken(
         key,
         submitted,
         data,
-        true, // showData
+        data ? true : false, // showData
         true, // timed
         options.seperator,
         options.dataSerializer,
