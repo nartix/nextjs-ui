@@ -32,7 +32,8 @@ export interface Options {
    * - Uint8Array: used directly
    * - others: `String(data)` and then UTF-8 encode
    */
-  dataSerializer?: (data: unknown) => Uint8Array;
+  dataSerializer?: (data: any) => any;
+  dataDecoder?: (data: any) => any;
 }
 
 /**
@@ -99,7 +100,7 @@ export const defaultDataSerializer = (data: unknown): Uint8Array => {
   }
 };
 
-const defaultDataDecoder = (data: Uint8Array): unknown => {
+export const defaultDataDecoder = (data: Uint8Array): unknown => {
   const decodedString = new TextDecoder().decode(data);
   try {
     const parsedData = JSON.parse(decodedString);
@@ -116,6 +117,7 @@ const defaultOptions: Required<Options> = {
   tokenByteLength: 32,
   seperator: '.',
   dataSerializer: defaultDataSerializer,
+  dataDecoder: defaultDataDecoder,
 };
 
 /**
@@ -471,10 +473,10 @@ function arraysEqual(a: Uint8Array, b: Uint8Array): boolean {
  * @param serializer - Function to serialize the timestamp.
  * @returns The timestamp as a number or null if invalid.
  */
-function extractTimestamp(timeBase64: string, serializer: (data: unknown) => Uint8Array): number | null {
+function extractTimestamp(timeBase64: string): number | null {
   try {
     const timeBytes = base64ToUint8Array(timeBase64);
-    const timeStr = new TextDecoder().decode(timeBytes);
+    const timeStr = defaultDataDecoder(timeBytes) as string;
     const tokenTime = parseInt(timeStr, 10);
     if (isNaN(tokenTime)) return null;
     return tokenTime;
@@ -483,6 +485,7 @@ function extractTimestamp(timeBase64: string, serializer: (data: unknown) => Uin
   }
 }
 
+// working =======================
 /**
  * Verifies the integrity and validity of a submitted token.
  *
@@ -496,6 +499,99 @@ function extractTimestamp(timeBase64: string, serializer: (data: unknown) => Uin
  * @param maxAgeMs - Optional maximum age in milliseconds for token validity.
  * @returns A Promise that resolves to true if the token is valid, false otherwise.
  */
+// export async function verifyToken(
+//   key: CryptoKey,
+//   submitted: string,
+//   data: unknown, // The 'expected' data you want to verify against
+//   showData: boolean, // Matches generateToken’s 'showData'
+//   timed: boolean, // Matches generateToken’s 'timed'
+//   separator: string,
+//   serializer: (data: unknown) => Uint8Array,
+//   maxAgeMs?: number // Optional expiration check in milliseconds
+// ): Promise<boolean> {
+//   // Split and trim the submitted token string into parts.
+//   const parts = splitAndTrimToken(submitted, separator);
+
+//   // Extract token parts based on showData and timed flags.
+//   const extractedParts = extractTokenParts(parts, showData, timed);
+//   if (!extractedParts) return false;
+
+//   const { dataBase64, timeBase64, randomBase64, signatureBase64 } = extractedParts;
+
+//   // Decode the random bytes.
+//   let randomBytes: Uint8Array;
+//   try {
+//     randomBytes = base64ToUint8Array(randomBase64);
+//   } catch {
+//     return false; // Invalid Base64 encoding for random bytes
+//   }
+
+//   // Handle data bytes.
+//   let dataBytes: Uint8Array = new Uint8Array();
+//   if (showData && dataBase64) {
+//     try {
+//       // Decode the data from the token.
+//       const extractedDataBytes = base64ToUint8Array(dataBase64);
+
+//       // Serialize the expected data.
+//       const expectedDataBytes = data !== undefined && data !== null ? serializer(data) : new Uint8Array();
+
+//       // Compare the extracted data with the expected data.
+//       if (!arraysEqual(extractedDataBytes, expectedDataBytes)) {
+//         return false; // Data mismatch
+//       }
+
+//       dataBytes = extractedDataBytes;
+//     } catch {
+//       return false; // Invalid Base64 encoding for data bytes
+//     }
+//   } else {
+//     // The token does NOT carry data, or we don’t need to show/verify it.
+//     dataBytes = data !== undefined && data !== null ? serializer(data) : new Uint8Array();
+//   }
+
+//   // Combine random bytes and data bytes.
+//   let finalCombined = combineUint8Arrays(randomBytes, dataBytes);
+
+//   // Handle timestamp bytes if the token is timed.
+//   if (timed && timeBase64) {
+//     const tokenTime = extractTimestamp(timeBase64);
+//     if (tokenTime === null) return false; // Corrupted or invalid timestamp
+
+//     // Serialize the timestamp as it was during token generation.
+//     const timeBytes = serializer(tokenTime);
+
+//     // Append the timestamp bytes to the combined data.
+//     finalCombined = combineUint8Arrays(finalCombined, timeBytes);
+
+//     // Verify the token's age if maxAgeMs is provided.
+//     if (maxAgeMs !== undefined) {
+//       const currentTime = Date.now();
+//       if (currentTime - tokenTime > maxAgeMs) {
+//         return false; // Token expired
+//       }
+//     }
+//   }
+
+//   // Decode the signature from Base64.
+//   let signatureBytes: Uint8Array;
+//   try {
+//     signatureBytes = base64ToUint8Array(signatureBase64);
+//   } catch {
+//     return false; // Invalid Base64 encoding for signature
+//   }
+
+//   // Verify the signature using the CryptoKey.
+//   let isVerified: boolean;
+//   try {
+//     isVerified = await crypto.subtle.verify('HMAC', key, signatureBytes, finalCombined);
+//   } catch {
+//     return false; // Verification process failed
+//   }
+
+//   return isVerified;
+// }
+
 export async function verifyToken(
   key: CryptoKey,
   submitted: string,
@@ -549,10 +645,11 @@ export async function verifyToken(
 
   // Combine random bytes and data bytes.
   let finalCombined = combineUint8Arrays(randomBytes, dataBytes);
+  let tokenTime: number | null = null;
 
   // Handle timestamp bytes if the token is timed.
   if (timed && timeBase64) {
-    const tokenTime = extractTimestamp(timeBase64, serializer);
+    tokenTime = extractTimestamp(timeBase64);
     if (tokenTime === null) return false; // Corrupted or invalid timestamp
 
     // Serialize the timestamp as it was during token generation.
@@ -560,14 +657,6 @@ export async function verifyToken(
 
     // Append the timestamp bytes to the combined data.
     finalCombined = combineUint8Arrays(finalCombined, timeBytes);
-
-    // Verify the token's age if maxAgeMs is provided.
-    if (maxAgeMs !== undefined) {
-      const currentTime = Date.now();
-      if (currentTime - tokenTime > maxAgeMs) {
-        return false; // Token expired
-      }
-    }
   }
 
   // Decode the signature from Base64.
@@ -586,7 +675,19 @@ export async function verifyToken(
     return false; // Verification process failed
   }
 
-  return isVerified;
+  if (!isVerified) {
+    return false;
+  }
+
+  // Verify the token's age if maxAgeMs is provided.
+  if (maxAgeMs && tokenTime) {
+    const currentTime = Date.now();
+    if (currentTime - tokenTime > maxAgeMs) {
+      return false; // Token expired
+    }
+  }
+
+  return true;
 }
 
 /**

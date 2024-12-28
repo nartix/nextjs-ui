@@ -42,12 +42,13 @@ export const testMiddleware: MiddlewareHandler = async (req, res) => {
   // await new Promise((resolve) => setTimeout(resolve, 1000));
   // console.log('verify token ===========', await csrt.verifyWithData(token, 'test'));
 
-  // const { generateWithDataTimed: generateToken, verifyWithDataTimed: verifyToken } = await edgeToken({ secret: 'test' });
-  // const token = await generateToken('test;ldlkslefl');
-  // // await new Promise((resolve) => setTimeout(resolve, 2000));
-  // const isTokenValid = await verifyToken(token, 'test;ldlkslefl', 1000);
-  // console.log('token ===========', token);
-  // console.log('isTokenValid ===========', isTokenValid);
+  const { generateWithDataTimed: generateToken, verifyWithDataTimed: verifyToken } = await edgeToken({ secret: 'test' });
+  const token = await generateToken('test;ldlkslefl');
+  // await new Promise((resolve) => setTimeout(resolve, 2000));
+  const isTokenValid = await verifyToken(token, 'test;ldlkslefl', 1000);
+  console.log('token ===========', token);
+  // console.log('token ===========', atob(token.split('.')[0]));
+  console.log('isTokenValid ===========', isTokenValid);
 
   return { response: res, next: true };
 };
