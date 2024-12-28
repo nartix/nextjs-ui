@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 // import { MiddlewareHandler } from '@/types/middleware-handler';
 import { MiddlewareHandler } from '@nartix/next-middleware-chain';
 import { isPublicPath, isLocaleSupported } from '@/lib/locale-util';
-import { edgeToken } from '@nartix/edge-token/src';
+import { edgeToken } from '@nartix/edge-token';
 
 export const testMiddleware: MiddlewareHandler = async (req, res) => {
   // res?.cookies.set('test', 'test');
