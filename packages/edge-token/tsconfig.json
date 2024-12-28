@@ -11,5 +11,5 @@
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "build/types/**/*.ts"],
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["dist", "node_modules", "*.js", "*.d.ts"]
 }

@@ -22,13 +22,15 @@
     "edge-runtime",
     "edge-token",
     "hmac",
+    "node",
+    "csrf",
     "next.js"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nartix/edge-token.git"
   },
-  "author": "Feroz Faiz",
+  "author": "Feroz Faiz <feroz@hotmail.ca>",
   "license": "MIT",
   "devDependencies": {
     "@repo/typescript-config": "*",

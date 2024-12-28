@@ -32,10 +32,10 @@ export const testMiddleware: MiddlewareHandler = async (req, res) => {
   //   console.log('x-middleware-rewrite======================', req.nextUrl.pathname);
   // }
 
-  const { generateWithDataTimed: generateToken, verifyWithDataTimed: verifyToken } = await edgeToken({ secret: 'test' });
-  const token = await generateToken('test;ldlkslefl');
+  const { generateTimed: generateToken, verifyTimed: verifyToken } = await edgeToken({ secret: 'test' });
+  const token = await generateToken();
   // await new Promise((resolve) => setTimeout(resolve, 2000));
-  const isTokenValid = await verifyToken(token, 'test;ldlkslefl', 1000);
+  const isTokenValid = await verifyToken(token, '', 2000);
   console.log('token ===========', token);
   // console.log('token ===========', atob(token.split('.')[0]));
   console.log('isTokenValid ===========', isTokenValid);
