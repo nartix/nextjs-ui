@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 // import { MiddlewareHandler } from '@/types/middleware-handler';
 import { MiddlewareHandler } from '@nartix/next-middleware-chain';
 import { isPublicPath, isLocaleSupported } from '@/lib/locale-util';
-import { edgeToken } from '@nartix/edge-token';
+import { edgeToken } from '@nartix/edge-token/src';
 
 export const testMiddleware: MiddlewareHandler = async (req, res) => {
   // res?.cookies.set('test', 'test');
@@ -32,13 +32,13 @@ export const testMiddleware: MiddlewareHandler = async (req, res) => {
   //   console.log('x-middleware-rewrite======================', req.nextUrl.pathname);
   // }
 
-  // const { generateTimed: generateToken, verifyTimed: verifyToken } = await edgeToken({ secret: 'test' });
-  // const token = await generateToken();
-  // // await new Promise((resolve) => setTimeout(resolve, 2000));
-  // const isTokenValid = await verifyToken(token, '', 2000);
-  // console.log('token ===========', token);
-  // // console.log('token ===========', atob(token.split('.')[0]));
-  // console.log('isTokenValid ===========', isTokenValid);
+  const { generate: generateToken, verify: verifyToken } = await edgeToken({ secret: 'test', tokenByteLength: 0 });
+  const token = await generateToken();
+  // await new Promise((resolve) => setTimeout(resolve, 2000));
+  const isTokenValid = await verifyToken(token);
+  console.log('token ===========', token);
+  // console.log('token ===========', atob(token.split('.')[0]));
+  console.log('isTokenValid ===========', isTokenValid);
 
   return { response: res, next: true };
 };

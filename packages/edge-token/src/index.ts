@@ -499,6 +499,10 @@ export async function edgeToken(userOptions: Partial<Options>) {
   const options = mergeExtendedOptions(userOptions);
   const key = await getHmacKey(options.secret, options.algorithm);
 
+  if (options.tokenByteLength <= 0) {
+    options.tokenByteLength = defaultOptions.tokenByteLength;
+  }
+
   return {
     options,
 
