@@ -7,7 +7,7 @@
   "description": "An edge runtime compatible token generator",
   "private": false,
   "scripts": {
-    "test": "npx tsx src/tests/edge-token.test.ts",
+    "test": "jest",
     "dev": "tsc --watch",
     "build": "tsc"
   },
@@ -34,6 +34,9 @@
   "license": "MIT",
   "devDependencies": {
     "@repo/typescript-config": "*",
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
