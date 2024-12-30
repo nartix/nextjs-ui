@@ -10,10 +10,19 @@ export const nextSecurityMiddleware = async (
 ): Promise<{ response: NextResponse; next: boolean }> => {
   const { sessionAdaptor, cookie, csrf } = authOptions;
 
-  const sessionToken = atob(req.cookies.get(cookie.name!)?.value || '');
+  const csrfResponse = await nextCsrfMiddleware(req, res, {
+    secret: authOptions.secret!,
+    algorithm: csrf.algorithm,
+    tokenByteLength: csrf.tokenByteLength,
+    cookieName: csrf.cookieName,
+    headerName: csrf.headerName,
+    maxAge: cookie.maxAge,
+    secure: cookie.secure,
+  });
 
+  const sessionToken = atob(req.cookies.get(cookie.name!)?.value || '');
   if (!sessionToken) {
-    return { response: res, next: true };
+    return { response: csrfResponse, next: true };
   }
 
   const updatedSessionObject = await sessionAdaptor.updateSession({
@@ -37,16 +46,6 @@ export const nextSecurityMiddleware = async (
       console.error('Cookie name is undefined');
     }
   }
-
-  const csrfResponse = await nextCsrfMiddleware(req, res, {
-    secret: authOptions.secret!,
-    algorithm: csrf.algorithm,
-    tokenByteLength: csrf.tokenByteLength,
-    cookieName: csrf.cookieName,
-    headerName: csrf.headerName,
-    maxAge: cookie.maxAge,
-    secure: cookie.secure,
-  });
 
   return { response: csrfResponse, next: true };
 };

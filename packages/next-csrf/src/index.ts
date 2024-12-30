@@ -17,13 +17,13 @@ interface CsrfOptions extends CookieOptions {
   tokenByteLength?: number;
   cookieName?: string;
   headerName?: string;
-  formName?: string;
+  formFieldName?: string;
 }
 
 const DEFAULT_OPTIONS: Partial<CsrfOptions> = {
   cookieName: 'CSRF-TOKEN',
   headerName: 'X-CSRF-TOKEN',
-  formName: '_csrf',
+  formFieldName: '_csrf',
   path: '/',
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
@@ -45,7 +45,7 @@ const nextCsrfMiddleware = async (req: NextRequest, res: NextResponse, options: 
     const csrfCookie = req.cookies.get(cookieName!);
 
     if (!csrfCookie) {
-      const token = btoa(await csrf.generate());
+      const token = await csrf.generate();
 
       res.cookies.set(cookieName!, token, {
         path: mergedOptions.path,
@@ -58,9 +58,12 @@ const nextCsrfMiddleware = async (req: NextRequest, res: NextResponse, options: 
     } else {
       res.headers.set(headerName!, csrfCookie.value);
     }
+
+    const method = req.method.toUpperCase();
+    console.log('CSRF middleware method:', method);
   } catch (error) {
     console.error('Error in CSRF middleware:', error);
-    // Optionally, you can set an error response here
+    // Optionally, an error response can be returned
     // return new NextResponse('Internal Server Error', { status: 500 });
   }
 
