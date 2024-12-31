@@ -1,3 +1,4 @@
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { LoginForm } from '@/components/auth/login-form';
 import { ContentContainer } from '@/components/common/ui/content-container';
@@ -10,9 +11,12 @@ export default async function Login() {
     redirect('/');
   }
 
+  const headersList = await headers();
+  const csrfToken = headersList.get('x-csrf-token') || '';
+
   return (
     <ContentContainer className='flex flex-col items-center'>
-      <LoginForm />
+      <LoginForm csrfToken={csrfToken} />
     </ContentContainer>
   );
 }

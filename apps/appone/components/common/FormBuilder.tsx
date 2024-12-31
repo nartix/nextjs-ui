@@ -1,4 +1,3 @@
-// app/(common)/components/FormBuilder.tsx
 'use client';
 
 import React from 'react';
@@ -16,7 +15,7 @@ import { EyeFilledIcon } from '@/components/common/ui/icons/EyeFilledIcon';
 import { EyeSlashFilledIcon } from '@/components/common/ui/icons/EyeSlashFilledIcon';
 
 export type FormField = {
-  type: 'text' | 'email' | 'password' | 'textarea';
+  type: 'text' | 'email' | 'password' | 'textarea' | 'number' | 'file' | 'select' | 'checkbox' | 'radio' | 'date' | 'hidden';
   name: string;
   label: string;
   className?: string;
@@ -39,6 +38,8 @@ export type FormBuilderProps<T = unknown> = {
   action?: (data: FormDataValues, req?: Request) => Promise<ActionResponse>;
   formSchema?: ZodType<T>;
   handleRedirect?: boolean;
+  csrfToken?: string;
+  csrfTokenFieldName?: string;
 };
 
 export type ButtonProps = {
@@ -61,6 +62,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   action,
   formSchema,
   handleRedirect = false,
+  csrfToken,
+  csrfTokenFieldName = 'csrf_token',
 }) => {
   const t = useTranslations();
   const router = useRouter();
@@ -121,6 +124,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           </Alert>
         )}
         <form onSubmit={handleSubmit(onSubmit)} className={`w-full flex flex-col flex-wrap md:flex-nowrap gap-4 ${className}`}>
+          {csrfToken && <input {...register(csrfTokenFieldName)} key={csrfTokenFieldName} type='hidden' value={csrfToken} />}
           {fields.map((field) => (
             <div key={field.name} className='w-64'>
               <Input

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AuthOptions, SessionObj } from '@nartix/next-security';
-import { nextCsrfMiddleware } from '@nartix/next-csrf/src';
+import { createNextCsrfMiddleware } from '@nartix/next-csrf/src';
 
 export const nextSecurityMiddleware = async (
   req: NextRequest,
@@ -10,7 +10,7 @@ export const nextSecurityMiddleware = async (
 ): Promise<{ response: NextResponse; next: boolean }> => {
   const { sessionAdaptor, cookie, csrf } = authOptions;
 
-  const csrfResponse = await nextCsrfMiddleware(req, res, {
+  const csrfResponse = await createNextCsrfMiddleware(req, res, {
     secret: authOptions.secret!,
     algorithm: csrf.algorithm,
     tokenByteLength: csrf.tokenByteLength,

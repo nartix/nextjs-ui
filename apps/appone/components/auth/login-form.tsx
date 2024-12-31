@@ -1,10 +1,9 @@
 'use client';
-
 import { useTranslations } from 'next-intl';
 
 import FormBuilder, { ButtonProps } from '@/components/common/FormBuilder';
 import { loginFields } from '@/app/[locale]/(common)/form/formFields';
-import { loginSchema } from '@/app/[locale]/(auth)/form/schemas';
+import { loginSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { loginAction } from '@/app/[locale]/(auth)/actions/login-action';
 
 const buttons: ButtonProps[] = [
@@ -14,7 +13,7 @@ const buttons: ButtonProps[] = [
   },
 ];
 
-export function LoginForm() {
+export function LoginForm({ csrfToken }: { csrfToken: string }) {
   const t = useTranslations();
 
   return (
@@ -27,6 +26,7 @@ export function LoginForm() {
       action={loginAction}
       formSchema={loginSchema}
       handleRedirect={true}
+      csrfToken={csrfToken}
     />
   );
 }
