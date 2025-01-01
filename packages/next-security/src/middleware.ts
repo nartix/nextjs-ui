@@ -14,10 +14,12 @@ export const nextSecurityMiddleware = async (
     secret: authOptions.secret!,
     algorithm: csrf.algorithm,
     tokenByteLength: csrf.tokenByteLength,
-    cookieName: csrf.cookieName,
     headerName: csrf.headerName,
-    maxAge: cookie.maxAge,
-    secure: cookie.secure,
+    cookie: {
+      name: csrf.cookieName,
+      maxAge: cookie.maxAge,
+      secure: cookie.secure,
+    },
   });
 
   const sessionToken = atob(req.cookies.get(cookie.name!)?.value || '');

@@ -2,34 +2,37 @@ import { NextRequest, NextResponse } from 'next/server';
 import { edgeToken } from '@nartix/edge-token/src';
 
 interface CookieOptions {
+  name?: string;
   path?: string;
   domain?: string;
   maxAge?: number;
-  expires?: Date;
   httpOnly?: boolean;
   secure?: boolean;
   sameSite?: 'strict' | 'lax' | 'none';
 }
 
-interface CsrfOptions extends CookieOptions {
-  secret: string;
+interface CsrfOptions {
+  secret?: string;
   algorithm?: AlgorithmIdentifier;
   tokenByteLength?: number;
   cookieName?: string;
   headerName?: string;
   formFieldName?: string;
+  cookie: CookieOptions;
 }
 
-const DEFAULT_OPTIONS: Partial<CsrfOptions> = {
-  cookieName: 'CSRF-TOKEN',
+const DEFAULT_OPTIONS: CsrfOptions = {
   headerName: 'X-CSRF-TOKEN',
   formFieldName: 'csrf_token',
-  path: '/',
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'strict',
-  maxAge: 60 * 60 * 24 * 7, // 1 week
-  domain: undefined,
+  cookie: {
+    name: 'CSRF-TOKEN',
+    path: '/',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 60 * 60 * 24 * 7, // 1 week
+    domain: undefined,
+  },
 };
 
 /**
@@ -138,8 +141,28 @@ const getTokenFromRequest = async (req: NextRequest, options: CsrfOptions): Prom
   return null;
 };
 
+const mergeOptions = (options: Partial<CsrfOptions>, userOptions: Partial<CsrfOptions>): CsrfOptions => {
+  return {
+    ...options,
+    ...userOptions,
+    cookie: {
+      ...options.cookie,
+      ...userOptions.cookie,
+    },
+  };
+};
+
+/**
+ * Creates a CSRF middleware for Next.js.
+ *
+ * @param req - The incoming NextRequest object.
+ * @param res - The outgoing NextResponse object.
+ * @param options - The CSRF configuration options.
+ * @returns The modified NextResponse object.
+ */
+
 const createNextCsrfMiddleware = async (req: NextRequest, res: NextResponse, options: CsrfOptions): Promise<NextResponse> => {
-  const mergedOptions = { ...DEFAULT_OPTIONS, ...options };
+  const mergedOptions = mergeOptions(DEFAULT_OPTIONS, options);
 
   if (!mergedOptions.secret) {
     throw new Error('CSRF middleware requires a secret');
@@ -154,12 +177,12 @@ const createNextCsrfMiddleware = async (req: NextRequest, res: NextResponse, opt
       const token = await csrf.generate();
 
       res.cookies.set(cookieName!, token, {
-        path: mergedOptions.path,
-        maxAge: mergedOptions.maxAge,
-        httpOnly: mergedOptions.httpOnly!,
-        secure: mergedOptions.secure!,
-        sameSite: mergedOptions.sameSite!,
-        domain: mergedOptions.domain,
+        path: mergedOptions.cookie.path,
+        maxAge: mergedOptions.cookie.maxAge,
+        httpOnly: mergedOptions.cookie.httpOnly!,
+        secure: mergedOptions.cookie.secure!,
+        sameSite: mergedOptions.cookie.sameSite!,
+        domain: mergedOptions.cookie.domain,
       });
     } else {
       res.headers.set(headerName!, csrfCookie.value);
