@@ -170,13 +170,13 @@ const createNextCsrfMiddleware = async (req: NextRequest, res: NextResponse, opt
 
   try {
     const csrf = await edgeToken(mergedOptions);
-    const { cookieName, headerName } = mergedOptions;
-    const csrfCookie = req.cookies.get(cookieName!);
+    const { headerName, cookie } = mergedOptions;
+    const csrfCookie = req.cookies.get(cookie.name!);
 
     if (!csrfCookie) {
       const token = await csrf.generate();
 
-      res.cookies.set(cookieName!, token, {
+      res.cookies.set(cookie.name!, token, {
         path: mergedOptions.cookie.path,
         maxAge: mergedOptions.cookie.maxAge,
         httpOnly: mergedOptions.cookie.httpOnly!,

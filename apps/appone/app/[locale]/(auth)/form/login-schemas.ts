@@ -5,7 +5,7 @@ import { usernameOrEmailSchema, passwordSchema, csrfTokenSchema } from '@/app/[l
 export const loginSchema = z.object({
   username: usernameOrEmailSchema,
   password: passwordSchema,
-  csrf_token: csrfTokenSchema,
+  // csrf_token: csrfTokenSchema,
 });
 
 export type LoginFormSchema = z.infer<typeof loginSchema>;

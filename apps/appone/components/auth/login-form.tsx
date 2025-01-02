@@ -1,7 +1,7 @@
 'use client';
 import { useTranslations } from 'next-intl';
 
-import FormBuilder, { ButtonProps } from '@/components/common/FormBuilder';
+import FormBuilder, { ButtonProps, FormBuilderProps } from '@/components/common/FormBuilder';
 import { loginFields } from '@/app/[locale]/(common)/form/formFields';
 import { loginSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { loginAction } from '@/app/[locale]/(auth)/actions/login-action';
@@ -13,20 +13,20 @@ const buttons: ButtonProps[] = [
   },
 ];
 
-export function LoginForm({ csrfToken }: { csrfToken: string }) {
+export function LoginForm({ csrfToken, csrfTokenFieldName }: { csrfToken: string; csrfTokenFieldName?: string }) {
   const t = useTranslations();
 
-  return (
-    <FormBuilder
-      heading={t('auth.login')}
-      fields={loginFields}
-      buttons={buttons}
-      variant='bordered'
-      // action={handleSubmit}
-      action={loginAction}
-      formSchema={loginSchema}
-      handleRedirect={true}
-      csrfToken={csrfToken}
-    />
-  );
+  const formProps: FormBuilderProps<unknown> = {
+    heading: t('auth.login'),
+    fields: loginFields,
+    buttons: buttons,
+    variant: 'bordered',
+    action: loginAction,
+    formSchema: loginSchema,
+    handleRedirect: true,
+    csrfToken: csrfToken,
+    ...(csrfTokenFieldName && { csrfTokenFieldName: csrfTokenFieldName }),
+  };
+
+  return <FormBuilder {...formProps} />;
 }

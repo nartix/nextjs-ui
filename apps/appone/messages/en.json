@@ -4,7 +4,8 @@
     "about": "About",
     "contact": "Contact",
     "loading": "Loading...",
-    "no_action_provided": "No action provided"
+    "no_action_provided": "No action provided",
+    "redirecting": "Redirecting..."
   },
   "HomePage": {
     "title": "Hello world!",

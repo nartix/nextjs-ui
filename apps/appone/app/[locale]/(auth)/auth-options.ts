@@ -7,7 +7,7 @@ const authOptions: Partial<AuthOptions> = {
   providers: [credentialsProvider],
   cookie: {
     secure: false,
-    maxAge: process.env.SESSION_COOKIE_MAXAGE ? parseInt(process.env.SESSION_COOKIE_MAXAGE, 10) : undefined,
+    maxAge: process.env.SESSION_COOKIE_MAXAGE ? parseInt(process.env.SESSION_COOKIE_MAXAGE, 10) : 0,
   },
 };
 
