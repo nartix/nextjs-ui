@@ -71,7 +71,24 @@ const getTokenFromRequest = async (req: NextRequest, options: CsrfOptions): Prom
   if (isFormSubmission) {
     try {
       const formData = await req.formData();
-      const csrfToken = formData.get(formFieldName!);
+      let csrfToken: string | null;
+      if (req.headers.get('next-action')) {
+        csrfToken =
+          Array.from(formData.entries())
+            .find(([name, _]) => name.endsWith(`_${formFieldName}`))?.[1]
+            .toString() ?? null;
+        console.log('csrfToken server action ========================', csrfToken);
+        return csrfToken ? csrfToken.toString() : null;
+      }
+
+      csrfToken = formData.get(formFieldName!)?.toString() ?? null;
+
+      console.log('csrfToken reqular form ========================', csrfToken);
+
+      if (!csrfToken) {
+        return null;
+      }
+
       return csrfToken ? csrfToken.toString() : null;
     } catch (error) {
       console.error('Error parsing form data for CSRF:', error);
@@ -111,17 +128,12 @@ const getTokenFromRequest = async (req: NextRequest, options: CsrfOptions): Prom
   // Handle Server Actions
   if (serverAction) {
     const text = await req.text();
-    console.log('text', text);
+    console.log('text ========================', text);
     try {
-      const csrfTokenFromHeader = req.headers.get(headerName!);
-      if (csrfTokenFromHeader) {
-        return csrfTokenFromHeader;
-      }
-
       // 2) Try parsing the plain text as JSON for a "csrf_token" field
       const data = JSON.parse(text);
 
-      // // If you expect an array of objects
+      // If you expect an array of objects
       if (Array.isArray(data) && data.length > 0 && data[0][options.formFieldName!]) {
         return data[0][options.formFieldName!];
       }
@@ -133,11 +145,9 @@ const getTokenFromRequest = async (req: NextRequest, options: CsrfOptions): Prom
       return null;
     } catch (error) {
       console.error('Error extracting CSRF token for Server Action:', error);
-      throw new Error('Invalid Server Action request');
+      return null;
     }
   }
-
-  // For other content types or methods, return null (no CSRF token)
   return null;
 };
 
@@ -152,6 +162,16 @@ const mergeOptions = (options: Partial<CsrfOptions>, userOptions: Partial<CsrfOp
   };
 };
 
+const invalidResponse = (
+  message: string = 'Forbidden: CSRF token validation failed. Please refresh the page and try again.'
+): NextResponse => {
+  return new NextResponse(JSON.stringify({ error: message }), {
+    status: 403,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+};
 /**
  * Creates a CSRF middleware for Next.js.
  *
@@ -177,12 +197,12 @@ const createNextCsrfMiddleware = async (req: NextRequest, res: NextResponse, opt
       const token = await csrf.generate();
 
       res.cookies.set(cookie.name!, token, {
-        path: mergedOptions.cookie.path,
-        maxAge: mergedOptions.cookie.maxAge,
-        httpOnly: mergedOptions.cookie.httpOnly!,
-        secure: mergedOptions.cookie.secure!,
-        sameSite: mergedOptions.cookie.sameSite!,
-        domain: mergedOptions.cookie.domain,
+        path: cookie.path,
+        maxAge: cookie.maxAge,
+        httpOnly: cookie.httpOnly!,
+        secure: cookie.secure!,
+        sameSite: cookie.sameSite!,
+        domain: cookie.domain,
       });
     } else {
       res.headers.set(headerName!, csrfCookie.value);
@@ -192,17 +212,22 @@ const createNextCsrfMiddleware = async (req: NextRequest, res: NextResponse, opt
     const csrfTokenFromRequest = await getTokenFromRequest(req, mergedOptions);
     console.log('csrfTokenFromRequest', csrfTokenFromRequest);
 
-    if (csrfTokenFromRequest) {
-      // const csrfCookieValue = csrfCookie?.value;
-      // // If CSRF token is present in form but missing in cookies, reject the request
-      // if (!csrfCookieValue) {
-      //   return new NextResponse('CSRF token missing in cookies', { status: 403 });
-      // }
-      // Validate the CSRF token from the form against the cookie
-      // const isValid = await csrf.verify(csrfTokenFromRequest, csrfCookieValue);
-      // if (!isValid) {
-      //   return new NextResponse('Invalid CSRF token', { status: 403 });
-      // }
+    if (isServerAction(req) || csrfTokenFromRequest) {
+      const csrfCookieValue = csrfCookie?.value;
+      // If CSRF token is present in form but missing in cookies, reject the request
+      if (!csrfCookieValue) {
+        return invalidResponse();
+      }
+      if (csrfTokenFromRequest !== csrfCookieValue) {
+        return invalidResponse();
+      }
+      // Validate the CSRF token
+      const isValid = await csrf.verify(csrfTokenFromRequest);
+      if (isValid) {
+        return res;
+      }
+      console.log('invalid csrf token ==========================');
+      return invalidResponse();
     }
   } catch (error) {
     console.error('Error in CSRF middleware:', error);

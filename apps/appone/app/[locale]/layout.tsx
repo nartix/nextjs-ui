@@ -4,6 +4,7 @@ import clsx from 'clsx';
 
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
 import { setRequestLocale } from 'next-intl/server';
 
 import { routing } from '@/i18n/routing';
@@ -58,6 +59,9 @@ export default async function LocaleLayout({
   // preload session
   const session = await getServerSession();
 
+  const headersList = await headers();
+  const csrfToken = headersList.get('x-csrf-token') || '';
+
   return (
     <html suppressHydrationWarning={true} lang={locale}>
       <head />
@@ -69,7 +73,7 @@ export default async function LocaleLayout({
           themeProps={{ attribute: 'class', defaultTheme: 'light', children: children }}
         >
           <div className='relative flex flex-col h-screen'>
-            <Header locale={locale} />
+            <Header locale={locale} csrfToken={csrfToken} />
             {children}
             <Footer />
           </div>

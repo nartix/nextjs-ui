@@ -50,7 +50,7 @@ export type ButtonProps = {
 };
 
 export type FormDataValues = {
-  [key: string]: string | number | File;
+  [key: string]: string | number | File | boolean;
 };
 
 const FormBuilder: React.FC<FormBuilderProps> = ({

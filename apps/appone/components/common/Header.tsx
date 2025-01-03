@@ -19,9 +19,10 @@ import { logoutAction } from '@/app/[locale]/(auth)/actions/logout-action';
 
 interface HeaderProps {
   locale: string;
+  csrfToken: string;
 }
 
-export function Header({ locale }: HeaderProps) {
+export function Header({ locale, csrfToken }: HeaderProps) {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const session = useSession();
@@ -37,11 +38,12 @@ export function Header({ locale }: HeaderProps) {
     user
       ? {
           label: 'Log Out',
-          href: '/logout',
+          href: '/',
           action: async () => {
-            // const formData = new FormData();
+            const formData = new FormData();
+            formData.append('csrf_token', csrfToken);
             setIsMenuOpen(false);
-            await logoutAction();
+            await logoutAction(formData);
             router.refresh();
           },
         }
@@ -81,6 +83,7 @@ export function Header({ locale }: HeaderProps) {
         {user ? (
           <NavbarItem key='logout'>
             <form action={logoutAction}>
+              <input type='hidden' name='csrf_token' value={csrfToken} />
               <Button color='primary' variant='flat' type='submit'>
                 Logout
               </Button>
@@ -115,7 +118,8 @@ export function Header({ locale }: HeaderProps) {
               {...(item.action
                 ? {
                     onClick: async (e) => {
-                      e.preventDefault(); 
+                      e.preventDefault();
+                      console.log('Logout button clicked'); //
                       await item.action();
                     },
                   }
