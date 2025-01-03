@@ -64,7 +64,7 @@ export function Header({ locale, csrfToken }: HeaderProps) {
         <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} className='sm:hidden' />
         <NavbarBrand>
           <Link href='/'>
-            <p className='font-bold text-inherit'>ACME</p>
+            <p className='font-bold text-inherit'>FEROZ FAIZ</p>
           </Link>
         </NavbarBrand>
       </NavbarContent>

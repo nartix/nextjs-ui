@@ -4,7 +4,7 @@ export default {
   transform: {
     '^.+.tsx?$': ['ts-jest', {}],
   },
-  transformIgnorePatterns: ['/node_modules/(?!@nartix/edge-token)'],
+  transformIgnorePatterns: ['/node_modules/(?!@nartix/next-csrf)'],
   testMatch: ['**/tests/**/*.test.ts', '**/*.test.ts'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   extensionsToTreatAsEsm: ['.ts'],

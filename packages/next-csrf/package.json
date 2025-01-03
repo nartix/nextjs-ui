@@ -7,7 +7,7 @@
   "description": "A CSRF middleware for Next.js",
   "private": false,
   "scripts": {
-    "test": "echo \"All tests passed\" && exit 0",
+    "test": "jest",
     "dev": "tsc --watch",
     "build": "tsc"
   },
@@ -28,6 +28,7 @@
   "license": "MIT",
   "devDependencies": {
     "@repo/typescript-config": "*",
+    "jest": "^29.7.0",
     "typescript": "latest"
   },
   "dependencies": {
