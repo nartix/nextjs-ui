@@ -1,6 +1,6 @@
 'use client';
 import { useTranslations } from 'next-intl';
-
+import { useState, useEffect } from 'react';
 import FormBuilder, { ButtonProps, FormBuilderProps } from '@/components/common/FormBuilder';
 import { loginFields } from '@/app/[locale]/(common)/form/formFields';
 import { loginSchema } from '@/app/[locale]/(auth)/form/login-schemas';
@@ -15,6 +15,32 @@ const buttons: ButtonProps[] = [
 
 export function LoginForm({ csrfToken, csrfTokenFieldName }: { csrfToken: string; csrfTokenFieldName?: string }) {
   const t = useTranslations();
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    const login = async () => {
+      const response = await fetch('/login', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: username, password: password, csrf_token: csrfToken }),
+      });
+
+      if (response.ok) {
+        console.log('Login successful!');
+        // Handle successful login
+      } else {
+        const errorData = await response.json();
+        console.error('Login failed:', errorData);
+        // Handle login failure
+      }
+    };
+
+    login();
+  }, [username, password]);
 
   const formProps: FormBuilderProps<unknown> = {
     heading: t('auth.login'),

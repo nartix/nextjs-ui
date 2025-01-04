@@ -1,5 +1,3 @@
-// tokenUtil.test.ts
-
 import { edgeToken } from '@nartix/edge-token/src';
 
 describe('Token Utility Tests', () => {
@@ -62,11 +60,11 @@ describe('Token Utility Tests', () => {
   // Test 7: Verify a token with altered signature
   test('Test 7: Verification with altered signature should fail', async () => {
     const token = await tokenUtil.generate();
-    const separator = tokenUtil.options.seperator;
-    const tokenParts = token.split(separator);
+    const seperator = tokenUtil.options.seperator;
+    const tokenParts = token.split(seperator);
     // Alter the signature part
     tokenParts[tokenParts.length - 1] = 'invalidsignature';
-    const alteredToken = tokenParts.join(separator);
+    const alteredToken = tokenParts.join(seperator);
     const isValid = await tokenUtil.verify(alteredToken);
     expect(isValid).toBe(false);
   });
@@ -75,13 +73,13 @@ describe('Token Utility Tests', () => {
   test('Test 8: Verification with altered data should fail', async () => {
     const data = { userId: 123, role: 'admin' };
     const token = await tokenUtil.generateWithData(data);
-    const separator = tokenUtil.options.seperator;
-    const tokenParts = token.split(separator);
+    const seperator = tokenUtil.options.seperator;
+    const tokenParts = token.split(seperator);
     // Assuming the first part is data
     if (tokenParts.length > 0) {
       tokenParts[0] = tokenParts[0].replace(/.$/, 'A'); // Alter the last character
     }
-    const alteredToken = tokenParts.join(separator);
+    const alteredToken = tokenParts.join(seperator);
     const isValid = await tokenUtil.verifyWithData(alteredToken, data);
     expect(isValid).toBe(false);
   });
@@ -109,14 +107,14 @@ describe('Token Utility Tests', () => {
     expect(isValid).toBe(true);
   });
 
-  // Test 11: Token generation with custom separator
-  test('Test 11: Token generation with custom separator', async () => {
-    const customSeparator = '|';
-    const tokenUtilCustomSep = await edgeToken({ secret, seperator: customSeparator });
+  // Test 11: Token generation with custom seperator
+  test('Test 11: Token generation with custom seperator', async () => {
+    const customseperator = '|';
+    const tokenUtilCustomSep = await edgeToken({ secret, seperator: customseperator });
     const token = await tokenUtilCustomSep.generate();
     const isValid = await tokenUtilCustomSep.verify(token);
     expect(isValid).toBe(true);
-    expect(token).toContain(customSeparator);
+    expect(token).toContain(customseperator);
   });
 
   // Test 12: Token generation with different byte lengths
@@ -127,8 +125,8 @@ describe('Token Utility Tests', () => {
     for (const length of byteLengths) {
       const tokenUtilVarLength = await edgeToken({ secret, tokenByteLength: length });
       const token = await tokenUtilVarLength.generate();
-      const separator = tokenUtilVarLength.options.seperator;
-      const parts = token.split(separator);
+      const seperator = tokenUtilVarLength.options.seperator;
+      const parts = token.split(seperator || '.');
       const randomBytesBase64 = parts[parts.length - 2];
       if (randomBytesBase64) {
         const randomBytes = Uint8Array.from(Buffer.from(randomBytesBase64, 'base64'), (c) => c);
@@ -171,11 +169,11 @@ describe('Token Utility Tests', () => {
   // Test 14: Verification with invalid Base64 encoding should fail
   test('Test 14: Verification with invalid Base64 encoding should fail', async () => {
     const token = await tokenUtil.generate();
-    const separator = tokenUtil.options.seperator;
-    const tokenParts = token.split(separator);
+    const seperator = tokenUtil.options.seperator;
+    const tokenParts = token.split(seperator);
     // Introduce invalid Base64 characters in the first part
     tokenParts[0] = '!!!invalidbase64!!!';
-    const invalidBase64Token = tokenParts.join(separator);
+    const invalidBase64Token = tokenParts.join(seperator);
     const isValid = await tokenUtil.verify(invalidBase64Token);
     expect(isValid).toBe(false);
   });
@@ -183,12 +181,12 @@ describe('Token Utility Tests', () => {
   // Test 15: Verification with invalid timestamps should fail
   test('Test 15: Verification with invalid timestamps should fail', async () => {
     const token = await tokenUtil.generateTimed();
-    const separator = tokenUtil.options.seperator;
-    const tokenParts = token.split(separator);
+    const seperator = tokenUtil.options.seperator;
+    const tokenParts = token.split(seperator);
     // Determine the position of the timestamp based on whether data is shown
     // Since generateTimed does not include data, timestamp should be the first part
     tokenParts[0] = 'invalidtimestamp';
-    const invalidTimestampToken = tokenParts.join(separator);
+    const invalidTimestampToken = tokenParts.join(seperator);
     const isValid = await tokenUtil.verifyTimed(invalidTimestampToken, '', 5000);
     expect(isValid).toBe(false);
   });
@@ -218,13 +216,15 @@ describe('Token Utility Tests', () => {
     expect(isValid).toBe(true);
   });
 
-  // Test 17: Token generation and verification with empty, null, and undefined data
   test('Test 17: Token generation and verification with empty, null, and undefined data', async () => {
     const edgeCases = [undefined, null, '', 0, false, {}, []];
     let edgeCasePass = true;
     for (const caseData of edgeCases) {
+      console.log('Testing edge case:', caseData);
       const token = await tokenUtil.generateWithData(caseData);
       const isValid = await tokenUtil.verifyWithData(token, caseData);
+      console.log('Token:', token);
+      console.log('Verification:', isValid);
       if (!isValid) {
         edgeCasePass = false;
         break;
@@ -248,14 +248,14 @@ describe('Token Utility Tests', () => {
     expect(isValid).toBe(false);
   });
 
-  // Test 20: Tokens should use the specified separator correctly
-  test('Test 20: Tokens should use the specified separator correctly', async () => {
-    const separator = '|';
-    const tokenUtilSep = await edgeToken({ secret, seperator: separator });
+  // Test 20: Tokens should use the specified seperator correctly
+  test('Test 20: Tokens should use the specified seperator correctly', async () => {
+    const seperator = '|';
+    const tokenUtilSep = await edgeToken({ secret, seperator: seperator });
     const token = await tokenUtilSep.generateWithData('test');
     const isValid = await tokenUtilSep.verifyWithData(token, 'test');
     expect(isValid).toBe(true);
-    expect(token).toContain(separator);
+    expect(token).toContain(seperator);
   });
 
   afterAll(() => {

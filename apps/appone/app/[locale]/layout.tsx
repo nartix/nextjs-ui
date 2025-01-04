@@ -60,7 +60,7 @@ export default async function LocaleLayout({
   const session = await getServerSession();
 
   const headersList = await headers();
-  const csrfToken = headersList.get('x-csrf-token') + 'test' || '';
+  const csrfToken = headersList.get('x-csrf-token') || '';
 
   return (
     <html suppressHydrationWarning={true} lang={locale}>

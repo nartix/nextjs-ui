@@ -211,7 +211,7 @@ async function signData(key: CryptoKey, data: Uint8Array): Promise<Uint8Array> {
  * @param showData - Whether to include the serialized data in the token.
  * @param timed - Whether the token should include a timestamp.
  * @param tokenByteLength - The length of the random byte segment.
- * @param separator - The character used to separate token parts.
+ * @param seperator - The character used to separate token parts.
  * @param serializer - Function to serialize data into Uint8Array.
  * @returns A Promise that resolves to the generated token string.
  */
@@ -221,7 +221,7 @@ export async function generateToken(
   showData: boolean,
   timed: boolean,
   tokenByteLength: number,
-  separator: string,
+  seperator: string,
   serializer: (data: unknown) => Uint8Array
 ): Promise<string> {
   const parts: string[] = [];
@@ -250,18 +250,18 @@ export async function generateToken(
   parts.push(encodeBase64(randomBytes));
   parts.push(encodeBase64(signature));
 
-  return parts.join(separator);
+  return parts.join(seperator);
 }
 
 /**
  * Splits and trims the token into its constituent parts.
  *
  * @param token - The token string to split.
- * @param separator - The separator used in the token.
+ * @param seperator - The seperator used in the token.
  * @returns An array of trimmed token parts.
  */
-function splitAndTrimToken(token: string, separator: string): string[] {
-  return token.split(separator).map((part) => part.trim());
+function splitAndTrimToken(token: string, seperator: string): string[] {
+  return token.split(seperator).map((part) => part.trim());
 }
 
 /**
@@ -390,7 +390,7 @@ async function handleAndCompareData(
  * @param data - The expected data to verify against.
  * @param showData - Whether the token includes data.
  * @param timed - Whether the token includes a timestamp.
- * @param separator - The separator used in the token.
+ * @param seperator - The seperator used in the token.
  * @param serializer - Function to serialize data into Uint8Array.
  * @param maxAgeMs - Optional maximum age in milliseconds for token validity.
  * @returns A Promise that resolves to true if the token is valid, false otherwise.
@@ -401,12 +401,12 @@ export async function verifyToken(
   data: unknown, // The 'expected' data you want to verify against
   showData: boolean,
   timed: boolean,
-  separator: string,
+  seperator: string,
   serializer: (data: unknown) => Uint8Array,
   maxAgeMs?: number // Optional expiration check in milliseconds
 ): Promise<boolean> {
   // Split and trim the submitted token string into parts.
-  const parts = splitAndTrimToken(submitted, separator);
+  const parts = splitAndTrimToken(submitted, seperator);
 
   // Extract token parts based on showData and timed flags.
   const extractedParts = extractTokenParts(parts, showData, timed);
@@ -490,18 +490,62 @@ export function isEdgeCase(data: any): boolean {
   return false;
 }
 
+interface edgeTokenType {
+  options: Options;
+  generate: (data?: unknown) => Promise<string>;
+  verify: (submitted: string, data?: unknown) => Promise<boolean>;
+  generateWithData: (data: unknown) => Promise<string>;
+  verifyWithData: (submitted: string, data: unknown) => Promise<boolean>;
+  generateTimed: (data?: unknown) => Promise<string>;
+  verifyTimed: (submitted: string, data: unknown, maxAgeMs: number) => Promise<boolean>;
+  generateWithDataTimed: (data: unknown) => Promise<string>;
+  verifyWithDataTimed: (submitted: string, data: unknown, maxAgeMs: number) => Promise<boolean>;
+}
+
 /**
  * Create a CSRF utility object from user options merged with defaults.
  * Users can generate and verify tokens that are tied to optional additional data.
  * Custom data serializers can be provided to handle different data types.
  */
-export async function edgeToken(userOptions: Partial<Options>) {
+export async function edgeToken(userOptions: Partial<Options>): Promise<edgeTokenType> {
   const options = mergeExtendedOptions(userOptions);
-  const key = await getHmacKey(options.secret, options.algorithm);
 
+  // Ensure tokenByteLength is valid
   if (options.tokenByteLength <= 0) {
     options.tokenByteLength = defaultOptions.tokenByteLength;
   }
+
+  const key = await getHmacKey(options.secret, options.algorithm);
+
+  // Helper function to sanitize data
+  const sanitizeData = (data: unknown): unknown => (isEdgeCase(data) ? '' : data);
+
+  // Helper function to generate token
+  const createToken = async (
+    data: unknown,
+    showData: boolean,
+    timed: boolean,
+    tokenByteLength = options.tokenByteLength,
+    seperator = options.seperator,
+    dataSerializer = options.dataSerializer
+  ): Promise<string> => {
+    data = sanitizeData(data);
+    return generateToken(key, data, showData && Boolean(data), timed, tokenByteLength, seperator, dataSerializer);
+  };
+
+  // Helper function to verify token
+  const checkToken = async (
+    submitted: string,
+    data: unknown,
+    showData: boolean,
+    timed: boolean,
+    seperator = options.seperator,
+    dataSerializer = options.dataSerializer,
+    maxAgeMs?: number
+  ): Promise<boolean> => {
+    data = sanitizeData(data);
+    return verifyToken(key, submitted, data, showData && Boolean(data), timed, seperator, dataSerializer, maxAgeMs);
+  };
 
   return {
     options,
@@ -509,118 +553,45 @@ export async function edgeToken(userOptions: Partial<Options>) {
     /**
      * Generate a simple token without data and without timing.
      */
-    async generate(data: unknown = ''): Promise<string> {
-      data = isEdgeCase(data) ? '' : data;
-      return generateToken(key, data, false, false, options.tokenByteLength, options.seperator, options.dataSerializer);
-    },
+    generate: () => createToken('', false, false),
 
     /**
-     * Verify a simple token without data and without timing.
+     * Verify a simple token with or without data and without timing.
      */
-    async verify(submitted: string, data: unknown = ''): Promise<boolean> {
-      data = isEdgeCase(data) ? '' : data;
-      return verifyToken(key, submitted, data, false, false, options.seperator, options.dataSerializer, undefined);
-    },
+    verify: (submitted: string, data: unknown = '') => checkToken(submitted, data, false, false),
 
     /**
      * Generate a token with embedded data but without timing.
      */
-    async generateWithData(data: unknown): Promise<string> {
-      data = isEdgeCase(data) ? '' : data;
-      return generateToken(
-        key,
-        data,
-        data ? true : false, // showData
-        false, // timed
-        options.tokenByteLength,
-        options.seperator,
-        options.dataSerializer
-      );
-    },
+    generateWithData: (data: unknown) => createToken(data, Boolean(data), false),
 
     /**
      * Verify a token with embedded data but without timing.
      */
-    async verifyWithData(submitted: string, data: unknown): Promise<boolean> {
-      data = isEdgeCase(data) ? '' : data;
-      return verifyToken(
-        key,
-        submitted,
-        data,
-        data ? true : false, // showData
-        false, // timed
-        options.seperator,
-        options.dataSerializer,
-        undefined
-      );
-    },
+    verifyWithData: (submitted: string, data: unknown) => checkToken(submitted, data, Boolean(data), false),
 
     /**
      * Generate a timed token without embedded data.
      */
-    async generateTimed(data: unknown = ''): Promise<string> {
-      data = isEdgeCase(data) ? '' : data;
-      return generateToken(
-        key,
-        data,
-        false, // showData
-        true, // timed
-        options.tokenByteLength,
-        options.seperator,
-        options.dataSerializer
-      );
-    },
+    generateTimed: (data: unknown = '') => createToken(data, false, true),
 
     /**
      * Verify a timed token without embedded data.
      * @param maxAgeMs The maximum age in milliseconds the token is valid for.
      */
-    async verifyTimed(submitted: string, data: unknown = '', maxAgeMs: number): Promise<boolean> {
-      data = isEdgeCase(data) ? '' : data;
-      return verifyToken(
-        key,
-        submitted,
-        data,
-        false, // showData
-        true, // timed
-        options.seperator,
-        options.dataSerializer,
-        maxAgeMs
-      );
-    },
+    verifyTimed: (submitted: string, data: unknown = '', maxAgeMs: number) =>
+      checkToken(submitted, data, false, true, options.seperator, options.dataSerializer, maxAgeMs),
 
     /**
      * Generate a timed token with embedded data.
      */
-    async generateWithDataTimed(data: unknown): Promise<string> {
-      data = isEdgeCase(data) ? '' : data;
-      return generateToken(
-        key,
-        data,
-        data ? true : false, // showData
-        true, // timed
-        options.tokenByteLength,
-        options.seperator,
-        options.dataSerializer
-      );
-    },
+    generateWithDataTimed: (data: unknown) => createToken(data, Boolean(data), true),
 
     /**
      * Verify a timed token with embedded data.
      * @param maxAgeMs The maximum age in milliseconds the token is valid for.
      */
-    async verifyWithDataTimed(submitted: string, data: unknown, maxAgeMs: number): Promise<boolean> {
-      data = isEdgeCase(data) ? '' : data;
-      return verifyToken(
-        key,
-        submitted,
-        data,
-        data ? true : false, // showData
-        true, // timed
-        options.seperator,
-        options.dataSerializer,
-        maxAgeMs
-      );
-    },
+    verifyWithDataTimed: (submitted: string, data: unknown, maxAgeMs: number) =>
+      checkToken(submitted, data, Boolean(data), true, options.seperator, options.dataSerializer, maxAgeMs),
   };
 }
