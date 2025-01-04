@@ -16,31 +16,28 @@ const buttons: ButtonProps[] = [
 export function LoginForm({ csrfToken, csrfTokenFieldName }: { csrfToken: string; csrfTokenFieldName?: string }) {
   const t = useTranslations();
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  // useEffect(() => {
+  //   const login = async () => {
+  //     const response = await fetch('/login', {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ username: 'username', password: 'password', csrf_token: csrfToken }),
+  //     });
 
-  useEffect(() => {
-    const login = async () => {
-      const response = await fetch('/login', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username: username, password: password, csrf_token: csrfToken }),
-      });
+  //     if (response.ok) {
+  //       console.log('Login successful!');
+  //       // Handle successful login
+  //     } else {
+  //       const errorData = await response.json();
+  //       console.error('Login failed:', errorData);
+  //       // Handle login failure
+  //     }
+  //   };
 
-      if (response.ok) {
-        console.log('Login successful!');
-        // Handle successful login
-      } else {
-        const errorData = await response.json();
-        console.error('Login failed:', errorData);
-        // Handle login failure
-      }
-    };
-
-    login();
-  }, [username, password]);
+  //   login();
+  // }, []);
 
   const formProps: FormBuilderProps<unknown> = {
     heading: t('auth.login'),

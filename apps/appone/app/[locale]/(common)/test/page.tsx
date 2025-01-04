@@ -31,7 +31,6 @@ export default async function Test() {
       <ContentContainer>
         <TestContent />
       </ContentContainer>
-      {/* <ContentSkeleton /> */}
     </>
   );
 }
