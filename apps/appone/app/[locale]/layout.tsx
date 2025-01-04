@@ -71,6 +71,7 @@ export default async function LocaleLayout({
           locale={locale}
           messages={messages}
           themeProps={{ attribute: 'class', defaultTheme: 'light', children: children }}
+          csrfToken={csrfToken}
         >
           <div className='relative flex flex-col h-screen'>
             <Header locale={locale} csrfToken={csrfToken} />

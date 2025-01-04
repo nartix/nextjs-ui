@@ -2,8 +2,6 @@
 
 import { getTranslations } from 'next-intl/server';
 import { signIn } from '@nartix/next-security';
-import { headers } from 'next/headers';
-
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
 import { ActionResponse } from '@/components/common/FormBuilder';
 import { FormDataValues } from '@/components/common/FormBuilder';
@@ -11,11 +9,6 @@ import { loginSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 
 export async function loginAction(formData: FormDataValues): Promise<ActionResponse> {
   const t = await getTranslations();
-
-  const requestHeaders = await headers();
-  const headersObj: Record<string, string> = Object.fromEntries(requestHeaders);
-  console.log('headersObj', headersObj);
-  console.log('formData', formData);
 
   const { success } = loginSchema.safeParse(formData);
 

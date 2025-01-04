@@ -1,6 +1,5 @@
 'use client';
 import { useTranslations } from 'next-intl';
-import { useState, useEffect } from 'react';
 import FormBuilder, { ButtonProps, FormBuilderProps } from '@/components/common/FormBuilder';
 import { loginFields } from '@/app/[locale]/(common)/form/formFields';
 import { loginSchema } from '@/app/[locale]/(auth)/form/login-schemas';

@@ -9,6 +9,7 @@ import { AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
 // import { SessionProvider } from 'next-auth/react';
 import { SessionProvider } from '@/app/[locale]/(auth)/context/session-context';
 import { SessionObj } from '@nartix/next-security';
+import { CSRFProvider } from '@/app/[locale]/(common)/context/csrf-context';
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -16,9 +17,10 @@ export interface ProvidersProps {
   messages?: AbstractIntlMessages;
   locale?: string;
   session: SessionObj | null;
+  csrfToken?: string;
 }
 
-export function Providers({ children, themeProps, messages, locale, session }: ProvidersProps) {
+export function Providers({ children, themeProps, messages, locale, session, csrfToken }: ProvidersProps) {
   const router = useRouter();
 
   return (
