@@ -35,51 +35,66 @@ export interface Options {
   dataSerializer?: (data: any) => any;
   dataDecoder?: (data: any) => any;
 }
-
 /**
- * Encodes a Uint8Array into a Base64 string.
+ * Encodes a Uint8Array into a Base64URL string using edge runtime compatible methods.
  *
- * @param data - The Uint8Array to encode.
- * @returns The Base64-encoded string.
- * @throws If no suitable Base64 encoding method is available.
+ * @param {Uint8Array} data - The Uint8Array to encode.
+ * @returns {string} - The Base64URL-encoded string.
+ * @throws {Error} - If Base64 encoding is not supported.
  */
 export function encodeBase64(data: Uint8Array): string {
-  if (typeof btoa !== 'undefined') {
-    // Convert Uint8Array to binary string
-    let binary = '';
-    const len = data.length;
-    for (let i = 0; i < len; i++) {
-      binary += String.fromCharCode(data[i] ?? 0);
-    }
-    return btoa(binary);
-  } else {
-    throw new Error('No suitable Base64 encoding method available.');
+  if (typeof btoa !== 'function') {
+    throw new Error('Base64 encoding is not supported in this environment.');
   }
+
+  // Convert Uint8Array to binary string
+  const binary = Array.from(data)
+    .map((byte) => String.fromCharCode(byte))
+    .join('');
+
+  // Encode binary string to Base64
+  const base64 = btoa(binary);
+
+  // Convert Base64 to Base64URL by replacing characters and removing padding
+  const base64url = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+  return base64url;
 }
 
 /**
- * Decodes a Base64 string into a Uint8Array.
+ * Decodes a Base64URL string into a Uint8Array using edge runtime compatible methods.
  *
- * Edge Runtime Compatible Implementation:
- * - Utilizes the `atob` function, which is available in Edge environments.
- *
- * @param base64 - The Base64 string to decode.
- * @returns The decoded Uint8Array.
- * @throws If the Base64 string is invalid or decoding fails.
+ * @param {string} base64url - The Base64URL-encoded string to decode.
+ * @returns {Uint8Array} - The decoded Uint8Array.
+ * @throws {Error} - If the Base64URL string is invalid or decoding fails.
  */
-export function decodeBase64(base64: string): Uint8Array {
-  try {
-    const binaryString = atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
+export function decodeBase64(base64url: string): Uint8Array {
+  if (typeof atob !== 'function') {
+    throw new Error('Base64 decoding is not supported in this environment.');
+  }
 
-    for (let i = 0; i < len; i++) {
+  try {
+    // Convert Base64URL to Base64 by replacing characters
+    let base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+
+    // Pad with '=' to make the length a multiple of 4
+    const paddingNeeded = 4 - (base64.length % 4);
+    if (paddingNeeded !== 4) {
+      base64 += '='.repeat(paddingNeeded);
+    }
+
+    // Decode Base64 string to binary string
+    const binaryString = atob(base64);
+
+    // Convert binary string to Uint8Array
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
       bytes[i] = binaryString.charCodeAt(i);
     }
 
     return bytes;
   } catch (error) {
-    throw new Error('Invalid Base64 string provided for decoding.');
+    throw new Error('Invalid Base64URL string provided for decoding.');
   }
 }
 

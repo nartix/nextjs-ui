@@ -17,7 +17,7 @@ export interface ProvidersProps {
   messages?: AbstractIntlMessages;
   locale?: string;
   session: SessionObj | null;
-  csrfToken?: string;
+  csrfToken?: string | null;
 }
 
 export function Providers({ children, themeProps, messages, locale, session, csrfToken }: ProvidersProps) {
@@ -25,11 +25,13 @@ export function Providers({ children, themeProps, messages, locale, session, csr
 
   return (
     <SessionProvider value={session}>
-      <NextIntlClientProvider messages={messages} locale={locale}>
-        <NextUIProvider navigate={router.push}>
-          <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
-        </NextUIProvider>
-      </NextIntlClientProvider>
+      <CSRFProvider value={csrfToken ?? null}>
+        <NextIntlClientProvider messages={messages} locale={locale}>
+          <NextUIProvider navigate={router.push}>
+            <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+          </NextUIProvider>
+        </NextIntlClientProvider>
+      </CSRFProvider>
     </SessionProvider>
   );
 }

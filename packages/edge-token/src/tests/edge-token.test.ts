@@ -220,11 +220,11 @@ describe('Token Utility Tests', () => {
     const edgeCases = [undefined, null, '', 0, false, {}, []];
     let edgeCasePass = true;
     for (const caseData of edgeCases) {
-      console.log('Testing edge case:', caseData);
+      // console.log('Testing edge case:', caseData);
       const token = await tokenUtil.generateWithData(caseData);
       const isValid = await tokenUtil.verifyWithData(token, caseData);
-      console.log('Token:', token);
-      console.log('Verification:', isValid);
+      // console.log('Token:', token);
+      // console.log('Verification:', isValid);
       if (!isValid) {
         edgeCasePass = false;
         break;
