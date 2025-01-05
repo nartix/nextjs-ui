@@ -35,6 +35,54 @@ export interface Options {
   dataSerializer?: (data: any) => any;
   dataDecoder?: (data: any) => any;
 }
+
+// /**
+//  * Encodes a Uint8Array into a Base64 string.
+//  *
+//  * @param data - The Uint8Array to encode.
+//  * @returns The Base64-encoded string.
+//  * @throws If no suitable Base64 encoding method is available.
+//  */
+// export function encodeBase64(data: Uint8Array): string {
+//   if (typeof btoa !== 'undefined') {
+//     // Convert Uint8Array to binary string
+//     let binary = '';
+//     const len = data.length;
+//     for (let i = 0; i < len; i++) {
+//       binary += String.fromCharCode(data[i] ?? 0);
+//     }
+//     return btoa(binary);
+//   } else {
+//     throw new Error('No suitable Base64 encoding method available.');
+//   }
+// }
+
+// /**
+//  * Decodes a Base64 string into a Uint8Array.
+//  *
+//  * Edge Runtime Compatible Implementation:
+//  * - Utilizes the `atob` function, which is available in Edge environments.
+//  *
+//  * @param base64 - The Base64 string to decode.
+//  * @returns The decoded Uint8Array.
+//  * @throws If the Base64 string is invalid or decoding fails.
+//  */
+// export function decodeBase64(base64: string): Uint8Array {
+//   try {
+//     const binaryString = atob(base64);
+//     const len = binaryString.length;
+//     const bytes = new Uint8Array(len);
+
+//     for (let i = 0; i < len; i++) {
+//       bytes[i] = binaryString.charCodeAt(i);
+//     }
+
+//     return bytes;
+//   } catch (error) {
+//     throw new Error('Invalid Base64 string provided for decoding.');
+//   }
+// }
+
 /**
  * Encodes a Uint8Array into a Base64URL string using edge runtime compatible methods.
  *

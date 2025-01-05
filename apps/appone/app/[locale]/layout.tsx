@@ -74,7 +74,7 @@ export default async function LocaleLayout({
           csrfToken={csrfToken}
         >
           <div className='relative flex flex-col h-screen'>
-            <Header locale={locale} csrfToken={csrfToken} />
+            <Header locale={locale} />
             {children}
             <Footer />
           </div>

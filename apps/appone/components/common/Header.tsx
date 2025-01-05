@@ -16,18 +16,19 @@ import { Link } from '@/components/common/ui/link';
 import { useSession } from '@/app/[locale]/(auth)/context/session-context';
 import { logoutAction } from '@/app/[locale]/(auth)/actions/logout-action';
 // import { Link as IntlLink } from '@/i18n/routing';
+import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
 
 interface HeaderProps {
   locale: string;
-  csrfToken: string;
 }
 
-export function Header({ locale, csrfToken }: HeaderProps) {
+export function Header({ locale }: HeaderProps) {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const session = useSession();
   const user = session?.user || null;
   const router = useRouter();
+  const csrfToken = useCSRFToken() || '';
 
   const menuItems = [
     { label: 'Profile', href: '/test' },
