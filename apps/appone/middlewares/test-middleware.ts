@@ -43,35 +43,35 @@ export const testMiddleware: MiddlewareHandler = async (req, res) => {
   // // console.log('token ===========', atob(token.split('.')[0]));
   // console.log('test isTokenValid ===========', isTokenValid);
 
-  // Define the base64 string and ensure it's of type string
-  const base64: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.repeat(1000) + '===';
+  // // Define the base64 string and ensure it's of type string
+  // const base64: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.repeat(1000) + '===';
 
-  // Method 1: Multiple replace calls
-  console.time('Multiple Replaces');
-  for (let i = 0; i < 1000; i++) {
-    // Perform multiple replace operations to convert Base64 to Base64URL
-    const base64url: string = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-  }
-  console.timeEnd('Multiple Replaces');
+  // // Method 1: Multiple replace calls
+  // console.time('Multiple Replaces');
+  // for (let i = 0; i < 1000; i++) {
+  //   // Perform multiple replace operations to convert Base64 to Base64URL
+  //   const base64url: string = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  // }
+  // console.timeEnd('Multiple Replaces');
 
-  // Define a mapping object outside the loop for better performance
-  const base64urlMapping: { [key: string]: string } = {
-    '+': '-',
-    '/': '_',
-    '=': '',
-  };
+  // // Define a mapping object outside the loop for better performance
+  // const base64urlMapping: { [key: string]: string } = {
+  //   '+': '-',
+  //   '/': '_',
+  //   '=': '',
+  // };
 
-  // Method 2: Single replace with mapping
-  console.time('Single Replace with Mapping');
-  for (let i = 0; i < 1000; i++) {
-    // Perform a single replace operation using a mapping function
-    const base64url: string = base64
-      .replace(/[+/=]/g, (match: string): string => {
-        return base64urlMapping[match] || '';
-      })
-      .replace(/=+$/, '');
-  }
-  console.timeEnd('Single Replace with Mapping');
+  // // Method 2: Single replace with mapping
+  // console.time('Single Replace with Mapping');
+  // for (let i = 0; i < 1000; i++) {
+  //   // Perform a single replace operation using a mapping function
+  //   const base64url: string = base64
+  //     .replace(/[+/=]/g, (match: string): string => {
+  //       return base64urlMapping[match] || '';
+  //     })
+  //     .replace(/=+$/, '');
+  // }
+  // console.timeEnd('Single Replace with Mapping');
 
   return { response: res, next: true };
 };

@@ -61,7 +61,6 @@ export default async function LocaleLayout({
 
   const headersList = await headers();
   const csrfToken = headersList.get('x-csrf-token') || '';
-  console.log('csrfToken', csrfToken);
 
   return (
     <html suppressHydrationWarning={true} lang={locale}>

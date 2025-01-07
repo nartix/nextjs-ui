@@ -17,8 +17,6 @@ export function LoginForm({ csrfTokenFieldName }: { csrfTokenFieldName?: string 
   const t = useTranslations();
   const csrfToken = useCSRFToken() || '';
 
-  console.log('csrfToken', csrfToken);
-
   // useEffect(() => {
   //   const login = async () => {
   //     const response = await fetch('/login', {
