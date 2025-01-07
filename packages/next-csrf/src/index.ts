@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { edgeToken } from '@nartix/edge-token/src';
+import { edgeToken } from '@nartix/edge-token';
 
-/**
- * Types
- */
 interface CookieOptions {
   name?: string;
   path?: string;
@@ -18,10 +15,12 @@ interface CsrfOptions {
   secret?: string;
   algorithm?: AlgorithmIdentifier;
   tokenByteLength?: number;
+  separator?: string;
   headerName?: string;
   formFieldName?: string;
   cookie: CookieOptions;
   excludeMethods?: string[];
+  enableHeaderCheckForJson?: boolean;
 }
 
 /**
@@ -31,6 +30,10 @@ const DEFAULT_OPTIONS: CsrfOptions = {
   headerName: 'X-CSRF-TOKEN',
   formFieldName: 'csrf_token',
   excludeMethods: ['GET', 'HEAD', 'OPTIONS'],
+  algorithm: 'SHA-256',
+  tokenByteLength: 32,
+  separator: '.',
+  enableHeaderCheckForJson: false,
   cookie: {
     name: 'CSRF-TOKEN',
     path: '/',
@@ -106,12 +109,15 @@ export const extractCsrfTokenFromForm = async (req: NextRequest, formFieldName: 
 export const extractCsrfTokenFromJsonOrPlainText = async (
   req: NextRequest,
   headerName: string,
-  formFieldName: string
+  formFieldName: string,
+  enableHeaderCheckForJson: boolean
 ): Promise<string | null> => {
   // 1) Attempt to extract from header
-  const csrfTokenFromHeader = req.headers.get(headerName);
-  if (csrfTokenFromHeader) {
-    return csrfTokenFromHeader;
+  if (enableHeaderCheckForJson) {
+    const csrfTokenFromHeader = req.headers.get(headerName);
+    if (csrfTokenFromHeader) {
+      return csrfTokenFromHeader;
+    }
   }
 
   // 2) Parse the body as JSON
@@ -201,7 +207,7 @@ export const getTokenFromRequest = async (req: NextRequest, options: CsrfOptions
   }
 
   const contentType = (req.headers.get('content-type') || '').toLowerCase();
-  const { formFieldName, headerName } = options;
+  const { formFieldName, headerName, enableHeaderCheckForJson } = options;
 
   // 1) If it's form data
   if (contentType.includes('multipart/form-data') || contentType.includes('application/x-www-form-urlencoded')) {
@@ -210,7 +216,7 @@ export const getTokenFromRequest = async (req: NextRequest, options: CsrfOptions
 
   // 2) If it's JSON or we detect a server action (usually plain text containing JSON)
   if (contentType.includes('application/json') || contentType.includes('application/ld+json') || isServerAction(req)) {
-    return extractCsrfTokenFromJsonOrPlainText(req, headerName!, formFieldName!);
+    return extractCsrfTokenFromJsonOrPlainText(req, headerName!, formFieldName!, enableHeaderCheckForJson!);
   }
 
   // Default to no token if it's another content type
