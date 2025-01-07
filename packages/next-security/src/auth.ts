@@ -2,7 +2,6 @@ import 'server-only';
 import { cookies } from 'next/headers';
 import deepmerge from 'deepmerge';
 import { generateToken, verifyToken, getHmacKey } from '@nartix/edge-token/src';
-
 import { SessionAdaptor, Provider, authenticateWithProvider } from '@nartix/next-security';
 
 export interface CookieOptions {
@@ -91,7 +90,7 @@ export function auth(userOptions: Partial<AuthOptions>): AuthOptions {
   };
 
   // Check for NEXT_SECURITY_SECRET environment variable
-  const secret = process.env.NEXT_SECURITY_SECRET || userOptions.secret;
+  const secret = userOptions.secret || process.env.NEXT_SECURITY_SECRET;
   if (!secret) {
     throw new Error("A secret must be specified either in the environment variable 'NEXT_SECURITY_SECRET' or in 'AuthOptions'.");
   }

@@ -32,16 +32,16 @@ export const testMiddleware: MiddlewareHandler = async (req, res) => {
   //   console.log('x-middleware-rewrite======================', req.nextUrl.pathname);
   // }
 
-  // const { generateWithData: generateToken, verifyWithData: verifyToken } = await edgeToken({
-  //   secret: 'test',
-  //   tokenByteLength: 0,
-  // });
-  // const token = await generateToken({ data: 'ma' });
-  // // await new Promise((resolve) => setTimeout(resolve, 2000));
-  // const isTokenValid = await verifyToken(token, { data: 'ma' });
-  // console.log('token ===========', token);
-  // // console.log('token ===========', atob(token.split('.')[0]));
-  // console.log('isTokenValid ===========', isTokenValid);
+  const { generate: generateToken, verify: verifyToken } = await edgeToken({
+    secret: 'HLSE89W3LJSFLKJSDFOSDFDFG34TGSLKJSDFLK',
+    tokenByteLength: 18,
+  });
+  const token = await generateToken();
+  // await new Promise((resolve) => setTimeout(resolve, 2000));
+  const isTokenValid = await verifyToken('XLJfYlpVgcZfDwg-wWWooVoj.2xKJaN-aYs4T4-z8o3N6gFQm4e7CAURoMafFaz9qhsY');
+  console.log('test token ===========', token);
+  // console.log('token ===========', atob(token.split('.')[0]));
+  console.log('test isTokenValid ===========', isTokenValid);
 
   return { response: res, next: true };
 };

@@ -181,9 +181,11 @@ async function validateCsrf(
   csrf: any
 ): Promise<boolean> {
   if (!csrfCookieValue) {
+    console.error('CSRF cookie value is missing');
     return false;
   }
   if (!csrfTokenFromRequest || csrfTokenFromRequest !== csrfCookieValue) {
+    console.error('CSRF token from request does not match cookie value');
     return false;
   }
   return !!(await csrf.verify(csrfTokenFromRequest));

@@ -7,10 +7,9 @@ export interface MiddlewareResult {
 
 export type MiddlewareHandler = (req: NextRequest, res: NextResponse) => Promise<MiddlewareResult>;
 
-
 export function createMiddlewareChain(...middlewares: MiddlewareHandler[]) {
   return async (req: NextRequest, res: NextResponse): Promise<NextResponse | Response> => {
-    let currentResponse: NextResponse = res;
+    let currentResponse: NextResponse = res ?? NextResponse.next();
     for (const middleware of middlewares) {
       const { response, next }: MiddlewareResult = await middleware(req, currentResponse);
       if (!next && (response instanceof NextResponse || response instanceof Response)) {

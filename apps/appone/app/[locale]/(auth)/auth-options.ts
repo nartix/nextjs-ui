@@ -4,6 +4,7 @@ import { AuthOptions, auth } from '@nartix/next-security';
 
 const authOptions: Partial<AuthOptions> = {
   sessionAdaptor: ApiAdaptor({}),
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [credentialsProvider],
   cookie: {
     secure: false,

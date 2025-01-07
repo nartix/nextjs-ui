@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AuthOptions, SessionObj } from '@nartix/next-security';
-import { createNextCsrfMiddleware } from '@nartix/next-csrf/src';
+// import { createNextCsrfMiddleware } from '@nartix/next-csrf/src';
 
 export const nextSecurityMiddleware = async (
   req: NextRequest,
@@ -8,23 +8,11 @@ export const nextSecurityMiddleware = async (
   authOptions: AuthOptions,
   sessionObj: SessionObj = {}
 ): Promise<{ response: NextResponse; next: boolean }> => {
-  const { sessionAdaptor, cookie, csrf } = authOptions;
-
-  const csrfResponse = await createNextCsrfMiddleware(req, res, {
-    secret: authOptions.secret!,
-    algorithm: csrf.algorithm,
-    tokenByteLength: csrf.tokenByteLength,
-    headerName: csrf.headerName,
-    cookie: {
-      name: csrf.cookieName,
-      maxAge: cookie.maxAge,
-      secure: cookie.secure,
-    },
-  });
+  const { sessionAdaptor, cookie } = authOptions;
 
   const sessionToken = atob(req.cookies.get(cookie.name!)?.value || '');
   if (!sessionToken) {
-    return { response: csrfResponse, next: true };
+    return { response: res, next: true };
   }
 
   const updatedSessionObject = await sessionAdaptor.updateSession({
@@ -49,5 +37,5 @@ export const nextSecurityMiddleware = async (
     }
   }
 
-  return { response: csrfResponse, next: true };
+  return { response: res, next: true };
 };

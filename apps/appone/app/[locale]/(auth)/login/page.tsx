@@ -40,12 +40,9 @@ export default async function Login() {
     redirect('/');
   }
 
-  const headersList = await headers();
-  const csrfToken = headersList.get('x-csrf-token') || '';
-
   return (
     <ContentContainer className='flex flex-col items-center'>
-      <LoginForm csrfToken={csrfToken} />
+      <LoginForm />
     </ContentContainer>
   );
 }

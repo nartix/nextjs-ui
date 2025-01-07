@@ -4,6 +4,7 @@ import FormBuilder, { ButtonProps, FormBuilderProps } from '@/components/common/
 import { loginFields } from '@/app/[locale]/(common)/form/formFields';
 import { loginSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { loginAction } from '@/app/[locale]/(auth)/actions/login-action';
+import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
 
 const buttons: ButtonProps[] = [
   {
@@ -12,8 +13,11 @@ const buttons: ButtonProps[] = [
   },
 ];
 
-export function LoginForm({ csrfToken, csrfTokenFieldName }: { csrfToken: string; csrfTokenFieldName?: string }) {
+export function LoginForm({ csrfTokenFieldName }: { csrfTokenFieldName?: string }) {
   const t = useTranslations();
+  const csrfToken = useCSRFToken() || '';
+
+  console.log('csrfToken', csrfToken);
 
   // useEffect(() => {
   //   const login = async () => {

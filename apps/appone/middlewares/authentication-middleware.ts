@@ -3,7 +3,7 @@
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
 import { nextSecurityMiddleware } from '@nartix/next-security';
 import { getClientIp } from '@/lib/get-client-ip';
-import { MiddlewareHandler } from '@/types/middleware-handler';
+import { MiddlewareHandler } from '@nartix/next-middleware-chain/src';
 
 // way to overload sessionObj with custom properties
 export const authenticationMiddleware: MiddlewareHandler = async (req, res) => {
