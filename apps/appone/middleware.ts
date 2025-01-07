@@ -15,10 +15,9 @@ export default async function middleware(req: NextRequest) {
   if (!isPublicPath(req.nextUrl.pathname)) {
     middlewares.push(nextIntlMiddleware);
   }
-
+  middlewares.push(csrfMiddleware);
   middlewares.push(testMiddleware);
   middlewares.push(authenticationMiddleware);
-  middlewares.push(csrfMiddleware);
 
   const combined = createMiddlewareChain(...middlewares);
   return combined(req, res);
