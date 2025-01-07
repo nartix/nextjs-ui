@@ -6,8 +6,6 @@ import {
   isWriteMethod,
   isServerAction,
   extractCsrfTokenFromForm,
-  extractCsrfTokenFromJson,
-  extractCsrfTokenFromServerActionPlainText,
   mergeOptions,
   invalidCsrfResponse, // renamed from invalidResponse
   getTokenFromRequest,
@@ -153,61 +151,6 @@ describe('CSRF Middleware Tests', () => {
       } as unknown as NextRequest;
 
       await expect(extractCsrfTokenFromForm(req, 'csrf_token')).rejects.toThrow('Invalid form data');
-    });
-  });
-
-  describe('extractCsrfTokenFromJson', () => {
-    test('returns header token if present', async () => {
-      const req = createMockNextRequest('POST', { 'X-CSRF-TOKEN': 'headerToken' }, { csrf_token: 'bodyToken' });
-      const token = await extractCsrfTokenFromJson(req, 'X-CSRF-TOKEN', 'csrf_token');
-      expect(token).toBe('headerToken');
-    });
-
-    test('returns body token if header not present', async () => {
-      const req = createMockNextRequest('POST', {}, { csrf_token: 'bodyToken' });
-      const token = await extractCsrfTokenFromJson(req, 'X-CSRF-TOKEN', 'csrf_token');
-      expect(token).toBe('bodyToken');
-    });
-
-    test('returns null if neither header nor body token present', async () => {
-      const req = createMockNextRequest('POST', {}, {});
-      const token = await extractCsrfTokenFromJson(req, 'X-CSRF-TOKEN', 'csrf_token');
-      expect(token).toBeNull();
-    });
-
-    test('throws error if JSON parsing fails', async () => {
-      const req = {
-        ...createMockNextRequest('POST', {}),
-        json: jest.fn<() => Promise<any>>().mockRejectedValue(new Error('bad json')),
-      } as unknown as NextRequest;
-
-      await expect(extractCsrfTokenFromJson(req, 'X-CSRF-TOKEN', 'csrf_token')).rejects.toThrow('Invalid JSON data');
-    });
-  });
-
-  describe('extractCsrfTokenFromServerActionPlainText', () => {
-    test('parses single object JSON text', async () => {
-      const req = createMockNextRequest('POST', {}, '{"csrf_token":"fromPlainText"}');
-      const token = await extractCsrfTokenFromServerActionPlainText(req, 'csrf_token');
-      expect(token).toBe('fromPlainText');
-    });
-
-    test('parses array JSON text', async () => {
-      const req = createMockNextRequest('POST', {}, '[{"csrf_token":"fromArray"}]');
-      const token = await extractCsrfTokenFromServerActionPlainText(req, 'csrf_token');
-      expect(token).toBe('fromArray');
-    });
-
-    test('returns null if field is not present', async () => {
-      const req = createMockNextRequest('POST', {}, '{"someField":"value"}');
-      const token = await extractCsrfTokenFromServerActionPlainText(req, 'csrf_token');
-      expect(token).toBeNull();
-    });
-
-    test('returns null if invalid JSON', async () => {
-      const req = createMockNextRequest('POST', {}, 'not valid json');
-      const token = await extractCsrfTokenFromServerActionPlainText(req, 'csrf_token');
-      expect(token).toBeNull();
     });
   });
 

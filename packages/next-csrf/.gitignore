@@ -1,5 +1,6 @@
 src
 tsconfig.json
+jest.config.js
 .turbo
 node_modules
 
