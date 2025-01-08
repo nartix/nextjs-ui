@@ -1,5 +1,3 @@
-// csrfMiddleware.test.ts
-
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
 import {
@@ -223,6 +221,7 @@ describe('CSRF Middleware Tests', () => {
         formFieldName: 'csrf_token',
         headerName: 'X-CSRF-TOKEN',
         cookie: { name: 'CSRF-TOKEN' },
+        enableHeaderCheckForJson: true,
       } as any);
       expect(token).toBe('headerToken');
     });
@@ -345,12 +344,18 @@ describe('CSRF Middleware Tests', () => {
     });
 
     test('returns original response if not a write method and no server action token', async () => {
-      const req = createMockNextRequest('GET');
+      const req = {
+        ...createMockNextRequest('GET'),
+        cookies: {
+          get: jest.fn().mockReturnValue({ value: 'existingToken' }),
+        },
+      } as unknown as NextRequest;
       const res = createMockNextResponse();
 
       const result = await createNextCsrfMiddleware(req, res, {
         secret: 'mysecret',
         cookie: { name: 'CSRF-TOKEN' },
+        excludeMethods: ['GET', 'HEAD', 'OPTIONS'],
       } as any);
 
       // Should not block

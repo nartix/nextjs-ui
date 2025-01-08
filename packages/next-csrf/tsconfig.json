@@ -10,6 +10,6 @@
       "@nartix/next-csrf/*": ["src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "build/types/**/*.ts"],
-  "exclude": ["dist", "build", "node_modules"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["dist", "*.js", "*.d.ts", "node_modules"]
 }
