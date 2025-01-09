@@ -5,7 +5,8 @@ WORKDIR /app
 ENV ENVCONSUL_VERSION 0.13.2
 
 # Install wget and unzip, then download and install envconsul
-RUN apk add --no-cache wget unzip \
+# xdg-utils is required for storybook to work
+RUN apk add --no-cache wget unzip xdg-utils \
     && if [ ! -f /usr/local/bin/envconsul ]; then \
     wget https://releases.hashicorp.com/envconsul/${ENVCONSUL_VERSION}/envconsul_${ENVCONSUL_VERSION}_linux_amd64.zip \
     && unzip envconsul_${ENVCONSUL_VERSION}_linux_amd64.zip -d /usr/local/bin \
