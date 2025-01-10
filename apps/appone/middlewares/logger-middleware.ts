@@ -1,6 +1,6 @@
 'user server';
 
-import { MiddlewareHandler } from '@/types/middleware-handler';
+import { MiddlewareHandler } from '@nartix/next-middleware-chain/src';
 
 /**
  * Logger Middleware
@@ -10,5 +10,5 @@ export const loggerMiddleware: MiddlewareHandler = async (req, res) => {
   if (req.headers.get('x-middleware-rewrite')) {
     console.log(`Request URL: ${req.url}`);
   }
-  return { next: true };
+  return { response: res, next: true };
 };

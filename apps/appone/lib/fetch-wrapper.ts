@@ -1,45 +1,6 @@
-// 'use server';
-
-// import { getServerSideToken } from '@/app/[locale]/(auth)/lib/token-manager';
-
-// interface FetchOptions extends RequestInit {
-//   headers?: HeadersInit;
-// }
-
-// const fetchWrapper = async (url: string, options: FetchOptions = {}): Promise<Response> => {
-//   // Check if Authorization header is already set
-//   const hasAuthHeader = options.headers && 'Authorization' in options.headers;
-
-//   // Get the token only if Authorization header is not set
-//   const token = hasAuthHeader ? '' : await getServerSideToken();
-
-//   // Set the default headers
-//   const defaultHeaders: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
-
-//   // Merge custom headers with default headers
-//   const headers: HeadersInit = {
-//     ...defaultHeaders,
-//     ...options.headers,
-//   };
-
-//   const defaultOptions: FetchOptions = {
-//     headers,
-//   };
-
-//   // Merge custom options with default options
-//   const updatedOptions: FetchOptions = {
-//     ...options,
-//     ...defaultOptions,
-//   };
-
-//   // Call the original fetch function
-//   return fetch(url, updatedOptions);
-// };
-
-// export default fetchWrapper;
-
 import 'server-only';
-import { getServerSideToken, invalidateToken } from '@/app/[locale]/(auth)/lib/token-manager';
+
+import { getServerSideToken } from '@/app/[locale]/(auth)/lib/token-manager';
 
 interface FetchOptions extends RequestInit {
   headers?: HeadersInit;
@@ -53,12 +14,12 @@ interface FetchOptions extends RequestInit {
  * @param authenticated Whether the request requires authentication
  * @returns The fetch response
  */
-const fetchWrapper = async (url: string, options: FetchOptions = {}, authenticated = true): Promise<Response> => {
+const fetchWrapper = async (url: string, options: FetchOptions = {}): Promise<Response> => {
   // Determine if Authorization header is already present
   const hasAuthHeader = options.headers && Object.keys(options.headers).some((key) => key.toLowerCase() === 'authorization');
 
   // Retrieve token if Authorization header is not set
-  let token = hasAuthHeader ? '' : await getServerSideToken();
+  const token = hasAuthHeader ? '' : await getServerSideToken();
 
   // Set default headers
   const defaultHeaders: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
@@ -76,7 +37,7 @@ const fetchWrapper = async (url: string, options: FetchOptions = {}, authenticat
   };
 
   // First fetch attempt
-  let response = await fetch(url, updatedOptions);
+  const response = await fetch(url, updatedOptions);
 
   // // Case where authorization server changes RSA kay pair used to sign JWT
   // // In this case, the existing token will be invalid and the server will return 401

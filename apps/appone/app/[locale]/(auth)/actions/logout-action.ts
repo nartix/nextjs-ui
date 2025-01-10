@@ -12,5 +12,9 @@ export async function logoutAction(formData: FormData): Promise<void> {
 
   const options = await signOut(authConfig);
 
-  redirect(options?.redirectUrl!);
+  if (options?.redirectUrl) {
+    redirect(options.redirectUrl);
+  } else {
+    console.error('Redirect URL is undefined');
+  }
 }

@@ -3,8 +3,8 @@ import { credentialsProvider } from '@/app/[locale]/(auth)/providers/credentials
 import { AuthOptions, auth } from '@nartix/next-security';
 
 const authOptions: Partial<AuthOptions> = {
-  sessionAdaptor: ApiAdaptor({}),
-  secret: process.env.NEXTAUTH_SECRET,
+  sessionAdaptor: ApiAdaptor(),
+  secret: process.env.NEXT_SECURITY_SECRET,
   providers: [credentialsProvider],
   cookie: {
     secure: false,

@@ -1,5 +1,5 @@
 import 'server-only';
-import { routing } from '@/i18n/routing';
+import { routing, Locale } from '@/i18n/routing';
 
 /**
  * Checks if the locale is supported by routing.
@@ -11,7 +11,7 @@ export function isLocaleSupported(pathname: string): boolean {
 }
 
 export function matchLocaleInclude(pathname: string): boolean {
-  return routing.locales.includes(extractLocale(pathname) as any);
+  return routing.locales.includes(extractLocale(pathname) as Locale);
 }
 
 /**

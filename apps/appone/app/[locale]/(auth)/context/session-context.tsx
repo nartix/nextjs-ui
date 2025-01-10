@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext } from 'react';
 import { SessionObj } from '@nartix/next-security';
-import { Session } from 'inspector/promises';
 
 const SessionContext = createContext<SessionObj | null>(null);
 

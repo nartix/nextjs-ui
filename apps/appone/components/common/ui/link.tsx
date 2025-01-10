@@ -1,8 +1,8 @@
 import { Link as NextIntlLink } from '@/i18n/routing';
-import {forwardRef} from "react";
-import {LinkIcon} from "@nextui-org/shared-icons";
-import {linkAnchorClasses} from "@nextui-org/theme";
-import {useLink, LinkProps as UIProps} from "@nextui-org/react";
+import { forwardRef } from 'react';
+import { LinkIcon } from '@nextui-org/shared-icons';
+import { linkAnchorClasses } from '@nextui-org/theme';
+import { useLink, LinkProps as UIProps } from '@nextui-org/react';
 
 const MyLink = forwardRef<HTMLAnchorElement, UIProps>((props, ref) => {
   const {
@@ -15,7 +15,7 @@ const MyLink = forwardRef<HTMLAnchorElement, UIProps>((props, ref) => {
     ref,
   });
   // onClick causes 307 redirect when used with next intl link
-  const { onClick, href,  ...linkProps } = getLinkProps();
+  const { onClick, href, ...linkProps } = getLinkProps(); // eslint-disable-line @typescript-eslint/no-unused-vars
   return (
     <NextIntlLink href={props.href || '#'} {...linkProps}>
       <>
@@ -26,6 +26,6 @@ const MyLink = forwardRef<HTMLAnchorElement, UIProps>((props, ref) => {
   );
 });
 
-MyLink.displayName = "MyLink";
+MyLink.displayName = 'MyLink';
 
-export  { MyLink as Link };
+export { MyLink as Link };

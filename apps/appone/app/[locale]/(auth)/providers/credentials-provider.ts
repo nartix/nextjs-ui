@@ -17,18 +17,14 @@ export const credentialsProvider: Provider = {
     }
 
     try {
-      const response = await fetchWrapper(
-        `${API_BASE_URL}/${API_PREFIX}/${API_VERSION}/auth/login`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            username: credentials.username,
-            password: credentials.password,
-          }),
-        },
-        false
-      );
+      const response = await fetchWrapper(`${API_BASE_URL}/${API_PREFIX}/${API_VERSION}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: credentials.username,
+          password: credentials.password,
+        }),
+      });
 
       if (!response.ok) {
         return null;
@@ -38,7 +34,7 @@ export const credentialsProvider: Provider = {
 
       // Return user information
       return userInfo;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(t('auth.error_in_authorize'), error);
       return null;
     }

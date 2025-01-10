@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import fetchWrapper from '@/lib/fetch-wrapper';
 import { SessionAdaptor, SessionObj } from '@nartix/next-security';
 
-export default function ApiAdaptor(client: any, options = {}): SessionAdaptor {
+export default function ApiAdaptor(): SessionAdaptor {
   const apiBaseUrl = `${process.env.API_URL_GLOBAL}/${process.env.API_URL_PREFIX}/${process.env.API_URL_VERSION}`;
 
   return {
@@ -19,7 +19,7 @@ export default function ApiAdaptor(client: any, options = {}): SessionAdaptor {
     //   }
     //   return response.json();
     // },
-    async getUser(id: string | null): Promise<Record<string, any> | null> {
+    async getUser(id: string | null): Promise<Record<string, unknown> | null> {
       if (!id) return null;
       const response = await fetchWrapper(`${apiBaseUrl}/users/${id}`);
       if (!response.ok) return null;

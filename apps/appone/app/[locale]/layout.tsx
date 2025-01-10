@@ -9,7 +9,7 @@ import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
 import { setRequestLocale } from 'next-intl/server';
 
-import { routing } from '@/i18n/routing';
+import { routing, Locale } from '@/i18n/routing';
 
 import { Providers } from './../providers';
 import { siteConfig } from '@/config/site';
@@ -41,11 +41,11 @@ export default async function LocaleLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: Locale }>;
 }) {
   const { locale } = await params;
   // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as any)) {
+  if (!routing.locales.includes(locale)) {
     notFound();
   }
 

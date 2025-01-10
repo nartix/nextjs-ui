@@ -6,7 +6,7 @@ import { ContentContainer } from '@/components/common/ui/content-container';
 
 async function TestContent() {
   const session = await getServerSession();
-  const session2 = await getServerSession();
+  // const session2 = await getServerSession();
   const user = session?.user;
   console.log('session from TestContent', session?.sessionId || 'Guest');
 

@@ -5,19 +5,35 @@
   "scripts": {
     "dev": "envconsul -config=/app/envconsul-config.hcl next dev ",
     "build": "next build",
-    "start": "next start",
+    "start": "envconsul -config=/app/envconsul-config.hcl next start",
     "lint": "next lint",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "storybook": "envconsul -config=/app/envconsul-config.hcl storybook dev -p 6006",
+    "build-storybook": "envconsul -config=/app/envconsul-config.hcl storybook build"
   },
   "dependencies": {
+    "@mantine/carousel": "^7.15.3",
+    "@mantine/code-highlight": "^7.15.3",
+    "@mantine/core": "^7.15.3",
+    "@mantine/dates": "^7.15.3",
+    "@mantine/dropzone": "^7.15.3",
+    "@mantine/hooks": "^7.15.3",
+    "@mantine/modals": "^7.15.3",
+    "@mantine/notifications": "^7.15.3",
+    "@mantine/spotlight": "^7.15.3",
+    "@mantine/tiptap": "^7.15.3",
     "@nartix/edge-token": "*",
     "@nartix/next-middleware-chain": "*",
     "@nartix/next-security": "*",
     "@nartix/ui-appone": "*",
+    "@tiptap/extension-link": "^2.11.0",
+    "@tiptap/pm": "^2.11.0",
+    "@tiptap/react": "^2.11.0",
+    "@tiptap/starter-kit": "^2.11.0",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dayjs": "^1.11.13",
+    "embla-carousel-react": "^7.1.0",
     "jose": "^5.9.6",
     "next": "^15.0.3",
     "next-intl": "^3.25.0",
@@ -37,6 +53,9 @@
     "@types/negotiator": "^0.6.3",
     "@types/node": "^22.10.5",
     "eslint-plugin-storybook": "^0.11.2",
+    "postcss": "^8.4.49",
+    "postcss-preset-mantine": "^1.17.0",
+    "postcss-simple-vars": "^7.0.1",
     "storybook": "^8.4.7"
   }
 }

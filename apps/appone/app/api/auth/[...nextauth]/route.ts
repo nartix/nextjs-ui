@@ -1,14 +1,14 @@
-import { getTranslations } from 'next-intl/server';
-import NextAuth, { NextAuthOptions } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import { JWT } from 'next-auth/jwt';
+// import { getTranslations } from 'next-intl/server';
+// import NextAuth, { NextAuthOptions } from 'next-auth';
+// import CredentialsProvider from 'next-auth/providers/credentials';
+// import { JWT } from 'next-auth/jwt';
 
-import fetchWrapper from '@/lib/fetch-wrapper';
-import ApiAdaptor from '@/app/[locale]/(auth)/adaptor/api-adaptor';
+// import fetchWrapper from '@/lib/fetch-wrapper';
+// import ApiAdaptor from '@/app/[locale]/(auth)/adaptor/api-adaptor';
 
-const API_BASE_URL = process.env.API_URL_GLOBAL;
-const API_VERSION = process.env.API_URL_VERSION;
-const API_PREFIX = process.env.API_URL_PREFIX;
+// const API_BASE_URL = process.env.API_URL_GLOBAL;
+// const API_VERSION = process.env.API_URL_VERSION;
+// const API_PREFIX = process.env.API_URL_PREFIX;
 
 // async function refreshAccessToken(token: JWT): Promise<JWT> {
 //   const t = await getTranslations();
@@ -133,3 +133,4 @@ const API_PREFIX = process.env.API_URL_PREFIX;
 // const handler = NextAuth(authOptions);
 
 // export { handler as GET, handler as POST };
+export {};
