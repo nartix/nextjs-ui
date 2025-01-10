@@ -1,4 +1,5 @@
 import '@/styles/globals.css';
+import '@mantine/core/styles.css';
 
 import { Metadata, Viewport } from 'next';
 import React from 'react';
@@ -8,6 +9,7 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
 import { setRequestLocale } from 'next-intl/server';
+import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core';
 
 import { routing, Locale } from '@/i18n/routing';
 
@@ -63,8 +65,10 @@ export default async function LocaleLayout({
   const csrfToken = headersList.get('x-csrf-token') || '';
 
   return (
-    <html suppressHydrationWarning={true} lang={locale}>
-      <head />
+    <html lang={locale} {...mantineHtmlProps}>
+      <head>
+        <ColorSchemeScript />
+      </head>
       <body className={clsx('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
         <Providers
           session={session}

@@ -10,6 +10,8 @@ import { AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
 import { SessionProvider } from '@/app/[locale]/(auth)/context/session-context';
 import { SessionObj } from '@nartix/next-security';
 import { CSRFProvider } from '@/app/[locale]/(common)/context/csrf-context';
+import { MantineProvider } from '@mantine/core';
+import { theme } from '@/styles/theme';
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -27,9 +29,11 @@ export function Providers({ children, themeProps, messages, locale, session, csr
     <SessionProvider value={session}>
       <CSRFProvider value={csrfToken ?? null}>
         <NextIntlClientProvider messages={messages} locale={locale}>
-          <NextUIProvider navigate={router.push}>
-            <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
-          </NextUIProvider>
+          <MantineProvider theme={theme}>
+            <NextUIProvider navigate={router.push}>
+              <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+            </NextUIProvider>
+          </MantineProvider>
         </NextIntlClientProvider>
       </CSRFProvider>
     </SessionProvider>

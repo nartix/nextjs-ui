@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "envconsul -config=/app/envconsul-config.hcl next start",
     "lint": "next lint",
-    "storybook": "envconsul -config=/app/envconsul-config.hcl storybook dev -p 6006",
+    "storybook": "storybook dev -p 6006",
     "build-storybook": "envconsul -config=/app/envconsul-config.hcl storybook build"
   },
   "dependencies": {
@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.3",
+    "@mantinex/mantine-logo": "^1.1.0",
     "@storybook/addon-essentials": "^8.4.7",
     "@storybook/addon-interactions": "^8.4.7",
     "@storybook/addon-onboarding": "^8.4.7",
@@ -56,6 +57,7 @@
     "postcss": "^8.4.49",
     "postcss-preset-mantine": "^1.17.0",
     "postcss-simple-vars": "^7.0.1",
-    "storybook": "^8.4.7"
+    "storybook": "^8.4.7",
+    "storybook-dark-mode": "^4.0.2"
   }
 }
