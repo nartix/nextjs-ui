@@ -1,3 +1,5 @@
+import '@/styles/globals.css';
+
 import { Metadata, Viewport } from 'next';
 import React from 'react';
 import clsx from 'clsx';
@@ -8,8 +10,6 @@ import { headers } from 'next/headers';
 import { setRequestLocale } from 'next-intl/server';
 
 import { routing } from '@/i18n/routing';
-
-import '@/styles/globals.css';
 
 import { Providers } from './../providers';
 import { siteConfig } from '@/config/site';
