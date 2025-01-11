@@ -25,6 +25,7 @@
     "@nartix/next-middleware-chain": "*",
     "@nartix/next-security": "*",
     "@nartix/ui-appone": "*",
+    "@tabler/icons-react": "^3.28.1",
     "@tiptap/extension-link": "^2.11.0",
     "@tiptap/pm": "^2.11.0",
     "@tiptap/react": "^2.11.0",

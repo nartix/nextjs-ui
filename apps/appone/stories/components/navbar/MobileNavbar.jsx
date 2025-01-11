@@ -1,11 +1,13 @@
-import { AppShell, Burger, Group, UnstyledButton, Text } from '@mantine/core';
+import { AppShell, Burger, Group, UnstyledButton, Text, RemoveScroll } from '@mantine/core';
 import { useDisclosure, useHeadroom } from '@mantine/hooks';
 import { MantineLogo } from '@mantinex/mantine-logo';
 import classes from './MobileNavbar.module.css';
+import { LoginIcon } from '../Icons/LoginIcon';
+// import { Footer } from '../../../components/common/Footer';
+import { FooterCentered as Footer } from '../Footer/Footer';
 
 const lorem =
   'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos ullam, ex cum repellat alias ea nemo. Ducimus ex nesciunt hic ad saepe molestiae nobis necessitatibus laboriosam officia, reprehenderit, earum fugiat?';
-
 
 export function MobileNavbar() {
   const [opened, { toggle }] = useDisclosure();
@@ -13,26 +15,29 @@ export function MobileNavbar() {
 
   return (
     <AppShell
-      header={{ height: 60, collapsed: !pinned, offset: true }}
+      header={{ height: 60, collapsed: opened ? false : !pinned, offset: true }}
       navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !opened } }}
-      padding="md"
+      padding='md'
     >
       <AppShell.Header>
-        <Group h="100%" px="md">
-          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-          <Group justify="space-between" style={{ flex: 1 }}>
+        <Group h='100%' px='md'>
+          <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
+          <Group justify='space-between' style={{ flex: 1 }}>
             <MantineLogo size={30} />
-            <Group ml="xl" gap={0} visibleFrom="sm">
+            <Group ml='xl' gap={0} visibleFrom='sm'>
               <UnstyledButton className={classes.control}>Home</UnstyledButton>
               <UnstyledButton className={classes.control}>Blog</UnstyledButton>
               <UnstyledButton className={classes.control}>Contacts</UnstyledButton>
               <UnstyledButton className={classes.control}>Support</UnstyledButton>
             </Group>
+            <Group ml='xl' gap={0} visibleFrom='sm'>
+              <UnstyledButton className={classes.control}>Login</UnstyledButton>
+            </Group>
           </Group>
         </Group>
       </AppShell.Header>
 
-      <AppShell.Navbar py="md" px={4}>
+      <AppShell.Navbar py='md' px={4}>
         <UnstyledButton className={classes.control}>Home</UnstyledButton>
         <UnstyledButton className={classes.control}>Blog</UnstyledButton>
         <UnstyledButton className={classes.control}>Contacts</UnstyledButton>
@@ -40,14 +45,17 @@ export function MobileNavbar() {
       </AppShell.Navbar>
 
       <AppShell.Main>
-      {Array(40)
-          .fill(0)
-          .map((_, index) => (
-            <Text size="lg" key={index} my="md" maw={600} mx="auto">
-              {lorem}
-            </Text>
-          ))}
+        <RemoveScroll enabled={opened}>
+          {Array(2)
+            .fill(0)
+            .map((_, index) => (
+              <Text size='lg' key={index} my='md' maw={600} mx='auto'>
+                {lorem}
+              </Text>
+            ))}
+        </RemoveScroll>
       </AppShell.Main>
+      <Footer />
     </AppShell>
   );
 }
