@@ -13,7 +13,7 @@ export function MobileNavbar() {
 
   return (
     <AppShell
-      header={{ height: 60, collapsed: !pinned, offset: false }}
+      header={{ height: 60, collapsed: !pinned, offset: true }}
       navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !opened } }}
       padding="md"
     >

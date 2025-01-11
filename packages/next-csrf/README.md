@@ -1,6 +1,6 @@
 # Next CSRF
 
-A lightweight CSRF protection middleware for Next.js on the Edge Runtime. It performs a **double check** on the CSRF token by comparing the token from the request body or headers with the token stored in the cookie. You can access the token via **request header** or by reading the **cookie** value.
+A lightweight CSRF protection middleware for Next.js on the Edge Runtime. It automatically protects **write methods**—including `POST`, `PUT`, `PATCH`, and `DELETE`—by performing a **double check** on the CSRF token. It compares the token from the request body or headers with the token stored in the cookie. You can access the token via **request header** or by reading the **cookie** value.
 
 ## Installation
 
