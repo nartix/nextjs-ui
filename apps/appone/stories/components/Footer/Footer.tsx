@@ -11,7 +11,7 @@ const links = [
   { link: '#', label: 'Careers' },
 ];
 
-export function FooterCentered() {
+export function Footer() {
   const items = links.map((link) => (
     <Anchor c='dimmed' key={link.label} href={link.link} lh={1} onClick={(event) => event.preventDefault()} size='sm'>
       {link.label}

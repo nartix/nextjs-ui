@@ -1,7 +1,7 @@
 import { AppShell, Burger, Group, UnstyledButton, Text, RemoveScroll } from '@mantine/core';
 import { useDisclosure, useHeadroom } from '@mantine/hooks';
 import { MantineLogo } from '@mantinex/mantine-logo';
-import classes from './MobileNavbar.module.css';
+import classes from './Layout.module.css';
 import { LoginIcon } from '../Icons/LoginIcon';
 // import { Footer } from '../../../components/common/Footer';
 import { Footer } from '../Footer/Footer';
@@ -9,7 +9,7 @@ import { Footer } from '../Footer/Footer';
 const lorem =
   'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos ullam, ex cum repellat alias ea nemo. Ducimus ex nesciunt hic ad saepe molestiae nobis necessitatibus laboriosam officia, reprehenderit, earum fugiat?';
 
-export function MobileNavbar() {
+export function Layout() {
   const [opened, { toggle }] = useDisclosure();
   const pinned = useHeadroom({ fixedAt: 120 });
 
