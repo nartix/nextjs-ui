@@ -1,5 +1,6 @@
-import '../styles/globals.css';
-import '@mantine/core/styles.css';
+import '../styles/globals.scss';
+// import '../styles/mantine.scss';
+// import '@mantine/core/styles.css';
 
 import React, { useEffect } from 'react';
 import { addons } from '@storybook/preview-api';

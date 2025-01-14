@@ -19,7 +19,7 @@ export function Footer() {
   ));
 
   return (
-    <div className={classes.footer}>
+    <div className={`${classes.footer}`}>
       <div className={classes.inner}>
         <Text c='dimmed' lh={1} size='sm'>
           Feroz Faiz

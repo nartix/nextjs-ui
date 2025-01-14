@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import '@mantine/core/styles.css';
+@import './mantine.scss';
 
 @layer base {
   :root {
