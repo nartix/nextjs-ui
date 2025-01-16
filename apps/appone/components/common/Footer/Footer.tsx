@@ -1,3 +1,4 @@
+'use client';
 import { IconBrandInstagram, IconBrandTwitter, IconBrandYoutube } from '@tabler/icons-react';
 import { ActionIcon, Anchor, Group, Text } from '@mantine/core';
 import { MantineLogo } from '@mantinex/mantine-logo';

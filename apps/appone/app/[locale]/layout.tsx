@@ -1,9 +1,9 @@
 import '@/styles/globals.scss';
+// import '@/styles/_mantine.scss';
 import '@mantine/core/styles.css';
 
 import { Metadata, Viewport } from 'next';
 import React from 'react';
-import clsx from 'clsx';
 
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -18,7 +18,9 @@ import { siteConfig } from '@/config/site';
 import { fontSans } from '@/config/fonts';
 import { Header } from '@/components/common/Header';
 import { Footer } from '@/components/common/Footer';
+import { Layout } from '@/components/common/Layout/Layout';
 import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: {
@@ -69,7 +71,7 @@ export default async function LocaleLayout({
       <head>
         <ColorSchemeScript />
       </head>
-      <body className={clsx('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
+      <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
         <Providers
           session={session}
           locale={locale}
@@ -77,11 +79,7 @@ export default async function LocaleLayout({
           themeProps={{ attribute: 'class', defaultTheme: 'light', children: children }}
           csrfToken={csrfToken}
         >
-          <div className='relative flex flex-col h-screen'>
-            <Header locale={locale} />
-            {children}
-            <Footer />
-          </div>
+          <Layout>{children}</Layout>
         </Providers>
       </body>
     </html>

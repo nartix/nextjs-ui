@@ -1,5 +1,7 @@
 import React from 'react';
-import { FooterStory as Footer } from './FooterStory';
+import { Footer } from './Footer';
+import { AppShell, Container } from '@mantine/core';
+import { cn } from '@/lib/utils';
 
 // Optional: Only if you want to log actions (e.g., from '@storybook/addon-actions'):
 // import { action } from '@storybook/addon-actions';
@@ -21,6 +23,17 @@ export default {
   */
 };
 
+const Template = () => {
+  return (
+    <AppShell>
+      <Container className={cn('pt-10')} size='lg'>
+        <Footer />
+      </Container>
+    </AppShell>
+  );
+};
+
 export const Default = {
   args: {},
+  render: Template,
 };

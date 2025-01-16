@@ -1,15 +1,12 @@
-import { AppShell, Burger, Group, UnstyledButton, Text, RemoveScroll, Avatar } from '@mantine/core';
+'use client';
+
+import { AppShell, Burger, Group, UnstyledButton, Text, RemoveScroll, Avatar, Flex } from '@mantine/core';
 import { useDisclosure, useHeadroom } from '@mantine/hooks';
-import { MantineLogo } from '@mantinex/mantine-logo';
-import classes from './Layout.module.css';
-import { LoginIcon } from '../Icons/LoginIcon';
-// import { Footer } from '../../../components/common/Footer';
-import { Footer } from '../Footer/Footer';
+import { Footer } from '@/components/common/Footer/Footer';
+import classes from '@/components/common/Layout/Layout.module.css';
+import { ReactNode } from 'react';
 
-const lorem =
-  'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos ullam, ex cum repellat alias ea nemo. Ducimus ex nesciunt hic ad saepe molestiae nobis necessitatibus laboriosam officia, reprehenderit, earum fugiat?';
-
-export function Layout() {
+export function Layout({ children }: { children: ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
   const pinned = useHeadroom({ fixedAt: 120 });
 
@@ -17,9 +14,13 @@ export function Layout() {
     <AppShell
       header={{ height: 60, collapsed: opened ? false : !pinned, offset: true }}
       navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !opened } }}
-      // footer={{ offset: opened ? false : true, height: { base: 90, md: 70, lg: 70 }, collapsed: opened ? false : !pinned }}
-      // aside={{ width: 300, breakpoint: 'md', collapsed: { desktop: false, mobile: true } }}
       padding='md'
+      styles={{
+        main: {
+          minHeight: 'auto', // Reset min-height
+          height: '100%',
+        },
+      }}
     >
       <AppShell.Header>
         <Group h='100%' px='md' mx='auto'>
@@ -48,20 +49,12 @@ export function Layout() {
         <UnstyledButton className={classes.control}>Contacts</UnstyledButton>
         <UnstyledButton className={classes.control}>Support</UnstyledButton>
       </AppShell.Navbar>
-
-      <AppShell.Main>
-        <RemoveScroll enabled={opened}>
-          {Array(2)
-            .fill(0)
-            .map((_, index) => (
-              <Text size='lg' key={index} my='md' mx='auto' className='max-w-2xl'>
-                {lorem}
-              </Text>
-            ))}
-        </RemoveScroll>
-      </AppShell.Main>
-      {/* <AppShell.Aside p='md'>Aside</AppShell.Aside> */}
-      <Footer />
+      <RemoveScroll enabled={opened}>
+        <Flex direction='column' style={{ minHeight: '100vh' }}>
+          <AppShell.Main className='flex grow'>{children}</AppShell.Main>
+          <Footer />
+        </Flex>
+      </RemoveScroll>
     </AppShell>
   );
 }
