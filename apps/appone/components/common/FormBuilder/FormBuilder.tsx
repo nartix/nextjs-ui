@@ -1,13 +1,15 @@
+'use client';
+
 import { z, ZodTypeAny } from 'zod';
-import { Grid, Fieldset, Text, TextInput, Button, Stack, Checkbox, PasswordInput, Container, Title } from '@mantine/core';
-import { useFormContext, FormProvider, useForm } from 'react-hook-form';
+import { Grid, Fieldset, Text, TextInput, Button, Stack, Checkbox, PasswordInput, Container, Title, Alert } from '@mantine/core';
+import { useFormContext, FormProvider, useForm, SubmitHandler, UseFormSetError } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 // A single field (like before, but you can add optional layout props like colSpan)
 interface FormFieldConfig {
   name: string;
-  label: string;
-  type: 'text' | 'select' | 'checkbox' | 'radio' | 'password';
+  label?: string;
+  type: 'text' | 'select' | 'checkbox' | 'radio' | 'password' | 'number' | 'hidden';
   props?: any;
   placeholder?: string;
   description?: string;
@@ -53,9 +55,11 @@ function renderRow(row: FormRow) {
 
 interface SectionRendererProps {
   section: FormSection;
+  formState: any;
 }
 
-export function SectionRenderer({ section }: SectionRendererProps) {
+export function SectionRenderer({ section, formState }: SectionRendererProps) {
+  const { isSubmitting } = formState;
   const fieldSetProps = {
     legend: section.title,
     ...section.props?.title,
@@ -70,7 +74,7 @@ export function SectionRenderer({ section }: SectionRendererProps) {
   };
 
   return (
-    <Fieldset {...fieldSetProps}>
+    <Fieldset disabled={isSubmitting} {...fieldSetProps}>
       {/* If the section has a description, display it below the legend */}
       {section.description && <Text {...descriptionProps}>{section.description}</Text>}
 
@@ -78,7 +82,7 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       {section.rows.map((row: FormRow, rowIndex: number) => (
         <Grid key={rowIndex} align='flex-end' justify='flex-start' grow mb='md'>
           {row.fields.map((field: FormFieldConfig) => (
-            <Grid.Col key={field.name} span={field.colSpan ?? 6}>
+            <Grid.Col key={field.name} span={field.colSpan ?? 6} className={field.type === 'hidden' ? 'hidden' : ''}>
               <FieldRenderer field={field} />
             </Grid.Col>
           ))}
@@ -106,6 +110,7 @@ function FieldRenderer({ field }: { field: FormFieldConfig }) {
         error={errors[field.name]?.message?.toString()}
         description={field.description}
         {...register(field.name)}
+        {...field.props}
       />
     );
   }
@@ -119,24 +124,82 @@ function FieldRenderer({ field }: { field: FormFieldConfig }) {
         error={errors[field.name]?.message?.toString()}
         description={field.description}
         {...register(field.name)}
+        {...field.props}
       />
     );
   }
 
   if (field.type === 'checkbox') {
-    return <Checkbox id={field.name} label={field.label} {...register(field.name)} />;
+    return <Checkbox id={field.name} label={field.label} {...register(field.name)} {...field.props} />;
+  }
+
+  if (field.type === 'hidden') {
+    return (
+      <input
+        type='hidden'
+        id={field.name}
+        {...register(field.name)}
+        value={(field.defaultValue as string) ?? ''}
+        {...field.props}
+      />
+    );
   }
 
   // Handle other field types (select, checkbox, etc.) here.
   return null;
 }
 
-export const FormBuilder = ({ formConfig }: { formConfig: FormConfig }) => {
-  const zodSchema = buildZodSchema(formConfig); // merges all fields' validations
+function buildDefaultValues(formConfig: FormConfig) {
+  const defaultVals: Record<string, any> = {};
+  formConfig.sections.forEach((section) => {
+    section.rows.forEach((row) => {
+      row.fields.forEach((field) => {
+        defaultVals[field.name] = field.defaultValue ?? '';
+      });
+    });
+  });
+  return defaultVals;
+}
+
+interface FormBuilderProps<T = unknown> {
+  formConfig: FormConfig;
+  submitHandler: (data: T, setError: unknown) => Promise<unknown>;
+  loading?: boolean;
+}
+
+export const FormBuilder = <T,>({ formConfig, submitHandler }: FormBuilderProps<T>) => {
+  const zodSchema = buildZodSchema(formConfig);
+  // const onSubmit: SubmitHandler<any> = (data) => console.log(data);
+
   const methods = useForm({
     resolver: zodResolver(zodSchema),
-    defaultValues: {}, // or from the config
+    defaultValues: buildDefaultValues(formConfig), // or from the config
   });
+
+  const { handleSubmit, setError, formState, register } = methods;
+
+  const { errors, isSubmitting } = formState;
+
+  // 4) onSubmit with server error handling
+  const onSubmit: SubmitHandler<any> = async (data) => {
+    try {
+      await submitHandler(data, setError);
+      // If success, do something like redirect, show success, etc.
+      // alert('Login successful!');
+    } catch (err: any) {
+      // The server says username or password is incorrect
+      // We can show a "global" form error or field-specific errors
+      // Example: a global form error
+      setError('root.serverError', {
+        type: 'server',
+        message: err.message || 'Unknown server error',
+      });
+
+      // Or you might do field-specific, e.g.:
+      // setError('username', { type: 'server', message: 'Username or password incorrect' });
+      // setError('password', { type: 'server', message: 'Username or password incorrect' });
+    }
+  };
 
   const titleProps = {
     order: 2,
@@ -146,22 +209,30 @@ export const FormBuilder = ({ formConfig }: { formConfig: FormConfig }) => {
 
   return (
     <Container
-      size='sm' // Adjusts the max-width based on predefined sizes
+      // size='md' // Adjusts the max-width based on predefined sizes
       style={{
-        // minWidth: '300px', // Set your desired minimum width
+        // minWidth: '200px', // Set your desired minimum width
         width: '100%', // Ensures the container takes full available width
-        maxWidth: '300px', // Optional: Set a maximum width if desired
+        maxWidth: '350px', // Optional: Set a maximum width if desired
         margin: '0 auto', // Centers the container horizontally
       }}
     >
       <FormProvider {...methods}>
-        <form>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Stack align='stretch'>
             {formConfig.title && <Title {...titleProps}>{formConfig.title}</Title>}
+            {/* Global/Root Error Display */}
+            {errors.root?.serverError && (
+              <Alert variant='light' color='red' styles={(theme) => ({ message: { color: theme.colors.red[8] } })}>
+                {errors.root.serverError.message}
+              </Alert>
+            )}
             {formConfig.sections.map((section, index) => (
-              <SectionRenderer key={index} section={section} />
+              <SectionRenderer key={index} section={section} formState={formState} />
             ))}
-            <Button type='submit'>{formConfig.submitText ?? 'Submit'}</Button>
+            <Button type='submit' loading={isSubmitting}>
+              {formConfig.submitText ?? 'Submit'}
+            </Button>
           </Stack>
         </form>
       </FormProvider>
