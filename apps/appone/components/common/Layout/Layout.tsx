@@ -1,10 +1,11 @@
 'use client';
 
-import { AppShell, Burger, Group, UnstyledButton, Text, RemoveScroll, Avatar, Flex } from '@mantine/core';
-import { useDisclosure, useHeadroom } from '@mantine/hooks';
+import { AppShell, Burger, Group, UnstyledButton, Text, RemoveScroll, Avatar, Flex, Anchor } from '@mantine/core';
+import { useDisclosure, useHeadroom, useHover } from '@mantine/hooks';
 import { Footer } from '@/components/common/Footer/Footer';
-import classes from '@/components/common/Layout/Layout.module.css';
+import classes from '@/components/common/Layout/Layout.module.scss';
 import { ReactNode } from 'react';
+import { Header } from '@/components/common/Header/Header';
 
 export function Layout({ children }: { children: ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
@@ -22,26 +23,7 @@ export function Layout({ children }: { children: ReactNode }) {
         },
       }}
     >
-      <AppShell.Header>
-        <Group h='100%' px='md' mx='auto'>
-          <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
-          <Group justify='space-between' style={{ flex: 1 }}>
-            <Text size='lg' fw={700} variant='gradient' gradient={{ from: 'gray', to: 'rgba(120, 73, 73, 1)', deg: 90 }}>
-              FEROZ
-            </Text>
-            <Group ml='xl' gap={0} visibleFrom='sm'>
-              <UnstyledButton className={classes.control}>Home</UnstyledButton>
-              <UnstyledButton className={classes.control}>Blog</UnstyledButton>
-              <UnstyledButton className={classes.control}>Contacts</UnstyledButton>
-              <UnstyledButton className={classes.control}>Support</UnstyledButton>
-            </Group>
-            {/* <Group ml='xl' gap={0} visibleFrom='sm'>
-              <UnstyledButton className={classes.control}>Login</UnstyledButton>
-            </Group> */}
-            <Avatar radius='xl' size='md' />
-          </Group>
-        </Group>
-      </AppShell.Header>
+      <Header opened={opened} toggle={toggle} />
 
       <AppShell.Navbar py='md' px={4}>
         <UnstyledButton className={classes.control}>Home</UnstyledButton>

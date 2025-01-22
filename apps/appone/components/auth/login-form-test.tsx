@@ -1,5 +1,5 @@
 'use client';
-import React, { use } from 'react';
+import React from 'react';
 
 import { FormConfig, FormBuilder } from '@/components/common/FormBuilder/FormBuilder';
 import { BaseContainer } from '@/components/common/BaseContainer/BaseContainer';
@@ -7,12 +7,23 @@ import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { z } from 'zod';
 import { loginActionTest } from '@/app/[locale]/(auth)/actions/login-test-action';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
+import { Text, Anchor } from '@mantine/core';
+import { Link } from '@/i18n/routing';
 
 export function TestLoginForm() {
   const csrf_token = useCSRFToken();
   const formConfig: FormConfig = {
     title: 'Login',
+    // beforeSubmitText: 'Please enter your username and password',
     submitText: 'Sign In',
+    afterSubmitText: (
+      <Text ta='center' size='sm'>
+        Don't have an account?{' '}
+        <Anchor component={Link} href='/'>
+          Register
+        </Anchor>
+      </Text>
+    ),
     // props: {
     //   title: {
     //     order: 1,
@@ -25,12 +36,12 @@ export function TestLoginForm() {
         // description: 'Please enter your personal information',
         // props: {
         //   title: {
-        //     variant: 'default',
+        //     variant: 'unstyled',
         //     classNames: { legend: 'text-left' },
         //   },
-        //   description: {
-        //     className: 'text-right',
-        //   },
+        // description: {
+        //   className: 'text-right',
+        // },
         // },
         rows: [
           // {
@@ -62,6 +73,17 @@ export function TestLoginForm() {
                 // props: { withAsterisk: true },
                 // colSpan: 8,
                 defaultValue: 'bill',
+                gridColProps: { span: 3 },
+              },
+              {
+                name: 'username2',
+                label: 'Username',
+                type: 'text',
+                validation: loginFormSchema.shape.username,
+                // props: { withAsterisk: true },
+                // colSpan: 8,
+                defaultValue: 'bill',
+                gridColProps: { span: 6 },
               },
             ],
           },
@@ -72,6 +94,7 @@ export function TestLoginForm() {
                 label: 'Password',
                 type: 'password',
                 validation: loginFormSchema.shape.password,
+                gridColProps: { span: 6 },
               },
             ],
           },
@@ -81,6 +104,18 @@ export function TestLoginForm() {
                 name: 'rememberme',
                 label: 'Keep me logged in',
                 type: 'checkbox',
+                gridColProps: { span: 6 },
+                // props: { size: 'xs', classNames: { body: 'flex justify-end ' } },
+              },
+              {
+                name: 'forgotpassword',
+                type: 'component',
+                gridColProps: { ta: 'right', span: 6 },
+                component: (
+                  <Anchor href='/' component={Link} size='sm'>
+                    Forgot Password
+                  </Anchor>
+                ),
               },
             ],
           },

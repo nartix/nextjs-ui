@@ -1,23 +1,41 @@
 'use client';
 
 import { z, ZodTypeAny } from 'zod';
-import { Grid, Fieldset, Text, TextInput, Button, Stack, Checkbox, PasswordInput, Container, Title, Alert } from '@mantine/core';
+import {
+  Grid,
+  Fieldset,
+  Text,
+  TextInput,
+  Button,
+  Stack,
+  Checkbox,
+  PasswordInput,
+  Container,
+  Title,
+  Alert,
+  Select,
+  RadioGroup,
+  NumberInput,
+  Radio,
+} from '@mantine/core';
 import { useFormContext, FormProvider, useForm, SubmitHandler, UseFormSetError } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ReactNode } from 'react';
 
 // A single field (like before, but you can add optional layout props like colSpan)
 interface FormFieldConfig {
   name: string;
   label?: string;
-  type: 'text' | 'select' | 'checkbox' | 'radio' | 'password' | 'number' | 'hidden';
+  type: 'text' | 'select' | 'checkbox' | 'radio' | 'password' | 'number' | 'hidden' | 'component';
   props?: any;
   placeholder?: string;
   description?: string;
   defaultValue?: unknown;
   validation?: ZodTypeAny;
   options?: { label: string; value: string }[];
-  // Layout-specific options (optional):
-  colSpan?: number; // how many columns to span if using a 12-column grid, for instance
+  component?: ReactNode;
+  gridColProps?: any; // props to pass to the grid
+  gridColSpan?: number; // how many columns to span if using a 12-column grid, for instance
 }
 
 // Each row is simply an array of fields
@@ -38,14 +56,16 @@ export interface FormConfig {
   props?: any;
   sections: FormSection[];
   title?: string;
+  beforeSubmitText?: ReactNode;
   submitText?: string;
+  afterSubmitText?: ReactNode;
 }
 
 function renderRow(row: FormRow) {
   return (
     <Grid>
       {row.fields.map((field) => (
-        <Grid.Col key={field.name} span={field.colSpan ?? 12}>
+        <Grid.Col key={field.name} span={field.gridColSpan ?? 12}>
           {/* Render your field here */}
         </Grid.Col>
       ))}
@@ -58,8 +78,9 @@ interface SectionRendererProps {
   formState: any;
 }
 
-export function SectionRenderer({ section, formState }: SectionRendererProps) {
+const SectionRenderer: React.FC<SectionRendererProps> = ({ section, formState }) => {
   const { isSubmitting } = formState;
+
   const fieldSetProps = {
     legend: section.title,
     ...section.props?.title,
@@ -75,14 +96,11 @@ export function SectionRenderer({ section, formState }: SectionRendererProps) {
 
   return (
     <Fieldset disabled={isSubmitting} {...fieldSetProps}>
-      {/* If the section has a description, display it below the legend */}
       {section.description && <Text {...descriptionProps}>{section.description}</Text>}
-
-      {/* Render each row */}
       {section.rows.map((row: FormRow, rowIndex: number) => (
         <Grid key={rowIndex} align='flex-end' justify='flex-start' grow mb='md'>
           {row.fields.map((field: FormFieldConfig) => (
-            <Grid.Col key={field.name} span={field.colSpan ?? 6} className={field.type === 'hidden' ? 'hidden' : ''}>
+            <Grid.Col key={field.name} className={field.type === 'hidden' ? 'hidden' : ''} {...field.gridColProps}>
               <FieldRenderer field={field} />
             </Grid.Col>
           ))}
@@ -90,75 +108,88 @@ export function SectionRenderer({ section, formState }: SectionRendererProps) {
       ))}
     </Fieldset>
   );
+};
+
+interface FieldRendererProps {
+  field: FormFieldConfig;
 }
 
-// A simple FieldRenderer that picks the correct Mantine component
-function FieldRenderer({ field }: { field: FormFieldConfig }) {
-  // useFormContext gives us access to the form methods (register, errors, etc.)
+const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
   const {
     register,
     formState: { errors },
   } = useFormContext();
 
-  // For demonstration, let's assume a simple text input:
-  if (field.type === 'text') {
-    return (
-      <TextInput
-        id={field.name}
-        label={field.label}
-        placeholder={field.placeholder}
-        error={errors[field.name]?.message?.toString()}
-        description={field.description}
-        {...register(field.name)}
-        {...field.props}
-      />
-    );
-  }
+  const error = errors[field.name]?.message?.toString();
 
-  if (field.type === 'password') {
-    return (
-      <PasswordInput
-        id={field.name}
-        label={field.label}
-        placeholder={field.placeholder}
-        error={errors[field.name]?.message?.toString()}
-        description={field.description}
-        {...register(field.name)}
-        {...field.props}
-      />
-    );
-  }
+  const commonProps = {
+    id: field.name,
+    label: field.label,
+    placeholder: field.placeholder,
+    description: field.description,
+    error,
+    ...register(field.name),
+    ...field.props,
+  };
 
-  if (field.type === 'checkbox') {
-    return <Checkbox id={field.name} label={field.label} {...register(field.name)} {...field.props} />;
+  switch (field.type) {
+    case 'text':
+      return <TextInput {...commonProps} />;
+    case 'password':
+      return <PasswordInput {...commonProps} />;
+    case 'checkbox':
+      return <Checkbox label={field.label} {...commonProps} />;
+    case 'select':
+      return <Select data={field.options || []} {...commonProps} />;
+    case 'radio':
+      return (
+        <RadioGroup {...commonProps}>
+          {field.options?.map((option) => <Radio key={option.value} value={option.value} label={option.label} />)}
+        </RadioGroup>
+      );
+    case 'number':
+      return <NumberInput {...commonProps} />;
+    case 'hidden':
+      return <input type='hidden' {...register(field.name)} defaultValue={field.defaultValue as string} {...field.props} />;
+    case 'component':
+      return field.component ?? null;
+    default:
+      return null;
   }
+};
 
-  if (field.type === 'hidden') {
-    return (
-      <input
-        type='hidden'
-        id={field.name}
-        {...register(field.name)}
-        value={(field.defaultValue as string) ?? ''}
-        {...field.props}
-      />
-    );
+/**
+ * Returns a default value based on the field type.
+ */
+function getDefaultValueByType(type: FormFieldConfig['type']): any {
+  switch (type) {
+    case 'checkbox':
+      return false;
+    case 'select':
+    case 'radio':
+      return '';
+    case 'number':
+      return 0;
+    case 'hidden':
+      return '';
+    default:
+      return '';
   }
-
-  // Handle other field types (select, checkbox, etc.) here.
-  return null;
 }
 
-function buildDefaultValues(formConfig: FormConfig) {
-  const defaultVals: Record<string, any> = {};
+/**
+ * Builds default values for the form based on the configuration.
+ */
+export function buildDefaultValues(formConfig: FormConfig): Record<string, any> {
+  const defaultValues: Record<string, any> = {};
   formConfig.sections.forEach((section) => {
     section.rows.forEach((row) => {
       row.fields.forEach((field) => {
-        defaultVals[field.name] = field.defaultValue ?? '';
+        defaultValues[field.name] = field.defaultValue ?? getDefaultValueByType(field.type);
       });
     });
   });
-  return defaultVals;
+  return defaultValues;
 }
 
 interface FormBuilderProps<T = unknown> {
@@ -167,16 +198,15 @@ interface FormBuilderProps<T = unknown> {
   loading?: boolean;
 }
 
-export const FormBuilder = <T,>({ formConfig, submitHandler }: FormBuilderProps<T>) => {
+export const FormBuilder = <T extends Record<string, any>>({ formConfig, submitHandler }: FormBuilderProps<T>) => {
   const zodSchema = buildZodSchema(formConfig);
-  // const onSubmit: SubmitHandler<any> = (data) => console.log(data);
 
   const methods = useForm({
     resolver: zodResolver(zodSchema),
     defaultValues: buildDefaultValues(formConfig), // or from the config
   });
 
-  const { handleSubmit, setError, formState, register } = methods;
+  const { handleSubmit, setError, formState } = methods;
 
   const { errors, isSubmitting } = formState;
 
@@ -184,12 +214,7 @@ export const FormBuilder = <T,>({ formConfig, submitHandler }: FormBuilderProps<
   const onSubmit: SubmitHandler<any> = async (data) => {
     try {
       await submitHandler(data, setError);
-      // If success, do something like redirect, show success, etc.
-      // alert('Login successful!');
     } catch (err: any) {
-      // The server says username or password is incorrect
-      // We can show a "global" form error or field-specific errors
-      // Example: a global form error
       setError('root.serverError', {
         type: 'server',
         message: err.message || 'Unknown server error',
@@ -213,7 +238,7 @@ export const FormBuilder = <T,>({ formConfig, submitHandler }: FormBuilderProps<
       style={{
         // minWidth: '200px', // Set your desired minimum width
         width: '100%', // Ensures the container takes full available width
-        maxWidth: '350px', // Optional: Set a maximum width if desired
+        maxWidth: '400px', // Optional: Set a maximum width if desired
         margin: '0 auto', // Centers the container horizontally
       }}
     >
@@ -230,9 +255,11 @@ export const FormBuilder = <T,>({ formConfig, submitHandler }: FormBuilderProps<
             {formConfig.sections.map((section, index) => (
               <SectionRenderer key={index} section={section} formState={formState} />
             ))}
+            {formConfig.beforeSubmitText}
             <Button type='submit' loading={isSubmitting}>
               {formConfig.submitText ?? 'Submit'}
             </Button>
+            {formConfig.afterSubmitText}
           </Stack>
         </form>
       </FormProvider>
@@ -241,29 +268,18 @@ export const FormBuilder = <T,>({ formConfig, submitHandler }: FormBuilderProps<
 };
 
 /**
- * buildZodSchema
- *  - Loops over all sections, rows, and fields
- *  - Collects each field's validation schema (if any)
- *  - Returns a single z.object() that includes all fields by name
+ * Builds a Zod schema based on the form configuration.
  */
-export function buildZodSchema(formConfig: FormConfig) {
-  // We'll store our shape in a standard JS object,
-  // where each key maps to a Zod schema for that field
+export function buildZodSchema(formConfig: FormConfig): z.ZodObject<any> {
   const shape: Record<string, ZodTypeAny> = {};
 
-  // Loop over every section
   formConfig.sections.forEach((section) => {
-    // Loop over every row within the section
     section.rows.forEach((row) => {
-      // Loop over each field in the row
       row.fields.forEach((field) => {
-        // If the field has a custom validation schema, use it
-        // Otherwise, default to z.any()
         shape[field.name] = field.validation ?? z.any();
       });
     });
   });
 
-  // Return a single Zod object containing all field validations
   return z.object(shape);
 }
