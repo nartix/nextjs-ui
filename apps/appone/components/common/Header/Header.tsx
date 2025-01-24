@@ -16,10 +16,15 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
             </Text>
           </Anchor>
           <Group ml='xl' gap={0} visibleFrom='sm'>
-            <UnstyledButton className={classes.control}>Home</UnstyledButton>
+            <UnstyledButton className={classes.control} component={Link} href='/'>
+              Home
+            </UnstyledButton>
             <UnstyledButton className={classes.control}>Blog</UnstyledButton>
             <UnstyledButton className={classes.control}>Contacts</UnstyledButton>
             <UnstyledButton className={classes.control}>Support</UnstyledButton>
+            <UnstyledButton className={classes.control} component={Link} href='/formtest'>
+              FormTest
+            </UnstyledButton>
           </Group>
           {/* <Group ml='xl' gap={0} visibleFrom='sm'>
           <UnstyledButton className={classes.control}>Login</UnstyledButton>

@@ -43,6 +43,10 @@ export function TestLoginForm() {
         //   className: 'text-right',
         // },
         // },
+        // mb: 'sm',
+        layout: {
+          gridProps: { align: 'flex-end', justify: 'flex-start', mb: 'sm' },
+        },
         rows: [
           // {
           //   fields: [
@@ -52,7 +56,6 @@ export function TestLoginForm() {
           //       placeholder: 'Enter your name',
           //       description: 'Input description',
           //       type: 'text',
-          //       colSpan: 4,
           //     },
           //     {
           //       name: 'input2',
@@ -73,18 +76,18 @@ export function TestLoginForm() {
                 // props: { withAsterisk: true },
                 // colSpan: 8,
                 defaultValue: 'bill',
-                gridColProps: { span: 3 },
+                // gridColProps: { span: 8 },
               },
-              {
-                name: 'username2',
-                label: 'Username',
-                type: 'text',
-                validation: loginFormSchema.shape.username,
-                // props: { withAsterisk: true },
-                // colSpan: 8,
-                defaultValue: 'bill',
-                gridColProps: { span: 6 },
-              },
+              // {
+              //   name: 'username2',
+              //   label: 'Username',
+              //   type: 'text',
+              //   validation: loginFormSchema.shape.username,
+              //   // props: { withAsterisk: true },
+              //   // colSpan: 8,
+              //   defaultValue: 'bill',
+              //   gridColProps: { span: 9 },
+              // },
             ],
           },
           {
@@ -94,7 +97,7 @@ export function TestLoginForm() {
                 label: 'Password',
                 type: 'password',
                 validation: loginFormSchema.shape.password,
-                gridColProps: { span: 6 },
+                // gridColProps: { span: 6 },
               },
             ],
           },
@@ -104,13 +107,17 @@ export function TestLoginForm() {
                 name: 'rememberme',
                 label: 'Keep me logged in',
                 type: 'checkbox',
-                gridColProps: { span: 6 },
+                layout: {
+                  gridColProps: { span: 6 },
+                },
                 // props: { size: 'xs', classNames: { body: 'flex justify-end ' } },
               },
               {
                 name: 'forgotpassword',
                 type: 'component',
-                gridColProps: { ta: 'right', span: 6 },
+                layout: {
+                  gridColProps: { ta: 'right', span: 6 },
+                },
                 component: (
                   <Anchor href='/' component={Link} size='sm'>
                     Forgot Password
@@ -125,6 +132,43 @@ export function TestLoginForm() {
                 name: 'csrf_token',
                 type: 'hidden',
                 defaultValue: csrf_token,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        title: 'Test Section',
+        rows: [
+          {
+            fields: [
+              {
+                name: 'showUserInfo',
+                type: 'component',
+                component: ({ watch, formState, setValue }) => {
+                  // watch returns the value of any field
+                  const username = watch('username', '');
+                  const rememberMe = watch('rememberme', false);
+
+                  // You can also read errors or isValid, etc., from formState
+                  const { errors } = formState;
+
+                  // // For demonstration, let's update some hidden field if username changes
+                  // if (username.includes('test')) {
+                  //   setValue('password', 'TestUserCSRF');
+                  // } else {
+                  //   setValue('password', '');
+                  // }
+
+                  return (
+                    <div style={{ color: 'blue' }}>
+                      {`Username: ${username}`}
+                      <br />
+                      {`Remember me? ${rememberMe}`}
+                      {errors.username && <p style={{ color: 'red' }}>Username Error: {String(errors.username.message)}</p>}
+                    </div>
+                  );
+                },
               },
             ],
           },

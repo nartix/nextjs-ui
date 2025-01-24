@@ -10,32 +10,35 @@ import {
   Stack,
   Checkbox,
   PasswordInput,
-  Container,
   Title,
   Alert,
   Select,
-  RadioGroup,
   NumberInput,
   Radio,
+  Group,
+  Textarea,
 } from '@mantine/core';
-import { useFormContext, FormProvider, useForm, SubmitHandler, UseFormSetError } from 'react-hook-form';
+import { useFormContext, FormProvider, useForm, SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
+
+export type FieldComponentFn = (methods: UseFormReturn<any>) => React.ReactNode;
 
 // A single field (like before, but you can add optional layout props like colSpan)
 interface FormFieldConfig {
   name: string;
   label?: string;
-  type: 'text' | 'select' | 'checkbox' | 'radio' | 'password' | 'number' | 'hidden' | 'component';
-  props?: any;
+  type: 'text' | 'textarea' | 'select' | 'checkbox' | 'radio' | 'password' | 'number' | 'hidden' | 'component';
   placeholder?: string;
   description?: string;
   defaultValue?: unknown;
   validation?: ZodTypeAny;
   options?: { label: string; value: string }[];
-  component?: ReactNode;
-  gridColProps?: any; // props to pass to the grid
-  gridColSpan?: number; // how many columns to span if using a 12-column grid, for instance
+  component?: ReactNode | FieldComponentFn;
+  layout?: {
+    props?: Record<string, any>; // e.g. { withAsterisk: true } for the all the mantine types
+    gridColProps?: Record<string, any>; // e.g. { span: 8 }
+  };
 }
 
 // Each row is simply an array of fields
@@ -48,29 +51,23 @@ interface FormSection {
   title?: string;
   description?: string;
   rows: FormRow[];
-  props?: any;
+  layout?: {
+    gridProps?: Record<string, any>; // e.g. { gutter: 'md' }
+    fieldsetProps?: Record<string, any>;
+  };
 }
 
 // The overall form config is just an array of sections
 export interface FormConfig {
-  props?: any;
+  // props?: any;
   sections: FormSection[];
   title?: string;
   beforeSubmitText?: ReactNode;
   submitText?: string;
   afterSubmitText?: ReactNode;
-}
-
-function renderRow(row: FormRow) {
-  return (
-    <Grid>
-      {row.fields.map((field) => (
-        <Grid.Col key={field.name} span={field.gridColSpan ?? 12}>
-          {/* Render your field here */}
-        </Grid.Col>
-      ))}
-    </Grid>
-  );
+  layout?: {
+    titleProps?: Record<string, any>;
+  };
 }
 
 interface SectionRendererProps {
@@ -83,7 +80,7 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({ section, formState })
 
   const fieldSetProps = {
     legend: section.title,
-    ...section.props?.title,
+    ...section.layout?.fieldsetProps?.title,
   };
 
   // size='sm' mt='xs' mb='md'
@@ -91,16 +88,16 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({ section, formState })
     mt: 'xs',
     mb: 'md',
     size: 'sm',
-    ...section.props?.description,
+    ...section.layout?.fieldsetProps?.description,
   };
 
   return (
     <Fieldset disabled={isSubmitting} {...fieldSetProps}>
       {section.description && <Text {...descriptionProps}>{section.description}</Text>}
       {section.rows.map((row: FormRow, rowIndex: number) => (
-        <Grid key={rowIndex} align='flex-end' justify='flex-start' grow mb='md'>
+        <Grid key={rowIndex} {...section.layout?.gridProps}>
           {row.fields.map((field: FormFieldConfig) => (
-            <Grid.Col key={field.name} className={field.type === 'hidden' ? 'hidden' : ''} {...field.gridColProps}>
+            <Grid.Col key={field.name} className={field.type === 'hidden' ? 'hidden' : ''} {...field.layout?.gridColProps}>
               <FieldRenderer field={field} />
             </Grid.Col>
           ))}
@@ -115,13 +112,17 @@ interface FieldRendererProps {
 }
 
 const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
+  const methods = useFormContext();
   const {
     register,
+    setValue,
     formState: { errors },
-  } = useFormContext();
+  } = methods;
 
   const error = errors[field.name]?.message?.toString();
 
+  // Common props for simple Mantine components that don't require bridging
+  // (text, textarea, password, checkbox, etc.)
   const commonProps = {
     id: field.name,
     label: field.label,
@@ -129,30 +130,94 @@ const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
     description: field.description,
     error,
     ...register(field.name),
-    ...field.props,
+    ...field.layout?.props,
   };
 
   switch (field.type) {
     case 'text':
       return <TextInput {...commonProps} />;
+
+    case 'textarea':
+      return <Textarea {...commonProps} />;
+
     case 'password':
       return <PasswordInput {...commonProps} />;
+
     case 'checkbox':
-      return <Checkbox label={field.label} {...commonProps} />;
-    case 'select':
-      return <Select data={field.options || []} {...commonProps} />;
-    case 'radio':
+      return <Checkbox {...commonProps} />;
+
+    case 'select': {
+      const selectRegister = register(field.name);
+
       return (
-        <RadioGroup {...commonProps}>
-          {field.options?.map((option) => <Radio key={option.value} value={option.value} label={option.label} />)}
-        </RadioGroup>
+        <Select
+          {...field.layout?.props}
+          label={field.label}
+          name={selectRegister.name}
+          data={field.options ?? []}
+          error={error}
+          defaultValue={field.defaultValue as string}
+          onChange={(value) => {
+            setValue(field.name, value, { shouldValidate: true });
+          }}
+        />
       );
-    case 'number':
-      return <NumberInput {...commonProps} />;
+    }
+
+    case 'radio': {
+      const [radioValue, setRadioValue] = useState<string>((field.defaultValue as string) ?? '');
+      const radioRegister = register(field.name);
+
+      return (
+        <Radio.Group label={field.label} value={radioValue} error={error}>
+          <Group mt='xs'>
+            {field.options?.map((option) => (
+              <Radio
+                key={option.value}
+                value={option.value}
+                label={option.label}
+                name={radioRegister.name}
+                onBlur={radioRegister.onBlur}
+                ref={radioRegister.ref}
+                onChange={(event) => {
+                  setRadioValue(event.currentTarget.value);
+                  radioRegister.onChange(event);
+                }}
+              />
+            ))}
+          </Group>
+        </Radio.Group>
+      );
+    }
+    case 'number': {
+      const numberRegister = register(field.name);
+
+      return (
+        <NumberInput
+          {...field.layout?.props} // e.g. min, max, etc.
+          label={field.label}
+          name={numberRegister.name}
+          error={error}
+          ref={numberRegister.ref}
+          onBlur={numberRegister.onBlur}
+          defaultValue={typeof field.defaultValue === 'number' ? field.defaultValue : undefined}
+          onChange={(val) => {
+            setValue(field.name, val ?? 0, { shouldValidate: true });
+          }}
+        />
+      );
+    }
     case 'hidden':
-      return <input type='hidden' {...register(field.name)} defaultValue={field.defaultValue as string} {...field.props} />;
-    case 'component':
-      return field.component ?? null;
+      return (
+        <input type='hidden' {...register(field.name)} defaultValue={field.defaultValue as string} {...field.layout?.props} />
+      );
+    case 'component': {
+      if (typeof field.component === 'function') {
+        const componentFn = field.component as FieldComponentFn;
+        return <>{componentFn(methods)}</>;
+      }
+      return <>{field.component ?? null}</>;
+    }
     default:
       return null;
   }
@@ -177,9 +242,6 @@ function getDefaultValueByType(type: FormFieldConfig['type']): any {
   }
 }
 
-/**
- * Builds default values for the form based on the configuration.
- */
 export function buildDefaultValues(formConfig: FormConfig): Record<string, any> {
   const defaultValues: Record<string, any> = {};
   formConfig.sections.forEach((section) => {
@@ -192,7 +254,7 @@ export function buildDefaultValues(formConfig: FormConfig): Record<string, any> 
   return defaultValues;
 }
 
-interface FormBuilderProps<T = unknown> {
+export interface FormBuilderProps<T = unknown> {
   formConfig: FormConfig;
   submitHandler: (data: T, setError: unknown) => Promise<unknown>;
   loading?: boolean;
@@ -210,7 +272,6 @@ export const FormBuilder = <T extends Record<string, any>>({ formConfig, submitH
 
   const { errors, isSubmitting } = formState;
 
-  // 4) onSubmit with server error handling
   const onSubmit: SubmitHandler<any> = async (data) => {
     try {
       await submitHandler(data, setError);
@@ -219,51 +280,37 @@ export const FormBuilder = <T extends Record<string, any>>({ formConfig, submitH
         type: 'server',
         message: err.message || 'Unknown server error',
       });
-
-      // Or you might do field-specific, e.g.:
-      // setError('username', { type: 'server', message: 'Username or password incorrect' });
-      // setError('password', { type: 'server', message: 'Username or password incorrect' });
     }
   };
 
   const titleProps = {
     order: 2,
     ta: 'center',
-    ...formConfig.props?.title,
+    ...formConfig.layout?.titleProps?.title,
   };
 
   return (
-    <Container
-      // size='md' // Adjusts the max-width based on predefined sizes
-      style={{
-        // minWidth: '200px', // Set your desired minimum width
-        width: '100%', // Ensures the container takes full available width
-        maxWidth: '400px', // Optional: Set a maximum width if desired
-        margin: '0 auto', // Centers the container horizontally
-      }}
-    >
-      <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack align='stretch'>
-            {formConfig.title && <Title {...titleProps}>{formConfig.title}</Title>}
-            {/* Global/Root Error Display */}
-            {errors.root?.serverError && (
-              <Alert variant='light' color='red' styles={(theme) => ({ message: { color: theme.colors.red[8] } })}>
-                {errors.root.serverError.message}
-              </Alert>
-            )}
-            {formConfig.sections.map((section, index) => (
-              <SectionRenderer key={index} section={section} formState={formState} />
-            ))}
-            {formConfig.beforeSubmitText}
-            <Button type='submit' loading={isSubmitting}>
-              {formConfig.submitText ?? 'Submit'}
-            </Button>
-            {formConfig.afterSubmitText}
-          </Stack>
-        </form>
-      </FormProvider>
-    </Container>
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Stack align='stretch'>
+          {formConfig.title && <Title {...titleProps}>{formConfig.title}</Title>}
+          {/* Global/Root Error Display */}
+          {errors.root?.serverError && (
+            <Alert variant='light' color='red' styles={(theme) => ({ message: { color: theme.colors.red[8] } })}>
+              {errors.root.serverError.message}
+            </Alert>
+          )}
+          {formConfig.sections.map((section, index) => (
+            <SectionRenderer key={index} section={section} formState={formState} />
+          ))}
+          {formConfig.beforeSubmitText}
+          <Button type='submit' loading={isSubmitting}>
+            {formConfig.submitText ?? 'Submit'}
+          </Button>
+          {formConfig.afterSubmitText}
+        </Stack>
+      </form>
+    </FormProvider>
   );
 };
 
