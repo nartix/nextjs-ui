@@ -35,6 +35,7 @@ interface FormFieldConfig {
   validation?: ZodTypeAny;
   options?: { label: string; value: string }[];
   component?: ReactNode | FieldComponentFn;
+  onChange?: (input: string) => string;
   layout?: {
     props?: Record<string, any>; // e.g. { withAsterisk: true } for the all the mantine types
     gridColProps?: Record<string, any>; // e.g. { span: 8 }
@@ -67,6 +68,7 @@ export interface FormConfig {
   afterSubmitText?: ReactNode;
   layout?: {
     titleProps?: Record<string, any>;
+    errorAlertProps?: Record<string, any>;
   };
 }
 
@@ -148,7 +150,6 @@ const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
 
     case 'select': {
       const selectRegister = register(field.name);
-
       return (
         <Select
           {...field.layout?.props}
@@ -169,7 +170,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
       const radioRegister = register(field.name);
 
       return (
-        <Radio.Group label={field.label} value={radioValue} error={error}>
+        <Radio.Group label={field.label} value={radioValue} error={error} {...field.layout?.props}>
           <Group mt='xs'>
             {field.options?.map((option) => (
               <Radio
@@ -289,17 +290,25 @@ export const FormBuilder = <T extends Record<string, any>>({ formConfig, submitH
     ...formConfig.layout?.titleProps?.title,
   };
 
+  const errorAlertProps = {
+    variant: 'light',
+    color: 'red',
+    styles: (theme: any) => ({ message: { color: theme.colors.red[8] } }),
+    ...formConfig.layout?.errorAlertProps,
+  };
+
   return (
+    // <Container
+    //   w='100%'
+    //   size={400}
+
+    // ></Container>
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack align='stretch'>
           {formConfig.title && <Title {...titleProps}>{formConfig.title}</Title>}
           {/* Global/Root Error Display */}
-          {errors.root?.serverError && (
-            <Alert variant='light' color='red' styles={(theme) => ({ message: { color: theme.colors.red[8] } })}>
-              {errors.root.serverError.message}
-            </Alert>
-          )}
+          {errors.root?.serverError && <Alert>{errors.root.serverError.message}</Alert>}
           {formConfig.sections.map((section, index) => (
             <SectionRenderer key={index} section={section} formState={formState} />
           ))}

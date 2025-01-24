@@ -7,7 +7,7 @@ import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { z } from 'zod';
 import { loginActionTest } from '@/app/[locale]/(auth)/actions/login-test-action';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
-import { Text, Anchor } from '@mantine/core';
+import { Text, Anchor, Container } from '@mantine/core';
 import { Link } from '@/i18n/routing';
 
 export function TestLoginForm() {
@@ -226,9 +226,31 @@ export function TestLoginForm() {
     }
   }
 
+  //   <Container
+  //   // size='md' // Adjusts the max-width based on predefined sizes
+  //   style={{
+  //     // minWidth: '200px', // Set your desired minimum width
+  //     width: '100%', // Ensures the container takes full available width
+  //     maxWidth: '400px', // Optional: Set a maximum width if desired
+  //     margin: '0 auto', // Centers the container horizontally
+  //   }}
+  // >
+
   return (
     <BaseContainer>
-      <FormBuilder formConfig={formConfig} submitHandler={loginActionTestHandler} />
+      <Container
+        w='100%'
+        size={400}
+        // m='0 auto'
+        //  style={{
+        //     // minWidth: '200px', // Set your desired minimum width
+        //     width: '100%', // Ensures the container takes full available width
+        //     maxWidth: '400px', // Optional: Set a maximum width if desired
+        //     margin: '0 auto', // Centers the container horizontally
+        //   }}
+      >
+        <FormBuilder formConfig={formConfig} submitHandler={loginActionTestHandler} />
+      </Container>
     </BaseContainer>
   );
 }
