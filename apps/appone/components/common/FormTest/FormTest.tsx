@@ -203,7 +203,7 @@ export function FormTest() {
 
   return (
     <BaseContainer>
-      <Container size={400}>
+      <Container size={400} mt='lg'>
         <FormBuilder formConfig={formConfig} submitHandler={submitHandler} />
       </Container>
     </BaseContainer>

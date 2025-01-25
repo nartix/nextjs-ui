@@ -1,7 +1,12 @@
 'use server';
 
 import { z } from 'zod';
-import { loginFormSchema } from '../form/login-schemas';
+import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
+import { getTranslations } from 'next-intl/server';
+import { redirect } from 'next/navigation';
+import { signIn } from '@nartix/next-security';
+import { authConfig } from '@/app/[locale]/(auth)/auth-options';
+import { loginSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 
 type LoginFormValues = z.infer<typeof loginFormSchema>;
 
@@ -13,19 +18,40 @@ export type ActionResponse<T = unknown> = {
   error?: string;
 };
 
-export async function loginActionTest(data: LoginFormValues): Promise<ActionResponse> {
+export async function loginActionTest(formData: LoginFormValues): Promise<ActionResponse> {
   // Simulate a server call. We'll reject if username or password is wrong
 
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      if (data.username === 'user' && data.password === 'password') {
-        resolve({ success: true }); // success
-      } else {
-        resolve({
-          success: false,
-          message: 'Username or password is incorrect',
-        });
-      }
-    }, 1000);
-  });
+  // return new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     if (data.username === 'user' && data.password === 'password') {
+  //       resolve({ success: true }); // success
+  //     } else {
+  //       resolve({
+  //         success: false,
+  //         message: 'Username or password is incorrect',
+  //       });
+  //     }
+  //   }, 1000);
+  // });
+
+  const t = await getTranslations();
+
+  const { success } = loginSchema.safeParse(formData);
+  if (!success) {
+    return { success: false, message: t('auth.error_invalid_form_data') };
+  }
+
+  const { username, password } = formData;
+  try {
+    const user = await signIn(authConfig, { username, password }, 'credentials');
+
+    if (!user) {
+      return { success: false, message: t('auth.error_invalid_credentials') };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Login error:', error);
+    return { success: false, message: t('errors.error_unexpected') };
+  }
 }

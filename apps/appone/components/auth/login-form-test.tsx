@@ -7,8 +7,9 @@ import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { z } from 'zod';
 import { loginActionTest } from '@/app/[locale]/(auth)/actions/login-test-action';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
-import { Text, Anchor, Container } from '@mantine/core';
+import { Text, Anchor, Container, Loader } from '@mantine/core';
 import { Link } from '@/i18n/routing';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export function TestLoginForm() {
   const csrf_token = useCSRFToken();
@@ -137,43 +138,43 @@ export function TestLoginForm() {
           },
         ],
       },
-      {
-        title: 'Test Section',
-        rows: [
-          {
-            fields: [
-              {
-                name: 'showUserInfo',
-                type: 'component',
-                component: ({ watch, formState, setValue }) => {
-                  // watch returns the value of any field
-                  const username = watch('username', '');
-                  const rememberMe = watch('rememberme', false);
+      // {
+      //   title: 'Test Section',
+      //   rows: [
+      //     {
+      //       fields: [
+      //         {
+      //           name: 'showUserInfo',
+      //           type: 'component',
+      //           component: ({ watch, formState, setValue }) => {
+      //             // watch returns the value of any field
+      //             const username = watch('username', '');
+      //             const rememberMe = watch('rememberme', false);
 
-                  // You can also read errors or isValid, etc., from formState
-                  const { errors } = formState;
+      //             // You can also read errors or isValid, etc., from formState
+      //             const { errors } = formState;
 
-                  // // For demonstration, let's update some hidden field if username changes
-                  // if (username.includes('test')) {
-                  //   setValue('password', 'TestUserCSRF');
-                  // } else {
-                  //   setValue('password', '');
-                  // }
+      //             // // For demonstration, let's update some hidden field if username changes
+      //             // if (username.includes('test')) {
+      //             //   setValue('password', 'TestUserCSRF');
+      //             // } else {
+      //             //   setValue('password', '');
+      //             // }
 
-                  return (
-                    <div style={{ color: 'blue' }}>
-                      {`Username: ${username}`}
-                      <br />
-                      {`Remember me? ${rememberMe}`}
-                      {errors.username && <p style={{ color: 'red' }}>Username Error: {String(errors.username.message)}</p>}
-                    </div>
-                  );
-                },
-              },
-            ],
-          },
-        ],
-      },
+      //             return (
+      //               <div style={{ color: 'blue' }}>
+      //                 {`Username: ${username}`}
+      //                 <br />
+      //                 {`Remember me? ${rememberMe}`}
+      //                 {errors.username && <p style={{ color: 'red' }}>Username Error: {String(errors.username.message)}</p>}
+      //               </div>
+      //             );
+      //           },
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // },
     ],
   };
 
@@ -204,13 +205,18 @@ export function TestLoginForm() {
     });
   }
 
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [isRedirecting, setIsRedirecting] = React.useState(false);
   async function loginActionTestHandler(data: any, setError: any) {
     try {
       const response = await loginActionTest(data);
       if (response && response.success) {
-        // If success, do something like redirect, show success, etc.
-        alert('Login successful!');
-        // return response;
+        // alert('Login successful!');
+        setIsRedirecting(true);
+        const next = searchParams.get('next');
+        router.push(next || '/');
+        return;
       } else {
         // setError('username', { message: 'Invalid username or password' });
         // setError('password', { type: 'manual', message: 'Invalid username or password' });
@@ -238,19 +244,13 @@ export function TestLoginForm() {
 
   return (
     <BaseContainer>
-      <Container
-        w='100%'
-        size={400}
-        // m='0 auto'
-        //  style={{
-        //     // minWidth: '200px', // Set your desired minimum width
-        //     width: '100%', // Ensures the container takes full available width
-        //     maxWidth: '400px', // Optional: Set a maximum width if desired
-        //     margin: '0 auto', // Centers the container horizontally
-        //   }}
-      >
-        <FormBuilder formConfig={formConfig} submitHandler={loginActionTestHandler} />
-      </Container>
+      {isRedirecting ? (
+        <Loader size={30} mt='lg' />
+      ) : (
+        <Container w='100%' size={400} mt='lg'>
+          <FormBuilder formConfig={formConfig} submitHandler={loginActionTestHandler} />
+        </Container>
+      )}
     </BaseContainer>
   );
 }
