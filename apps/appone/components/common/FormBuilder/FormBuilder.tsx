@@ -18,7 +18,7 @@ import {
   Group,
   Textarea,
 } from '@mantine/core';
-import { useFormContext, FormProvider, useForm, SubmitHandler, UseFormReturn } from 'react-hook-form';
+import { useFormContext, FormProvider, useForm, SubmitHandler, UseFormReturn, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReactNode, useState } from 'react';
 
@@ -112,106 +112,188 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({ section, formState })
 interface FieldRendererProps {
   field: FormFieldConfig;
 }
-
-const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
+export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
   const methods = useFormContext();
   const {
-    register,
-    setValue,
     formState: { errors },
   } = methods;
 
   const error = errors[field.name]?.message?.toString();
 
-  // Common props for simple Mantine components that don't require bridging
-  // (text, textarea, password, checkbox, etc.)
-  const commonProps = {
-    id: field.name,
-    label: field.label,
-    placeholder: field.placeholder,
-    description: field.description,
-    error,
-    ...register(field.name),
-    ...field.layout?.props,
-  };
-
   switch (field.type) {
     case 'text':
-      return <TextInput {...commonProps} />;
-
+      return (
+        <Controller
+          name={field.name}
+          defaultValue={field.defaultValue ?? ''}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <TextInput
+              id={field.name}
+              label={field.label}
+              placeholder={field.placeholder}
+              description={field.description}
+              error={error}
+              {...field.layout?.props}
+              // RHF bridging
+              onChange={onChange}
+              onBlur={onBlur}
+              value={value || ''}
+              ref={ref}
+            />
+          )}
+        />
+      );
     case 'textarea':
-      return <Textarea {...commonProps} />;
-
+      return (
+        <Controller
+          name={field.name}
+          defaultValue={field.defaultValue ?? ''}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Textarea
+              id={field.name}
+              label={field.label}
+              placeholder={field.placeholder}
+              description={field.description}
+              error={error}
+              {...field.layout?.props}
+              onChange={onChange}
+              onBlur={onBlur}
+              value={value || ''}
+              ref={ref}
+            />
+          )}
+        />
+      );
     case 'password':
-      return <PasswordInput {...commonProps} />;
-
+      return (
+        <Controller
+          name={field.name}
+          defaultValue={field.defaultValue ?? ''}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <PasswordInput
+              id={field.name}
+              label={field.label}
+              placeholder={field.placeholder}
+              description={field.description}
+              error={error}
+              {...field.layout?.props}
+              onChange={onChange}
+              onBlur={onBlur}
+              value={value || ''}
+              ref={ref}
+            />
+          )}
+        />
+      );
     case 'checkbox':
-      return <Checkbox {...commonProps} />;
-
-    case 'select': {
-      const selectRegister = register(field.name);
       return (
-        <Select
-          {...field.layout?.props}
-          label={field.label}
-          name={selectRegister.name}
-          data={field.options ?? []}
-          error={error}
-          defaultValue={field.defaultValue as string}
-          onChange={(value) => {
-            setValue(field.name, value, { shouldValidate: true });
-          }}
+        <Controller
+          name={field.name}
+          defaultValue={field.defaultValue ?? false}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Checkbox
+              id={field.name}
+              label={field.label}
+              placeholder={field.placeholder}
+              description={field.description}
+              error={error}
+              {...field.layout?.props}
+              onChange={onChange}
+              onBlur={onBlur}
+              // Mantine expects a boolean for Checkbox
+              checked={!!value}
+              ref={ref}
+            />
+          )}
         />
       );
-    }
-
-    case 'radio': {
-      const [radioValue, setRadioValue] = useState<string>((field.defaultValue as string) ?? '');
-      const radioRegister = register(field.name);
-
+    case 'select':
       return (
-        <Radio.Group label={field.label} value={radioValue} error={error} {...field.layout?.props}>
-          <Group mt='xs'>
-            {field.options?.map((option) => (
-              <Radio
-                key={option.value}
-                value={option.value}
-                label={option.label}
-                name={radioRegister.name}
-                onBlur={radioRegister.onBlur}
-                ref={radioRegister.ref}
-                onChange={(event) => {
-                  setRadioValue(event.currentTarget.value);
-                  radioRegister.onChange(event);
-                }}
-              />
-            ))}
-          </Group>
-        </Radio.Group>
-      );
-    }
-    case 'number': {
-      const numberRegister = register(field.name);
-
-      return (
-        <NumberInput
-          {...field.layout?.props} // e.g. min, max, etc.
-          label={field.label}
-          name={numberRegister.name}
-          error={error}
-          ref={numberRegister.ref}
-          onBlur={numberRegister.onBlur}
-          defaultValue={typeof field.defaultValue === 'number' ? field.defaultValue : undefined}
-          onChange={(val) => {
-            setValue(field.name, val ?? 0, { shouldValidate: true });
-          }}
+        <Controller
+          name={field.name}
+          defaultValue={field.defaultValue ?? ''}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              label={field.label}
+              data={field.options ?? []}
+              error={error}
+              {...field.layout?.props}
+              // Bridge Mantine’s onChange(value => ...) to RHF
+              onChange={(val) => onChange(val)}
+              value={value}
+            />
+          )}
         />
       );
-    }
+    case 'radio':
+      return (
+        <Controller
+          name={field.name}
+          defaultValue={field.defaultValue ?? ''}
+          render={({ field: { onChange, value } }) => (
+            <Radio.Group
+              label={field.label}
+              value={value}
+              onChange={onChange} // string => ...
+              error={error}
+              {...field.layout?.props}
+            >
+              <Group mt='xs'>
+                {field.options?.map((option) => <Radio key={option.value} value={option.value} label={option.label} />)}
+              </Group>
+            </Radio.Group>
+          )}
+        />
+      );
+
+    // -------------------------------------------------------------------
+    // 7) Number
+    // -------------------------------------------------------------------
+    case 'number':
+      return (
+        <Controller
+          name={field.name}
+          // If user does not specify defaultValue, we fallback to 0
+          defaultValue={field.defaultValue ?? 0}
+          render={({ field: { onChange, value } }) => (
+            <NumberInput
+              label={field.label}
+              error={error}
+              {...field.layout?.props}
+              // Mantine’s NumberInput onChange => (val: number) => void
+              onChange={(val) => onChange(val ?? 0)}
+              // If the user typed a string or something, ensure numeric
+              value={typeof value === 'number' ? value : Number(value) || 0}
+            />
+          )}
+        />
+      );
+
+    // -------------------------------------------------------------------
+    // 8) Hidden
+    // -------------------------------------------------------------------
     case 'hidden':
       return (
-        <input type='hidden' {...register(field.name)} defaultValue={field.defaultValue as string} {...field.layout?.props} />
+        <Controller
+          name={field.name}
+          defaultValue={field.defaultValue ?? ''}
+          render={({ field: { onChange, value, ref } }) => (
+            <input
+              type='hidden'
+              // Spread any additional props
+              {...field.layout?.props}
+              // Use the "field" from Controller
+              onChange={onChange}
+              value={value}
+              ref={ref}
+            />
+          )}
+        />
       );
+
+    // -------------------------------------------------------------------
+    // 9) Component
+    // -------------------------------------------------------------------
     case 'component': {
       if (typeof field.component === 'function') {
         const componentFn = field.component as FieldComponentFn;
@@ -219,6 +301,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
       }
       return <>{field.component ?? null}</>;
     }
+
     default:
       return null;
   }
@@ -308,7 +391,7 @@ export const FormBuilder = <T extends Record<string, any>>({ formConfig, submitH
         <Stack align='stretch'>
           {formConfig.title && <Title {...titleProps}>{formConfig.title}</Title>}
           {/* Global/Root Error Display */}
-          {errors.root?.serverError && <Alert>{errors.root.serverError.message}</Alert>}
+          {errors.root?.serverError && <Alert {...errorAlertProps}>{errors.root.serverError.message}</Alert>}
           {formConfig.sections.map((section, index) => (
             <SectionRenderer key={index} section={section} formState={formState} />
           ))}
