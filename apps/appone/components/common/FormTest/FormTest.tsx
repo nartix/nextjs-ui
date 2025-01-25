@@ -28,6 +28,11 @@ export function FormTest() {
                 // Example validation requiring non-empty
                 // validation: z.string().nonempty('First Name is required'),
                 defaultValue: 'ascas',
+                // onChange: ({ watch, setValue }) => {
+                //   const { firstName } = watch();
+                //   console.log('onChange', firstName);
+                //   setValue('firstName', firstName.toUpperCase());
+                // },
                 layout: {
                   props: { withAsterisk: true }, // optional Mantine prop
                 },
@@ -49,7 +54,7 @@ export function FormTest() {
                 label: 'Age',
                 type: 'number',
                 // Basic numeric validation
-                validation: z.coerce.number().min(2, 'Age must be 2 or higher').max(8, 'Age must be 150 or lower'),
+                validation: z.number().min(2, 'Age must be 2 or higher').max(8, 'Age must be 150 or lower'),
                 defaultValue: 4,
                 // layout: {
                 //   props: { min: 2, max: 8 }, // optional Mantine prop

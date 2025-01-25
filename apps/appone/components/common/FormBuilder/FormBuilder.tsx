@@ -18,14 +18,22 @@ import {
   Group,
   Textarea,
 } from '@mantine/core';
-import { useFormContext, FormProvider, useForm, SubmitHandler, UseFormReturn, Controller } from 'react-hook-form';
+import {
+  useFormContext,
+  FormProvider,
+  useForm,
+  SubmitHandler,
+  UseFormReturn,
+  Controller,
+  RegisterOptions,
+  ControllerProps,
+} from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 
 export type FieldComponentFn = (methods: UseFormReturn<any>) => React.ReactNode;
 
-// A single field (like before, but you can add optional layout props like colSpan)
-interface FormFieldConfig {
+export interface FormFieldConfig {
   name: string;
   label?: string;
   type: 'text' | 'textarea' | 'select' | 'checkbox' | 'radio' | 'password' | 'number' | 'hidden' | 'component';
@@ -35,20 +43,20 @@ interface FormFieldConfig {
   validation?: ZodTypeAny;
   options?: { label: string; value: string }[];
   component?: ReactNode | FieldComponentFn;
-  onChange?: (input: string) => string;
+  onChange?: (methods: UseFormReturn<any>) => void;
+  controllerProps?: Omit<ControllerProps, 'render' | 'control' | 'name'>;
   layout?: {
     props?: Record<string, any>; // e.g. { withAsterisk: true } for the all the mantine types
     gridColProps?: Record<string, any>; // e.g. { span: 8 }
   };
 }
 
-// Each row is simply an array of fields
-interface FormRow {
+export interface FormRow {
   fields: FormFieldConfig[];
 }
 
 // A section can contain a title, optional description, and multiple rows
-interface FormSection {
+export interface FormSection {
   title?: string;
   description?: string;
   rows: FormRow[];
@@ -60,7 +68,6 @@ interface FormSection {
 
 // The overall form config is just an array of sections
 export interface FormConfig {
-  // props?: any;
   sections: FormSection[];
   title?: string;
   beforeSubmitText?: ReactNode;
@@ -85,7 +92,6 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({ section, formState })
     ...section.layout?.fieldsetProps?.title,
   };
 
-  // size='sm' mt='xs' mb='md'
   const descriptionProps = {
     mt: 'xs',
     mb: 'md',
@@ -125,6 +131,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
       return (
         <Controller
           name={field.name}
+          {...field.controllerProps}
           defaultValue={field.defaultValue ?? ''}
           render={({ field: { onChange, onBlur, value, ref } }) => (
             <TextInput
@@ -134,8 +141,12 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
               description={field.description}
               error={error}
               {...field.layout?.props}
-              // RHF bridging
-              onChange={onChange}
+              onChange={(e) => {
+                onChange(e);
+                if (field.onChange) {
+                  field.onChange(methods);
+                }
+              }}
               onBlur={onBlur}
               value={value || ''}
               ref={ref}
@@ -147,6 +158,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
       return (
         <Controller
           name={field.name}
+          {...field.controllerProps}
           defaultValue={field.defaultValue ?? ''}
           render={({ field: { onChange, onBlur, value, ref } }) => (
             <Textarea
@@ -156,7 +168,12 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
               description={field.description}
               error={error}
               {...field.layout?.props}
-              onChange={onChange}
+              onChange={(e) => {
+                onChange(e);
+                if (field.onChange) {
+                  field.onChange(methods);
+                }
+              }}
               onBlur={onBlur}
               value={value || ''}
               ref={ref}
@@ -168,6 +185,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
       return (
         <Controller
           name={field.name}
+          {...field.controllerProps}
           defaultValue={field.defaultValue ?? ''}
           render={({ field: { onChange, onBlur, value, ref } }) => (
             <PasswordInput
@@ -177,7 +195,12 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
               description={field.description}
               error={error}
               {...field.layout?.props}
-              onChange={onChange}
+              onChange={(e) => {
+                onChange(e);
+                if (field.onChange) {
+                  field.onChange(methods);
+                }
+              }}
               onBlur={onBlur}
               value={value || ''}
               ref={ref}
@@ -189,6 +212,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
       return (
         <Controller
           name={field.name}
+          {...field.controllerProps}
           defaultValue={field.defaultValue ?? false}
           render={({ field: { onChange, onBlur, value, ref } }) => (
             <Checkbox
@@ -198,7 +222,12 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
               description={field.description}
               error={error}
               {...field.layout?.props}
-              onChange={onChange}
+              onChange={(e) => {
+                onChange(e);
+                if (field.onChange) {
+                  field.onChange(methods);
+                }
+              }}
               onBlur={onBlur}
               // Mantine expects a boolean for Checkbox
               checked={!!value}
@@ -211,6 +240,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
       return (
         <Controller
           name={field.name}
+          {...field.controllerProps}
           defaultValue={field.defaultValue ?? ''}
           render={({ field: { onChange, value } }) => (
             <Select
@@ -218,8 +248,12 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
               data={field.options ?? []}
               error={error}
               {...field.layout?.props}
-              // Bridge Mantine’s onChange(value => ...) to RHF
-              onChange={(val) => onChange(val)}
+              onChange={(val) => {
+                onChange(val);
+                if (field.onChange) {
+                  field.onChange(methods);
+                }
+              }}
               value={value}
             />
           )}
@@ -229,12 +263,18 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
       return (
         <Controller
           name={field.name}
+          {...field.controllerProps}
           defaultValue={field.defaultValue ?? ''}
           render={({ field: { onChange, value } }) => (
             <Radio.Group
               label={field.label}
               value={value}
-              onChange={onChange} // string => ...
+              onChange={(e) => {
+                onChange(e);
+                if (field.onChange) {
+                  field.onChange(methods);
+                }
+              }}
               error={error}
               {...field.layout?.props}
             >
@@ -245,55 +285,34 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
           )}
         />
       );
-
-    // -------------------------------------------------------------------
-    // 7) Number
-    // -------------------------------------------------------------------
     case 'number':
       return (
         <Controller
           name={field.name}
-          // If user does not specify defaultValue, we fallback to 0
+          {...field.controllerProps}
           defaultValue={field.defaultValue ?? 0}
           render={({ field: { onChange, value } }) => (
             <NumberInput
               label={field.label}
               error={error}
               {...field.layout?.props}
-              // Mantine’s NumberInput onChange => (val: number) => void
               onChange={(val) => onChange(val ?? 0)}
-              // If the user typed a string or something, ensure numeric
               value={typeof value === 'number' ? value : Number(value) || 0}
             />
           )}
         />
       );
-
-    // -------------------------------------------------------------------
-    // 8) Hidden
-    // -------------------------------------------------------------------
     case 'hidden':
       return (
         <Controller
           name={field.name}
+          {...field.controllerProps}
           defaultValue={field.defaultValue ?? ''}
           render={({ field: { onChange, value, ref } }) => (
-            <input
-              type='hidden'
-              // Spread any additional props
-              {...field.layout?.props}
-              // Use the "field" from Controller
-              onChange={onChange}
-              value={value}
-              ref={ref}
-            />
+            <input type='hidden' {...field.layout?.props} onChange={onChange} value={value} ref={ref} />
           )}
         />
       );
-
-    // -------------------------------------------------------------------
-    // 9) Component
-    // -------------------------------------------------------------------
     case 'component': {
       if (typeof field.component === 'function') {
         const componentFn = field.component as FieldComponentFn;
