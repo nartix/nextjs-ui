@@ -1,7 +1,8 @@
 'use client';
 import React from 'react';
 
-import { FormConfig, FormBuilder } from '@/components/common/FormBuilder/FormBuilder';
+// import { FormConfig, FormBuilder } from '@/components/common/FormBuilder/FormBuilder';
+import { FormBuilder, FormConfig } from '@nartix/mantine-form-builder/src';
 import { BaseContainer } from '@/components/common/BaseContainer/BaseContainer';
 import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { z } from 'zod';

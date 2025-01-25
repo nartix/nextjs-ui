@@ -24,6 +24,7 @@
     "@mantine/tiptap": "^7.15.3",
     "@nartix/edge-token": "*",
     "@nartix/next-middleware-chain": "*",
+    "@nartix/mantine-form-builder": "*",
     "@nartix/next-security": "*",
     "@nartix/ui-appone": "*",
     "@tabler/icons-react": "^3.28.1",
