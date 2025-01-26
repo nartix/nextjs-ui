@@ -212,7 +212,6 @@ export function TestLoginForm() {
     try {
       const response = await loginActionTest(data);
       if (response && response.success) {
-        // alert('Login successful!');
         setIsRedirecting(true);
         const next = searchParams.get('next');
         router.push(next || '/');

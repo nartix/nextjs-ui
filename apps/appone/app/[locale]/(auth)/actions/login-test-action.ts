@@ -7,16 +7,9 @@ import { redirect } from 'next/navigation';
 import { signIn } from '@nartix/next-security';
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
 import { loginSchema } from '@/app/[locale]/(auth)/form/login-schemas';
+import { ActionResponse } from '@/app/[locale]/(common)/types/common-types';
 
 type LoginFormValues = z.infer<typeof loginFormSchema>;
-
-export type ActionResponse<T = unknown> = {
-  success: boolean;
-  message?: string;
-  data?: T;
-  errors?: Record<string, string>;
-  error?: string;
-};
 
 export async function loginActionTest(formData: LoginFormValues): Promise<ActionResponse> {
   // Simulate a server call. We'll reject if username or password is wrong
