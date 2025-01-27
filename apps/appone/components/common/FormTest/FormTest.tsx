@@ -6,7 +6,7 @@ import { FormBuilder, FormConfig } from '@nartix/mantine-form-builder/src';
 import { BaseContainer } from '@/components/common/BaseContainer/BaseContainer';
 import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { z } from 'zod';
-import { loginActionTest } from '@/app/[locale]/(auth)/actions/login-test-action';
+import { loginAction } from '@/app/[locale]/(auth)/actions/login-action';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
 import { Text, Anchor, Container } from '@mantine/core';
 import { Link } from '@/i18n/routing';
@@ -177,7 +177,7 @@ export function FormTest() {
 
   async function loginActionTestHandler(data: any, setError: any) {
     try {
-      const response = await loginActionTest(data);
+      const response = await loginAction(data);
       if (response && response.success) {
         // If success, do something like redirect, show success, etc.
         alert('Login successful!');

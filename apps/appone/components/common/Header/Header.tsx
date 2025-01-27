@@ -30,7 +30,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
           <UnstyledButton className={classes.control}>Login</UnstyledButton>
         </Group> */}
 
-          <Avatar ref={ref} radius='xl' size='md' component={Link} variant={hovered ? 'filled' : 'light'} href='/testlogin' />
+          <Avatar ref={ref} radius='xl' size='md' component={Link} variant={hovered ? 'filled' : 'light'} href='/login' />
         </Group>
       </Group>
     </AppShell.Header>
