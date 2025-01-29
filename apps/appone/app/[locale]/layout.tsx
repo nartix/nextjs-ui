@@ -3,7 +3,7 @@ import '@/styles/globals.scss';
 import '@mantine/core/styles.css';
 
 import { Metadata, Viewport } from 'next';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';

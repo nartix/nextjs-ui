@@ -25,7 +25,17 @@ export function Layout({ children }: { children: ReactNode }) {
     >
       <Header opened={opened} toggle={toggle} />
 
-      <AppShell.Navbar py='md' px={4}>
+      <AppShell.Navbar
+        py='md'
+        px={4}
+        // slide from right
+        // style={{
+        //   right: 0,
+        //   left: 'auto',
+        //   transform: !opened ? 'translateX(100%)' : 'translateX(0)',
+        //   transition: 'transform 0.3s ease',
+        // }}
+      >
         <UnstyledButton className={classes.control}>Home</UnstyledButton>
         <UnstyledButton className={classes.control}>Blog</UnstyledButton>
         <UnstyledButton className={classes.control}>Contacts</UnstyledButton>

@@ -11,20 +11,12 @@ import { Text, Anchor, Container, Loader } from '@mantine/core';
 import { Link } from '@/i18n/routing';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export function LoginForm() {
+export function SignupForm() {
   const csrf_token = useCSRFToken();
   const formConfig: FormConfig = {
-    title: 'Login',
+    title: 'Sign Up',
     // beforeSubmitText: 'Please enter your username and password',
-    submitText: 'Sign In',
-    afterSubmitText: (
-      <Text ta='center' size='sm'>
-        Don't have an account?{' '}
-        <Anchor component={Link} href='/'>
-          Register
-        </Anchor>
-      </Text>
-    ),
+    submitText: 'Sign Up',
     // props: {
     //   title: {
     //     order: 1,
@@ -76,19 +68,23 @@ export function LoginForm() {
                 validation: loginFormSchema.shape.username,
                 // props: { withAsterisk: true },
                 // colSpan: 8,
-                defaultValue: 'bill',
+                // defaultValue: 'bill',
                 // gridColProps: { span: 8 },
               },
-              // {
-              //   name: 'username2',
-              //   label: 'Username',
-              //   type: 'text',
-              //   validation: loginFormSchema.shape.username,
-              //   // props: { withAsterisk: true },
-              //   // colSpan: 8,
-              //   defaultValue: 'bill',
-              //   gridColProps: { span: 9 },
-              // },
+            ],
+          },
+          {
+            fields: [
+              {
+                name: 'email',
+                label: 'Email',
+                type: 'text',
+                validation: loginFormSchema.shape.username,
+                // props: { withAsterisk: true },
+                // colSpan: 8,
+                // defaultValue: 'bill',
+                // gridColProps: { span: 8 },
+              },
             ],
           },
           {
@@ -105,25 +101,11 @@ export function LoginForm() {
           {
             fields: [
               {
-                name: 'rememberme',
-                label: 'Keep me logged in',
-                type: 'checkbox',
-                layout: {
-                  gridColProps: { span: 6 },
-                },
-                // props: { size: 'xs', classNames: { body: 'flex justify-end ' } },
-              },
-              {
-                name: 'forgotpassword',
-                type: 'component',
-                layout: {
-                  gridColProps: { ta: 'right', span: 6 },
-                },
-                component: (
-                  <Anchor href='/' component={Link} size='sm'>
-                    Forgot Password
-                  </Anchor>
-                ),
+                name: 'password2',
+                label: 'Confirm Password',
+                type: 'password',
+                validation: loginFormSchema.shape.password,
+                // gridColProps: { span: 6 },
               },
             ],
           },

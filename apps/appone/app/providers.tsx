@@ -26,7 +26,7 @@ export function Providers({ children, themeProps, messages, locale, session, csr
   const router = useRouter();
 
   return (
-    <SessionProvider value={session}>
+    <SessionProvider initialSession={session}>
       <CSRFProvider value={csrfToken ?? null}>
         <NextIntlClientProvider messages={messages} locale={locale}>
           <MantineProvider theme={theme}>
