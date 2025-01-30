@@ -201,11 +201,5 @@ export function FormTest() {
     alert(JSON.stringify(data, null, 2));
   };
 
-  return (
-    <BaseContainer>
-      <Container size={400} mt='lg'>
-        <FormBuilder formConfig={formConfig} submitHandler={submitHandler} />
-      </Container>
-    </BaseContainer>
-  );
+  return <FormBuilder formConfig={formConfig} submitHandler={submitHandler} />;
 }

@@ -25,7 +25,7 @@ interface HeaderProps {
 export function Header({ locale }: HeaderProps) {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const session = useSession();
+  const { session } = useSession();
   const user = session?.user || null;
   const router = useRouter();
   const csrfToken = useCSRFToken() || '';

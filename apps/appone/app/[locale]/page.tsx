@@ -2,6 +2,7 @@ import React from 'react';
 import { getTranslations } from 'next-intl/server';
 import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
 import { BaseContainer } from '@/components/common/BaseContainer/BaseContainer';
+import { SessionContainer } from '@/components/common/SessionContainer/SessionContainer';
 import { Text, Title } from '@mantine/core';
 import { extractSessionForClientside } from '@/app/[locale]/(auth)/lib/exgract-session-for-clientside';
 
@@ -15,7 +16,7 @@ export default async function Home() {
     'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos ullam, ex cum repellat alias ea nemo. Ducimus ex nesciunt hic ad saepe molestiae nobis necessitatibus laboriosam officia, reprehenderit, earum fugiat?';
 
   return (
-    <BaseContainer justify='flex-start' align='center' session={extractSessionForClientside(session) || null}>
+    <SessionContainer justify='flex-start' align='center'>
       <Title order={4}>
         App One {t('title')} Welcome {user ? user.username : 'Guest'}
       </Title>
@@ -27,7 +28,7 @@ export default async function Home() {
             {lorem}
           </Text>
         ))}
-    </BaseContainer>
+    </SessionContainer>
   );
 }
 

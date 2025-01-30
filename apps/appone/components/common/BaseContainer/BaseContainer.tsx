@@ -27,9 +27,7 @@ export function BaseContainer({ children, session, ...flexProps }: BaseContainer
 
   const { setSession } = useSession();
   useEffect(() => {
-    if (session) {
-      setSession(session);
-    }
+    setSession(session || null);
   }, [session, setSession]);
 
   return <Flex {...combinedProps}>{children}</Flex>;

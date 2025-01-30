@@ -20,11 +20,30 @@ import { Link } from '@/i18n/routing';
 import classes from '@/components/common/Layout/Layout.module.scss';
 import { IconLogout, IconSettings, IconUser, IconX } from '@tabler/icons-react';
 import { useSession } from '@/app/[locale]/(auth)/context/session-context';
+import { logoutAction } from '@/app/[locale]/(auth)/actions/logout-action';
+import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
+import { useState } from 'react';
 
 export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void }) => {
   const { session } = useSession();
   const [drawerOpened, { open: openDrawer, close: closeDrawer }] = useDisclosure(false);
   const { hovered, ref } = useHover();
+
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const csrfToken = useCSRFToken() || '';
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      const formData = new FormData();
+      formData.append('csrf_token', csrfToken);
+      await logoutAction(formData);
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      setIsLoggingOut(false);
+      closeDrawer();
+    }
+  };
   return (
     <>
       <AppShell.Header>
@@ -51,7 +70,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
               component={Link}
               href={session?.user ? '#' : '/user/login'}
               ref={ref}
-              radius='xl'
+              radius='lg'
               size='md'
               variant={hovered ? 'filled' : 'light'}
               onClick={(event) => {
@@ -102,8 +121,9 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
             justify='flex-start'
             leftSection={<IconLogout size={18} />}
             color='red'
-            onClick={() => console.log('Logout logic here')}
+            onClick={async () => await handleLogout()}
             variant='subtle'
+            disabled={isLoggingOut}
             fullWidth
           >
             Logout
