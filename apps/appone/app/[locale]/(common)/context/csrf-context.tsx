@@ -1,12 +1,15 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useState } from 'react';
 
 // Define the type for the CSRF token
-type CSRFContextType = string | null;
+type CSRFContextType = {
+  CSRFToken: string | null;
+  setCSRFToken: (token: string | null) => void;
+};
 
 // Create the CSRF context with a default value of null
-const CSRFContext = createContext<CSRFContextType>(null);
+const CSRFContext = createContext<CSRFContextType | null>(null);
 
 // Custom hook for consuming the CSRF context
 export function useCSRFToken(): CSRFContextType {
@@ -19,10 +22,11 @@ export function useCSRFToken(): CSRFContextType {
 
 // Provider component for the CSRF context
 interface CSRFProviderProps {
-  value: CSRFContextType;
+  initialCSRFToken: string | null;
   children: ReactNode;
 }
 
-export function CSRFProvider({ value, children }: CSRFProviderProps) {
-  return <CSRFContext.Provider value={value}>{children}</CSRFContext.Provider>;
+export function CSRFProvider({ initialCSRFToken, children }: CSRFProviderProps) {
+  const [CSRFToken, setCSRFToken] = useState(initialCSRFToken || null);
+  return <CSRFContext.Provider value={{ CSRFToken, setCSRFToken }}>{children}</CSRFContext.Provider>;
 }

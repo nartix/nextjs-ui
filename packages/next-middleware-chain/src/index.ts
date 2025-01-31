@@ -1,24 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, NextFetchEvent } from 'next/server';
 
-export interface MiddlewareResult {
-  response: Response | NextResponse;
-  next: boolean;
-}
+export type NextMiddleware = (
+  request: NextRequest,
+  event: NextFetchEvent,
+  response?: NextResponse
+) => NextResponse | Response | null | undefined | void | Promise<NextResponse | Response | null | undefined | void>;
 
-export type MiddlewareHandler = (req: NextRequest, res: NextResponse) => Promise<MiddlewareResult>;
+export type MiddlewareFactory = (next: NextMiddleware) => NextMiddleware;
 
-export function createMiddlewareChain(...middlewares: MiddlewareHandler[]) {
-  return async (req: NextRequest, res: NextResponse): Promise<NextResponse | Response> => {
-    let currentResponse: NextResponse = res ?? NextResponse.next();
-    for (const middleware of middlewares) {
-      const { response, next }: MiddlewareResult = await middleware(req, currentResponse);
-      if (!next && (response instanceof NextResponse || response instanceof Response)) {
-        return response;
-      }
-      if (response instanceof NextResponse) {
-        currentResponse = response;
-      }
-    }
-    return currentResponse;
+export function createMiddlewareChain(factories: MiddlewareFactory[] = [], index = 0): NextMiddleware {
+  if (factories[index]) {
+    return factories[index]((req, event, res) => {
+      return createMiddlewareChain(factories, index + 1)(req, event, res);
+    });
+  }
+  return (_req, _event, _res) => {
+    return _res ?? NextResponse.next();
   };
 }

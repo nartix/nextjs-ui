@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import { SessionObj } from '@nartix/next-security/src';
 import { BaseContainer } from '@/components/common/BaseContainer/BaseContainer';
 import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
+import { getCsrfToken } from '@/app/[locale]/(auth)/lib/get-csrf-token';
 
 interface SessionContainerProps extends FlexProps {
   children: ReactNode;
@@ -11,6 +12,7 @@ interface SessionContainerProps extends FlexProps {
 
 export async function SessionContainer({ children, ...flexProps }: SessionContainerProps) {
   const session = await getServerSession();
+  await getCsrfToken();
 
   const combinedProps = {
     session,

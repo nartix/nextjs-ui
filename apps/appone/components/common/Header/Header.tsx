@@ -30,12 +30,12 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
   const { hovered, ref } = useHover();
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const csrfToken = useCSRFToken() || '';
+  const { CSRFToken } = useCSRFToken();
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
       const formData = new FormData();
-      formData.append('csrf_token', csrfToken);
+      formData.append('csrf_token', CSRFToken || '');
       await logoutAction(formData);
     } catch (error) {
       console.error('Logout failed:', error);

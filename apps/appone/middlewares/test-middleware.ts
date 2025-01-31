@@ -1,10 +1,11 @@
 'user server';
 
-import { NextResponse } from 'next/server';
+import { NextResponse, NextFetchEvent, NextRequest } from 'next/server';
 // import { MiddlewareHandler } from '@/types/middleware-handler';
 import { MiddlewareHandler } from '@nartix/next-middleware-chain';
 import { isPublicPath, isLocaleSupported } from '@/lib/locale-util';
 import { edgeToken } from '@nartix/edge-token/src';
+import { MiddlewareFactory } from '@nartix/next-middleware-chain/src';
 
 export const testMiddleware: MiddlewareHandler = async (req, res) => {
   // res?.cookies.set('test', 'test');
@@ -73,5 +74,87 @@ export const testMiddleware: MiddlewareHandler = async (req, res) => {
   // }
   // console.timeEnd('Single Replace with Mapping');
 
+  let response = NextResponse.next();
+  response.headers.set('x-testing-middleware', 'true');
+
   return { response: res, next: true };
+};
+
+export const testMiddlewareFactory: MiddlewareFactory = (next) => {
+  return async (req: NextRequest, event: NextFetchEvent, response?: NextResponse) => {
+    console.log('test middleware run ', req.nextUrl.pathname);
+    return next(req, event, response);
+  };
+};
+
+export const withCustomHeader: MiddlewareFactory = (next) => {
+  return async (req: NextRequest, event: NextFetchEvent, incomingResponse?: NextResponse) => {
+    // If the chain above didn't supply a response, create a new one.
+    const response = incomingResponse ?? NextResponse.next();
+
+    // Set a custom header *before* continuing to the next middleware
+    response.headers.set('X-Powered-By', 'Universal Liberator');
+
+    // return response;
+
+    return next(req, event, response);
+
+    // // Call the next middleware in the chain, passing our 'response'
+    // const result = await next(req, event, response);
+
+    // // 'result' could be:
+    // //   - undefined/null/void => means next returned nothing special
+    // //   - a NextResponse or a native Response
+    // if (!result) {
+    //   // If nothing was returned, assume we should continue with 'response'
+    //   return response;
+    // }
+
+    // // If the next returned a NextResponse, we could do more changes:
+    // if (result instanceof NextResponse) {
+    //   result.headers.set('X-Post-Processed', 'true');
+    //   return result;
+    // }
+
+    // // If it's a native Response, we typically return it outright
+    // return result;
+  };
+};
+
+export const withCustomHeader2: MiddlewareFactory = (next) => {
+  return async (req: NextRequest, event: NextFetchEvent, incomingResponse?: NextResponse) => {
+    // If the chain above didn't supply a response, create a new one.
+    // const response = incomingResponse ?? NextResponse.next();
+
+    // Set a custom header *before* continuing to the next middleware
+    // response.headers.set('X-Powered-By2', 'Universal Liberator');
+
+    if (incomingResponse) {
+      // Set a custom header *before* continuing to the next middleware
+      incomingResponse.headers.set('X-Powered-By2', 'Universal Liberator');
+      // return next(req, event, incomingResponse);
+    }
+
+    return next(req, event, incomingResponse);
+
+    // // Call the next middleware in the chain, passing our 'response'
+    // const result = await next(req, event, response);
+
+    // // 'result' could be:
+    // //   - undefined/null/void => means next returned nothing special
+    // //   - a NextResponse or a native Response
+    // if (!result) {
+    //   // If nothing was returned, assume we should continue with 'response'
+    //   return response;
+    // }
+
+    // // If the next returned a NextResponse, we could do more changes:
+    // if (result instanceof NextResponse) {
+    //   result.headers.set('X-Post-Processed', 'true');
+    //   return result;
+    // }
+
+    // // If it's a native Response, we typically return it outright
+    // return result;
+  };
 };

@@ -1,14 +1,13 @@
 'user server';
 
-import { MiddlewareHandler } from '@nartix/next-middleware-chain/src';
+import { MiddlewareFactory } from '@nartix/next-middleware-chain/src';
+import { NextResponse, NextRequest, NextFetchEvent } from 'next/server';
 
-/**
- * Logger Middleware
- * Logs the incoming request URL.
- */
-export const loggerMiddleware: MiddlewareHandler = async (req, res) => {
-  if (req.headers.get('x-middleware-rewrite')) {
-    console.log(`Request URL: ${req.url}`);
-  }
-  return { response: res, next: true };
+export const loggerMiddlewareFactory: MiddlewareFactory = (next) => {
+  return async (req: NextRequest, event: NextFetchEvent, response?: NextResponse) => {
+    if (req.headers.get('x-middleware-rewrite')) {
+      console.log(`Request URL: ${req.url}`);
+    }
+    return next(req, event, response);
+  };
 };

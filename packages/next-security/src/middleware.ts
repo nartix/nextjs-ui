@@ -7,12 +7,12 @@ export const nextSecurityMiddleware = async (
   res: NextResponse,
   authOptions: AuthOptions,
   sessionObj: SessionObj = {}
-): Promise<{ response: NextResponse; next: boolean }> => {
+): Promise<NextResponse> => {
   const { sessionAdaptor, cookie } = authOptions;
 
   const sessionToken = atob(req.cookies.get(cookie.name!)?.value || '');
   if (!sessionToken) {
-    return { response: res, next: true };
+    return res;
   }
 
   const updatedSessionObject = await sessionAdaptor.updateSession({
@@ -37,5 +37,5 @@ export const nextSecurityMiddleware = async (
     }
   }
 
-  return { response: res, next: true };
+  return res;
 };

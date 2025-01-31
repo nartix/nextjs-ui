@@ -12,7 +12,7 @@ import { Link } from '@/i18n/routing';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export function LoginForm() {
-  const csrf_token = useCSRFToken();
+  const { CSRFToken } = useCSRFToken();
   const formConfig: FormConfig = {
     title: 'Login',
     // beforeSubmitText: 'Please enter your username and password',
@@ -132,7 +132,7 @@ export function LoginForm() {
               {
                 name: 'csrf_token',
                 type: 'hidden',
-                defaultValue: csrf_token,
+                defaultValue: CSRFToken || '',
               },
             ],
           },

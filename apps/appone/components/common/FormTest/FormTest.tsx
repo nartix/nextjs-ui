@@ -12,7 +12,7 @@ import { Text, Anchor, Container } from '@mantine/core';
 import { Link } from '@/i18n/routing';
 
 export function FormTest() {
-  const csrf_token = useCSRFToken();
+  const { CSRFToken } = useCSRFToken();
   const formConfig: FormConfig = {
     title: 'Example Form',
     submitText: 'Submit',

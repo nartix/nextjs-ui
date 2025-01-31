@@ -1,11 +1,16 @@
 'user server';
 
 import createMiddleware from 'next-intl/middleware';
-import { MiddlewareHandler } from '@/types/middleware-handler';
 import { routing } from '@/i18n/routing';
-import { isLocaleSupported, isPublicPath } from '@/lib/locale-util';
+import { MiddlewareFactory } from '@nartix/next-middleware-chain/src';
+import { NextRequest, NextFetchEvent, NextResponse } from 'next/server';
+import { isPublicPath } from '@/lib/locale-util';
 
-export const nextIntlMiddleware: MiddlewareHandler = async (req, res) => {
-  console.log('nextIntlMiddleware run ======');
-  return { response: createMiddleware(routing)(req), next: true };
+export const nextIntlMiddlewareFactory: MiddlewareFactory = (next) => {
+  return async (req: NextRequest, event: NextFetchEvent, response?: NextResponse) => {
+    if (!isPublicPath(req.nextUrl.pathname)) {
+      return next(req, event, createMiddleware(routing)(req));
+    }
+    return next(req, event, response);
+  };
 };

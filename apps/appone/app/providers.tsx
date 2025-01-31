@@ -27,7 +27,7 @@ export function Providers({ children, themeProps, messages, locale, session, csr
 
   return (
     <SessionProvider initialSession={session}>
-      <CSRFProvider value={csrfToken ?? null}>
+      <CSRFProvider initialCSRFToken={csrfToken || null}>
         <NextIntlClientProvider messages={messages} locale={locale}>
           <MantineProvider theme={theme}>
             <NextUIProvider navigate={router.push}>
