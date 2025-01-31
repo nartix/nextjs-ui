@@ -1,7 +1,7 @@
 import { authenticationMiddlewareFactory } from '@/middlewares/authentication-middleware';
 import { loggerMiddlewareFactory } from '@/middlewares/logger-middleware';
 import { nextIntlMiddlewareFactory } from '@/middlewares/nextintl-middleware';
-import { testMiddlewareFactory, withCustomHeader, withCustomHeader2 } from '@/middlewares/test-middleware';
+import { testMiddlewareFactory } from '@/middlewares/test-middleware';
 import { csrfMiddlewareFactory } from '@/middlewares/csrf-middleware';
 import { createMiddlewareChain } from '@nartix/next-middleware-chain/src';
 
@@ -11,8 +11,6 @@ const factories = [
   authenticationMiddlewareFactory,
   loggerMiddlewareFactory,
   testMiddlewareFactory,
-  withCustomHeader,
-  withCustomHeader2,
 ];
 
 export default createMiddlewareChain(factories);
