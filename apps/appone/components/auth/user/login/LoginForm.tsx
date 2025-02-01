@@ -1,8 +1,7 @@
 'use client';
 import React, { useEffect } from 'react';
 
-import { FormConfig, FormBuilder } from '@/components/common/FormBuilder/FormBuilder';
-import { BaseContainer } from '@/components/common/BaseContainer/BaseContainer';
+import { FormConfig, FormBuilder } from '@nartix/mantine-form-builder/src';
 import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { z } from 'zod';
 import { loginAction } from '@/app/[locale]/(auth)/actions/login-action';
@@ -144,7 +143,7 @@ export function LoginForm() {
                 type: 'component',
                 component: ({ setValue }) => {
                   useEffect(() => {
-                    setValue('csrf_token', CSRFToken);
+                    if (CSRFToken) setValue('csrf_token', CSRFToken);
                   }, [CSRFToken]);
                   return (
                     <>

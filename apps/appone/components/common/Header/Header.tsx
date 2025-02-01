@@ -8,7 +8,6 @@ import {
   Avatar,
   Drawer,
   Box,
-  Menu,
   Divider,
   Button,
   List,
@@ -31,6 +30,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { CSRFToken } = useCSRFToken();
+
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {

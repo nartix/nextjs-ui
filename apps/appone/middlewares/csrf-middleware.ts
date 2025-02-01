@@ -18,8 +18,8 @@ import { NextRequest, NextResponse, NextFetchEvent } from 'next/server';
 //   return { response: result, next: true };
 // };
 
-export const csrfMiddlewareFactory: MiddlewareFactory = (next) => {
-  return async (req: NextRequest, event: NextFetchEvent, response?: NextResponse) => {
+export const csrfMiddlewareFactory: MiddlewareFactory =
+  (next) => async (req: NextRequest, event: NextFetchEvent, response?: NextResponse) => {
     console.log('csrf middleware run =======');
     const result = await createNextCsrfMiddleware(req, response || NextResponse.next(), {
       secret: process.env.CSRF_SECRET,
@@ -34,4 +34,3 @@ export const csrfMiddlewareFactory: MiddlewareFactory = (next) => {
     });
     return next(req, event, result);
   };
-};
