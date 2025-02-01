@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { FormConfig, FormBuilder } from '@/components/common/FormBuilder/FormBuilder';
 import { BaseContainer } from '@/components/common/BaseContainer/BaseContainer';
@@ -10,6 +10,7 @@ import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
 import { Text, Anchor, Container, Loader } from '@mantine/core';
 import { Link } from '@/i18n/routing';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Controller } from 'react-hook-form';
 
 export function LoginForm() {
   const { CSRFToken } = useCSRFToken();
@@ -127,12 +128,36 @@ export function LoginForm() {
               },
             ],
           },
+          // {
+          //   fields: [
+          //     {
+          //       name: 'csrf_token',
+          //       type: 'hidden',
+          //       defaultValue: CSRFToken || '',
+          //     },
+          //   ],
+          // },
           {
             fields: [
               {
                 name: 'csrf_token',
-                type: 'hidden',
-                defaultValue: CSRFToken || '',
+                type: 'component',
+                component: ({ setValue }) => {
+                  useEffect(() => {
+                    setValue('csrf_token', CSRFToken);
+                  }, [CSRFToken]);
+                  return (
+                    <>
+                      <Controller
+                        name='csrf_token'
+                        defaultValue={CSRFToken}
+                        render={({ field: { onChange, onBlur, value, ref } }) => (
+                          <input type='hidden' value={value} ref={ref} onChange={onChange} onBlur={onBlur} />
+                        )}
+                      />
+                    </>
+                  );
+                },
               },
             ],
           },
@@ -247,7 +272,7 @@ export function LoginForm() {
   // >
 
   return (
-    <BaseContainer>
+    <>
       {isRedirecting ? (
         <Loader size={30} mt='lg' />
       ) : (
@@ -255,6 +280,6 @@ export function LoginForm() {
           <FormBuilder formConfig={formConfig} submitHandler={loginActionHandler} />
         </Container>
       )}
-    </BaseContainer>
+    </>
   );
 }

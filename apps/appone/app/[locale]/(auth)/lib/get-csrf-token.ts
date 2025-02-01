@@ -1,7 +1,5 @@
-import { headers } from 'next/headers';
+import { cookies } from 'next/headers';
 
 export const getCsrfToken = async () => {
-  const headersList = await headers();
-  const userAgent = headersList.get('x-custom-header');
-  console.log('====================', userAgent);
+  return (await cookies()).get(process.env.CSRF_COOKIE_NAME ?? '')?.value || null;
 };

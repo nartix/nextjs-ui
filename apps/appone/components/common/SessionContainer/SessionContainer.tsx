@@ -12,10 +12,11 @@ interface SessionContainerProps extends FlexProps {
 
 export async function SessionContainer({ children, ...flexProps }: SessionContainerProps) {
   const session = await getServerSession();
-  await getCsrfToken();
+  const csrfToken = await getCsrfToken();
 
   const combinedProps = {
     session,
+    csrfToken,
     ...flexProps,
   };
 

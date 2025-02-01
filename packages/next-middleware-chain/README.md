@@ -38,7 +38,7 @@ To continue the chain, call `next(req, event, response)`. To short-circuit, simp
 
 ```typescript
 import { NextResponse } from 'next/server';
-import { MiddlewareFactory } from '@nartix/next-middleware-chain'; // or your package name
+import { MiddlewareFactory } from '@nartix/next-middleware-chain';
 
 export const logRequestTimeFactory: MiddlewareFactory = (next) => {
   return async (req, event, incomingResponse) => {
@@ -67,6 +67,7 @@ Use `createMiddlewareChain` to create a composed handler:
 // middleware.ts
 import { logRequestTimeFactory } from './logRequestTimeFactory';
 import { addHeaderAFactory } from './addHeaderAFactory';
+import { createMiddlewareChain } from '@nartix/next-middleware-chain';
 
 const factories = [
   logRequestTimeFactory,

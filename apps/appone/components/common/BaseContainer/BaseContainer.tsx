@@ -4,13 +4,15 @@ import { ReactNode, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { SessionObj } from '@nartix/next-security/src';
 import { useSession } from '@/app/[locale]/(auth)/context/session-context';
+import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
 
 interface BaseContainerProps extends FlexProps {
   children: ReactNode;
   session?: SessionObj | null;
+  csrfToken?: string | null;
 }
 
-export function BaseContainer({ children, session, ...flexProps }: BaseContainerProps) {
+export function BaseContainer({ children, session, csrfToken, ...flexProps }: BaseContainerProps) {
   const defaultSettings: FlexProps = {
     direction: 'column',
     gap: 'md',
@@ -24,6 +26,11 @@ export function BaseContainer({ children, session, ...flexProps }: BaseContainer
     ...flexProps,
     className: cn(defaultSettings.className, flexProps.className),
   };
+
+  const { setCSRFToken } = useCSRFToken();
+  useEffect(() => {
+    setCSRFToken(csrfToken || null);
+  }, [csrfToken, setCSRFToken]);
 
   const { setSession } = useSession();
   useEffect(() => {

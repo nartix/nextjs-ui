@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode, useState } from 'react';
+import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 
 // Define the type for the CSRF token
 type CSRFContextType = {
@@ -28,5 +28,25 @@ interface CSRFProviderProps {
 
 export function CSRFProvider({ initialCSRFToken, children }: CSRFProviderProps) {
   const [CSRFToken, setCSRFToken] = useState(initialCSRFToken || null);
+
+  useEffect(() => {
+    const fetchCSRFToken = async () => {
+      try {
+        const response = await fetch('/api/auth/csrf-token'); // Replace with your API endpoint
+        if (!response.ok) console.error('Failed to fetch CSRF token');
+
+        const { token } = await response.json();
+        console.log('CSRF token:', token);
+        setCSRFToken(token);
+      } catch (error) {
+        console.error('Error fetching CSRF token:', error);
+      }
+    };
+
+    if (!CSRFToken) {
+      fetchCSRFToken();
+    }
+  }, [CSRFToken]);
+
   return <CSRFContext.Provider value={{ CSRFToken, setCSRFToken }}>{children}</CSRFContext.Provider>;
 }

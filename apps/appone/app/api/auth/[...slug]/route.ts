@@ -1,10 +1,16 @@
 import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
 import { NextRequest, NextResponse } from 'next/server';
+import { getCsrfToken } from '@/app/[locale]/(auth)/lib/get-csrf-token';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string[] }> }) {
   if ((await params).slug?.[0] === 'session') {
     const session = await getServerSession();
     return NextResponse.json(session);
+  }
+
+  if ((await params).slug?.[0] === 'csrf-token') {
+    const csrfToken = await getCsrfToken();
+    return NextResponse.json({ token: csrfToken });
   }
 
   return NextResponse.json({ error: 'Route not found' }, { status: 404 });
