@@ -1,17 +1,25 @@
 'use client';
 import React from 'react';
-
 import { FormConfig, FormBuilder } from '@/components/common/FormBuilder/FormBuilder';
-import { BaseContainer } from '@/components/common/BaseContainer/BaseContainer';
 import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
+import { createSchemas } from '@/app/[locale]/(common)/form/fieldSchemas';
 import { z } from 'zod';
 import { loginAction } from '@/app/[locale]/(auth)/actions/login-action';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
 import { Text, Anchor, Container, Loader } from '@mantine/core';
 import { Link } from '@/i18n/routing';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export function SignupForm() {
+  const t = useTranslations('errors.validation');
+  const { emailSchema, passwordSchema, usernameSchema, usernameOrEmailSchema } = createSchemas(t);
+  const signUpFormSchema = z.object({
+    username: usernameSchema,
+    email: emailSchema,
+    password: passwordSchema,
+    password2: passwordSchema,
+  });
   const csrf_token = useCSRFToken();
   const formConfig: FormConfig = {
     title: 'Sign Up',
@@ -65,7 +73,7 @@ export function SignupForm() {
                 name: 'username',
                 label: 'Username',
                 type: 'text',
-                validation: loginFormSchema.shape.username,
+                validation: signUpFormSchema.shape.username,
                 // props: { withAsterisk: true },
                 // colSpan: 8,
                 // defaultValue: 'bill',
@@ -79,7 +87,7 @@ export function SignupForm() {
                 name: 'email',
                 label: 'Email',
                 type: 'text',
-                validation: loginFormSchema.shape.username,
+                validation: signUpFormSchema.shape.username,
                 // props: { withAsterisk: true },
                 // colSpan: 8,
                 // defaultValue: 'bill',
@@ -93,7 +101,7 @@ export function SignupForm() {
                 name: 'password',
                 label: 'Password',
                 type: 'password',
-                validation: loginFormSchema.shape.password,
+                validation: signUpFormSchema.shape.password,
                 // gridColProps: { span: 6 },
               },
             ],
@@ -104,7 +112,7 @@ export function SignupForm() {
                 name: 'password2',
                 label: 'Confirm Password',
                 type: 'password',
-                validation: loginFormSchema.shape.password,
+                validation: signUpFormSchema.shape.password,
                 // gridColProps: { span: 6 },
               },
             ],
@@ -229,7 +237,7 @@ export function SignupForm() {
   // >
 
   return (
-    <BaseContainer>
+    <>
       {isRedirecting ? (
         <Loader size={30} mt='lg' />
       ) : (
@@ -237,6 +245,6 @@ export function SignupForm() {
           <FormBuilder formConfig={formConfig} submitHandler={loginActionHandler} />
         </Container>
       )}
-    </BaseContainer>
+    </>
   );
 }

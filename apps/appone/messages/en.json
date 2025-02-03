@@ -30,6 +30,16 @@
     "min": "This field must be at least {min} characters long.",
     "max": "This field must be at most {max} characters long.",
     "password_mismatch": "Passwords do not match.",
-    "failed_to_submit_form": "Failed to submit form. Please try again later."
+    "failed_to_submit_form": "Failed to submit form. Please try again later.",
+    "validation": {
+      "email_invalid": "Invalid email address.",
+      "username_length": "Username must be at least 4 characters long.",
+      "min": "This field must be at least {min} characters long.",
+      "max": "This field must be at most {max} characters long.",
+      "password_length": "Password must be at least 6 characters long.",
+      "password_mismatch": "Passwords do not match.",
+      "required": "This field is required.",
+      "invalid": "Invalid value."
+    }
   }
 }

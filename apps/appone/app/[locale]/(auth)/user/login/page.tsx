@@ -6,7 +6,6 @@ import { SessionContainer } from '@/components/common/SessionContainer/SessionCo
 
 export default async function Login() {
   const session = await getServerSession();
-
   if (session?.user) {
     redirect('/');
   }
