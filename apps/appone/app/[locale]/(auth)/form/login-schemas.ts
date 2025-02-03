@@ -1,11 +1,6 @@
 import z from 'zod';
 
-import { createSchemas } from '@/app/[locale]/(common)/form/fieldSchemas';
-import { getTranslations } from 'next-intl/server';
-
-const t = await getTranslations();
-
-const { emailSchema, passwordSchema, usernameSchema, usernameOrEmailSchema } = createSchemas(t);
+import { usernameOrEmailSchema, passwordSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 
 export const loginFormSchema = z.object({
   username: usernameOrEmailSchema,
