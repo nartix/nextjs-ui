@@ -20,7 +20,8 @@
     "error_invalid_credentials": "Invalid username or password.",
     "error_invalid_response": "Invalid response from authentication server.",
     "error_fetch_user_info": "Failed to fetch user",
-    "error_in_authorize": "Error in authorize:"
+    "error_in_authorize": "Error in authorize:",
+    "error_invalid_form_data": "Invalid form data"
   },
   "errors": {
     "an_error_occurred": "An error occurred.",

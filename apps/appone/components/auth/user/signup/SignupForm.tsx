@@ -12,7 +12,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 export function SignupForm() {
-  const t = useTranslations('errors.validation');
+  const t = useTranslations();
   const { emailSchema, passwordSchema, usernameSchema, usernameOrEmailSchema } = createSchemas(t);
   const signUpFormSchema = z.object({
     username: usernameSchema,

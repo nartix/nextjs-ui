@@ -1,12 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { NextUIProvider } from '@nextui-org/system';
 import { useRouter } from 'next/navigation';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { ThemeProviderProps } from 'next-themes';
 import { AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
-// import { SessionProvider } from 'next-auth/react';
 import { SessionProvider } from '@/app/[locale]/(auth)/context/session-context';
 import { SessionObj } from '@nartix/next-security';
 import { CSRFProvider } from '@/app/[locale]/(common)/context/csrf-context';
@@ -30,9 +28,7 @@ export function Providers({ children, themeProps, messages, locale, session, csr
       <CSRFProvider initialCSRFToken={csrfToken || null}>
         <NextIntlClientProvider messages={messages} locale={locale}>
           <MantineProvider theme={theme}>
-            <NextUIProvider navigate={router.push}>
-              <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
-            </NextUIProvider>
+            <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
           </MantineProvider>
         </NextIntlClientProvider>
       </CSRFProvider>

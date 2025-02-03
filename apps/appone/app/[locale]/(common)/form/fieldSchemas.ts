@@ -11,11 +11,11 @@ export const usernameOrEmailSchema = z
   .or(z.string().email('Invalid email address'));
 
 export const createSchemas = (t: (key: string) => string): { [key: string]: z.ZodTypeAny } => ({
-  emailSchema: z.string().email(t('email_invalid')),
-  passwordSchema: z.string().min(6, t('password_length')),
-  usernameSchema: z.string().min(3, t('username_length')),
+  emailSchema: z.string().email(t('errors.validation.email_invalid')),
+  passwordSchema: z.string().min(6, t('errors.validation.password_length')),
+  usernameSchema: z.string().min(3, t('errors.validation.username_length')),
   usernameOrEmailSchema: z
     .string()
-    .min(4, t('username_length'))
-    .or(z.string().email(t('email_invalid'))),
+    .min(4, t('errors.validation.username_length'))
+    .or(z.string().email(t('errors.validation.email_invalid'))),
 });

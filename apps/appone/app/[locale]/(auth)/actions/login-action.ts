@@ -1,13 +1,13 @@
 'use server';
 
 import { z } from 'zod';
-import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { signIn } from '@nartix/next-security';
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
-import { loginSchema } from '@/app/[locale]/(auth)/form/login-schemas';
+import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { ActionResponse } from '@/app/[locale]/(common)/types/common-types';
+import { createSchemas } from '@/app/[locale]/(common)/form/fieldSchemas';
 
 type LoginFormValues = z.infer<typeof loginFormSchema>;
 
@@ -30,8 +30,13 @@ export async function loginAction(formData: LoginFormValues): Promise<ActionResp
   // redirect('/en');
 
   const t = await getTranslations();
+  const { passwordSchema, usernameOrEmailSchema } = createSchemas(t);
+  const loginformSchemas = z.object({
+    username: usernameOrEmailSchema,
+    password: passwordSchema,
+  });
 
-  const { success } = loginSchema.safeParse(formData);
+  const { success, error } = loginformSchemas.safeParse(formData);
   if (!success) {
     return { success: false, message: t('auth.error_invalid_form_data') };
   }
