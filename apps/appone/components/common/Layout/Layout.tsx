@@ -1,7 +1,7 @@
 'use client';
 
-import { AppShell, Burger, Group, UnstyledButton, Text, RemoveScroll, Avatar, Flex, Anchor } from '@mantine/core';
-import { useDisclosure, useHeadroom, useHover } from '@mantine/hooks';
+import { AppShell, UnstyledButton, RemoveScroll, Flex } from '@mantine/core';
+import { useDisclosure, useHeadroom } from '@mantine/hooks';
 import { Footer } from '@/components/common/Footer/Footer';
 import classes from '@/components/common/Layout/Layout.module.scss';
 import { ReactNode } from 'react';
