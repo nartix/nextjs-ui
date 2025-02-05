@@ -13,7 +13,8 @@ export function Layout({ children }: { children: ReactNode }) {
 
   return (
     <AppShell
-      header={{ height: 60, collapsed: opened ? false : !pinned, offset: true }}
+      //default height was 60
+      header={{ height: 55, collapsed: opened ? false : !pinned, offset: true }}
       navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !opened } }}
       padding='md'
       styles={{

@@ -1,4 +1,8 @@
 {
+  "variables": {
+    "password_min_length": "8",
+    "username_min_length": "3"
+  },
   "common": {
     "home": "Home",
     "about": "About",
@@ -26,18 +30,13 @@
   "errors": {
     "an_error_occurred": "An error occurred.",
     "error_unexpected": "An unexpected error occurred.",
-    "required": "This field is required.",
-    "email": "Invalid email address.",
-    "min": "This field must be at least {min} characters long.",
-    "max": "This field must be at most {max} characters long.",
-    "password_mismatch": "Passwords do not match.",
     "failed_to_submit_form": "Failed to submit form. Please try again later.",
     "validation": {
+      "min": "This field must be at least zmin characters long.",
+      "max": "This field must be at most zmax characters long.",
       "email_invalid": "Invalid email address.",
-      "username_length": "Username must be at least 4 characters long.",
-      "min": "This field must be at least {min} characters long.",
-      "max": "This field must be at most {max} characters long.",
-      "password_length": "Password must be at least 6 characters long.",
+      "username_length": "Username must be at least zmin characters long.",
+      "password_length": "Password must be at least zmin characters long.",
       "password_mismatch": "Passwords do not match.",
       "required": "This field is required.",
       "invalid": "Invalid value."

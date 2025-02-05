@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
-import { signIn } from '@nartix/next-security';
+import { signIn } from '@nartix/next-security/src';
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
 import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { ActionResponse } from '@/app/[locale]/(common)/types/common-types';

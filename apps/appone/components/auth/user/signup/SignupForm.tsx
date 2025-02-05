@@ -1,27 +1,28 @@
 'use client';
-import React from 'react';
-import { FormConfig, FormBuilder } from '@/components/common/FormBuilder/FormBuilder';
+
+import React, { useEffect } from 'react';
+import { FormConfig, FormBuilder } from '@nartix/mantine-form-builder/src';
 import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
-import { createSchemas } from '@/app/[locale]/(common)/form/fieldSchemas';
-import { z } from 'zod';
+import { createSchemas, createSignUpFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
+import { z, ZodObject } from 'zod';
 import { loginAction } from '@/app/[locale]/(auth)/actions/login-action';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
 import { Text, Anchor, Container, Loader } from '@mantine/core';
 import { Link } from '@/i18n/routing';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { Controller } from 'react-hook-form';
+import { useActionHandler } from '@/app/[locale]/(common)/handlers/useActionHandler';
+import { signupAction } from '@/app/[locale]/(auth)/actions/signup-action';
 
 export function SignupForm() {
-  const t = useTranslations();
-  const { emailSchema, passwordSchema, usernameSchema, usernameOrEmailSchema } = createSchemas(t);
-  const signUpFormSchema = z.object({
-    username: usernameSchema,
-    email: emailSchema,
-    password: passwordSchema,
-    password2: passwordSchema,
-  });
-  const csrf_token = useCSRFToken();
+  const t = useTranslations('errors');
+  const signUpFormSchema = createSignUpFormSchema(t);
+
+  const { CSRFToken } = useCSRFToken();
+
   const formConfig: FormConfig = {
+    validationSchema: signUpFormSchema,
     title: 'Sign Up',
     // beforeSubmitText: 'Please enter your username and password',
     submitText: 'Sign Up',
@@ -73,7 +74,7 @@ export function SignupForm() {
                 name: 'username',
                 label: 'Username',
                 type: 'text',
-                validation: signUpFormSchema.shape.username,
+                // validation: signUpFormSchema._def.schema.shape.username,
                 // props: { withAsterisk: true },
                 // colSpan: 8,
                 // defaultValue: 'bill',
@@ -87,7 +88,7 @@ export function SignupForm() {
                 name: 'email',
                 label: 'Email',
                 type: 'text',
-                validation: signUpFormSchema.shape.username,
+                // validation: signUpFormSchema._def.schema.shape.email,
                 // props: { withAsterisk: true },
                 // colSpan: 8,
                 // defaultValue: 'bill',
@@ -101,7 +102,7 @@ export function SignupForm() {
                 name: 'password',
                 label: 'Password',
                 type: 'password',
-                validation: signUpFormSchema.shape.password,
+                // validation: signUpFormSchema._def.schema.shape.password,
                 // gridColProps: { span: 6 },
               },
             ],
@@ -112,7 +113,7 @@ export function SignupForm() {
                 name: 'password2',
                 label: 'Confirm Password',
                 type: 'password',
-                validation: signUpFormSchema.shape.password,
+                // validation: signUpFormSchema._def.schema.shape.password2,
                 // gridColProps: { span: 6 },
               },
             ],
@@ -121,8 +122,23 @@ export function SignupForm() {
             fields: [
               {
                 name: 'csrf_token',
-                type: 'hidden',
-                defaultValue: csrf_token,
+                type: 'component',
+                component: ({ setValue }) => {
+                  useEffect(() => {
+                    if (CSRFToken) setValue('csrf_token', CSRFToken);
+                  }, [CSRFToken]);
+                  return (
+                    <>
+                      <Controller
+                        name='csrf_token'
+                        defaultValue={CSRFToken}
+                        render={({ field: { onChange, onBlur, value, ref } }) => (
+                          <input name='csrf_token' type='hidden' value={value} ref={ref} onChange={onChange} onBlur={onBlur} />
+                        )}
+                      />
+                    </>
+                  );
+                },
               },
             ],
           },
@@ -168,73 +184,10 @@ export function SignupForm() {
     ],
   };
 
-  const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
-
-  const onSubmit = async (data: any) => {
-    if (data.username === 'bill') {
-      alert(JSON.stringify(data));
-    } else {
-      alert('There is an error');
-    }
-  };
-
-  type LoginFormValues = z.infer<typeof loginFormSchema>;
-
-  // 2) Example server-side "login" function
-  async function loginRequest(data: LoginFormValues, setError: any) {
-    // Simulate a server call. We'll reject if username or password is wrong
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (data.username === 'user' && data.password === 'password') {
-          alert('Login successful!');
-          resolve('OK'); // success
-        } else {
-          reject(new Error('Invalid username or password'));
-        }
-      }, 1000);
-    });
-  }
-
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const [isRedirecting, setIsRedirecting] = React.useState(false);
-  async function loginActionHandler(data: any, setError: any) {
-    try {
-      const response = await loginAction(data);
-      if (response && response.success) {
-        setIsRedirecting(true);
-        const next = searchParams.get('next');
-        router.push(next || '/');
-        return;
-      } else {
-        // setError('username', { message: 'Invalid username or password' });
-        // setError('password', { type: 'manual', message: 'Invalid username or password' });
-        throw new Error(response.message);
-      }
-    } catch (err: any) {
-      // next redirect from server throws an error with message 'NEXT_REDIRECT'
-      if (err.message === 'NEXT_REDIRECT') {
-        setIsRedirecting(true);
-        return;
-      }
-      // server action will throw unexpected error for csrf validation fails
-      // The server says username or password is incorrect
-      // We can show a "global" form error or field-specific errors
-      // Example: a global form error
-      // setError('username', { message: 'Invalid username or password' });
-      throw err;
-    }
-  }
-
-  //   <Container
-  //   // size='md' // Adjusts the max-width based on predefined sizes
-  //   style={{
-  //     // minWidth: '200px', // Set your desired minimum width
-  //     width: '100%', // Ensures the container takes full available width
-  //     maxWidth: '400px', // Optional: Set a maximum width if desired
-  //     margin: '0 auto', // Centers the container horizontally
-  //   }}
-  // >
+  const { handler: ActionHandler, isRedirecting } = useActionHandler({
+    action: signupAction,
+    onSuccessRedirect: true,
+  });
 
   return (
     <>
@@ -242,7 +195,7 @@ export function SignupForm() {
         <Loader size={30} mt='lg' />
       ) : (
         <Container w='100%' size={400} mt='lg'>
-          <FormBuilder formConfig={formConfig} submitHandler={loginActionHandler} />
+          <FormBuilder formConfig={formConfig} submitHandler={ActionHandler} />
         </Container>
       )}
     </>
