@@ -10,6 +10,8 @@ import { Text, Anchor, Container, Loader } from '@mantine/core';
 import { Link } from '@/i18n/routing';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Controller } from 'react-hook-form';
+import classes from '@/components/auth/user/login/LoginForm.module.scss';
+import { useActionHandler } from '@/app/[locale]/(common)/handlers/useActionHandler';
 
 export function LoginForm() {
   const { CSRFToken } = useCSRFToken();
@@ -47,6 +49,7 @@ export function LoginForm() {
         // mb: 'sm',
         layout: {
           gridProps: { align: 'flex-end', justify: 'flex-start', mb: 'sm' },
+          // fieldsetProps: { description: { className: 'text-center' } },
         },
         rows: [
           // {
@@ -229,36 +232,36 @@ export function LoginForm() {
     });
   }
 
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const [isRedirecting, setIsRedirecting] = React.useState(false);
-  async function loginActionHandler(data: any, setError: any) {
-    try {
-      const response = await loginAction(data);
-      if (response && response.success) {
-        setIsRedirecting(true);
-        const next = searchParams.get('next');
-        router.push(next || '/');
-        return;
-      } else {
-        // setError('username', { message: 'Invalid username or password' });
-        // setError('password', { type: 'manual', message: 'Invalid username or password' });
-        throw new Error(response.message);
-      }
-    } catch (err: any) {
-      // next redirect from server throws an error with message 'NEXT_REDIRECT'
-      if (err.message === 'NEXT_REDIRECT') {
-        setIsRedirecting(true);
-        return;
-      }
-      // server action will throw unexpected error for csrf validation fails
-      // The server says username or password is incorrect
-      // We can show a "global" form error or field-specific errors
-      // Example: a global form error
-      // setError('username', { message: 'Invalid username or password' });
-      throw err;
-    }
-  }
+  // const searchParams = useSearchParams();
+  // const router = useRouter();
+  // const [isRedirecting, setIsRedirecting] = React.useState(false);
+  // async function loginActionHandler(data: any, setError: any) {
+  //   try {
+  //     const response = await loginAction(data);
+  //     if (response && response.success) {
+  //       setIsRedirecting(true);
+  //       const next = searchParams.get('next');
+  //       router.push(next || '/');
+  //       return;
+  //     } else {
+  //       // setError('username', { message: 'Invalid username or password' });
+  //       // setError('password', { type: 'manual', message: 'Invalid username or password' });
+  //       throw new Error(response.message);
+  //     }
+  //   } catch (err: any) {
+  //     // next redirect from server throws an error with message 'NEXT_REDIRECT'
+  //     if (err.message === 'NEXT_REDIRECT') {
+  //       setIsRedirecting(true);
+  //       return;
+  //     }
+  //     // server action will throw unexpected error for csrf validation fails
+  //     // The server says username or password is incorrect
+  //     // We can show a "global" form error or field-specific errors
+  //     // Example: a global form error
+  //     // setError('username', { message: 'Invalid username or password' });
+  //     throw err;
+  //   }
+  // }
 
   //   <Container
   //   // size='md' // Adjusts the max-width based on predefined sizes
@@ -270,13 +273,18 @@ export function LoginForm() {
   //   }}
   // >
 
+  const { handler: ActionHandler, isRedirecting } = useActionHandler({
+    action: loginAction,
+    onSuccessRedirect: true,
+  });
+
   return (
     <>
       {isRedirecting ? (
         <Loader size={30} mt='lg' />
       ) : (
         <Container w='100%' size={400} mt='lg'>
-          <FormBuilder formConfig={formConfig} submitHandler={loginActionHandler} />
+          <FormBuilder formConfig={formConfig} submitHandler={ActionHandler} />
         </Container>
       )}
     </>

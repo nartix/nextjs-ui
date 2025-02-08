@@ -1,17 +1,16 @@
 'use server';
 
-import { z } from 'zod';
+import { unknown, z } from 'zod';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { signIn } from '@nartix/next-security/src';
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
 import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
-import { ActionResponse } from '@/app/[locale]/(common)/types/common-types';
-import { createSchemas } from '@/app/[locale]/(common)/form/fieldSchemas';
+import { serverActionType } from '@/app/[locale]/(common)/handlers/useActionHandler';
+import { createLoginFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 
-type LoginFormValues = z.infer<typeof loginFormSchema>;
-
-export async function loginAction(formData: LoginFormValues): Promise<ActionResponse> {
+export const loginAction: serverActionType<Record<string, unknown>> = async (formData) => {
+  // export async function loginAction(formData: LoginFormValues | Record<string, unknown>): Promise<ActionResponse> {
   // Simulate a server call. We'll reject if username or password is wrong
 
   // return new Promise((resolve) => {
@@ -30,18 +29,14 @@ export async function loginAction(formData: LoginFormValues): Promise<ActionResp
   // redirect('/en');
 
   const t = await getTranslations();
-  const { passwordSchema, usernameOrEmailSchema } = createSchemas(t);
-  const loginformSchemas = z.object({
-    username: usernameOrEmailSchema,
-    password: passwordSchema,
-  });
+  const loginformSchemas = createLoginFormSchema(t);
 
-  const { success, error } = loginformSchemas.safeParse(formData);
-  if (!success) {
+  const parsedData = loginformSchemas.safeParse(formData);
+  if (!parsedData.success) {
     return { success: false, message: t('auth.error_invalid_form_data') };
   }
 
-  const { username, password } = formData;
+  const { username, password } = parsedData.data;
   try {
     const user = await signIn(authConfig, { username, password }, 'credentials');
 
@@ -54,4 +49,4 @@ export async function loginAction(formData: LoginFormValues): Promise<ActionResp
     console.error('Login error:', error);
     return { success: false, message: t('errors.error_unexpected') };
   }
-}
+};

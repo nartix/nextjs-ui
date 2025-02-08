@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { z } from 'zod';
+import { unknown, z } from 'zod';
+import { UseFormReturn, FieldValues } from 'react-hook-form';
 
 function mapZodIssuesToErrors(issues: z.ZodIssue[]): Record<string, string> {
   return issues.reduce(
@@ -17,6 +18,10 @@ function mapZodIssuesToErrors(issues: z.ZodIssue[]): Record<string, string> {
   );
 }
 
+export type actionParams<T> = FormData | Record<string, unknown> | T;
+
+export type serverActionType<T> = (actionParams: actionParams<T>) => Promise<ActionResponse>;
+
 export type ActionResponse<T = unknown> = {
   success: boolean;
   message?: string;
@@ -25,10 +30,10 @@ export type ActionResponse<T = unknown> = {
   error?: string;
 };
 
-export type ServerAction<T = any> = (data: T) => Promise<ActionResponse>;
+export type ServerAction<T = unknown> = (data: T) => Promise<ActionResponse>;
 
 export interface ActionHandlerOptions<T> {
-  action: ServerAction<T>;
+  action: serverActionType<T>;
   onSuccessRedirect?: boolean;
   defaultRedirect?: string; // fallback redirect path (defaults to '/')
 }
@@ -40,7 +45,10 @@ export interface ActionHandlerOptions<T> {
  * @param options.onSuccessRedirect - Whether to redirect after a successful action.
  * @param options.defaultRedirect - The default redirect URL if none is provided in the URL search params.
  */
-export function useActionHandler<T>(options: ActionHandlerOptions<T>) {
+
+export function useActionHandler<T extends FieldValues = FieldValues | FormData | Record<string, unknown>>(
+  options: ActionHandlerOptions<T>
+) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isRedirecting, setIsRedirecting] = React.useState(false);
@@ -53,10 +61,10 @@ export function useActionHandler<T>(options: ActionHandlerOptions<T>) {
    */
   async function handler(
     data: T,
-    setError: (field: string, error: { message: string; type?: string }) => void
+    setError: (field: string, error: { message: string; type?: string }) => void,
+    useFormMethods?: UseFormReturn<FormData | Record<string, unknown>>
   ): Promise<ActionResponse | undefined> {
     try {
-      console.log('useactiondata:', data);
       const response = await options.action(data);
 
       if (response.success) {

@@ -24,11 +24,29 @@ export const createSchemas = (t: Translator): { [key: string]: z.ZodTypeAny } =>
 export const createSignUpFormSchema = (t: Translator) => {
   return z
     .object({
-      username: z.string().min(3, t('validation.username_length').replace('zmin', '3')),
-      email: z.string().email(t('validation.email_invalid')),
-      password: z.string().min(6, t('validation.password_length').replace('zmin', '6')),
+      username: z.string().min(3, t('errors.validation.username_length').replace('zmin', '3')),
+      email: z.string().email(t('errors.validation.email_invalid')),
+      password: z.string().min(6, t('errors.validation.password_length').replace('zmin', '6')),
       password2: z.string(),
       csrf_token: z.string(),
     })
-    .refine((data) => data.password === data.password2, { message: t('validation.password_mismatch'), path: ['password2'] });
+    .refine((data) => data.password === data.password2, {
+      message: t('errors.validation.password_mismatch'),
+      path: ['password2'],
+    });
+};
+
+export const createCheckUsernameSchema = (t: Translator) => {
+  return z.object({
+    username: z.string().min(3, t('errors.validation.username_length').replace('zmin', '3')),
+    csrf_token: z.string(),
+  });
+};
+
+export const createLoginFormSchema = (t: Translator) => {
+  return z.object({
+    username: z.string().min(3, t('errors.validation.username_length').replace('zmin', '3')),
+    password: z.string().min(6, t('errors.validation.password_length').replace('zmin', '6')),
+    csrf_token: z.string(),
+  });
 };

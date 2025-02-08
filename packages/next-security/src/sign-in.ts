@@ -1,4 +1,4 @@
-import { setCookie, ProviderType } from '@nartix/next-security';
+import { setCookie, ProviderType } from '@nartix/next-security/src';
 import { AuthOptions } from './auth';
 
 // cookies can only be set in server action or page handlers in Next.js

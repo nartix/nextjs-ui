@@ -1,6 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./components/**/*.{js,ts,jsx,tsx,mdx}', './app/**/*.{js,ts,jsx,tsx,mdx}'],
+  content: [
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    '../../packages/mantine-form-builder/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  safelist: ['border-red-700', 'text-red-700'],
   theme: {
     extend: {
       //   fontFamily: {
@@ -58,4 +63,9 @@ module.exports = {
   },
   darkMode: ['class'],
   plugins: [require('tailwindcss-animate')],
+  // was suggusted by mantine github issue
+  // https://github.com/orgs/mantinedev/discussions/1672
+  // corePlugins: {
+  //   preflight: false,
+  // },
 };

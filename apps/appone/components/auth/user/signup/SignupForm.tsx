@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormConfig, FormBuilder } from '@nartix/mantine-form-builder/src';
 import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { createSchemas, createSignUpFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
@@ -14,15 +14,22 @@ import { useTranslations } from 'next-intl';
 import { Controller } from 'react-hook-form';
 import { useActionHandler } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { signupAction } from '@/app/[locale]/(auth)/actions/signup-action';
+import { checkUsernameAction } from '@/app/[locale]/(auth)/actions/check-username-action';
+import { cn } from '@/lib/utils';
 
 export function SignupForm() {
   const t = useTranslations('errors');
   const signUpFormSchema = createSignUpFormSchema(t);
+  const [prevUsername, setPrevUsername] = useState<string>('');
 
   const { CSRFToken } = useCSRFToken();
 
   const formConfig: FormConfig = {
     validationSchema: signUpFormSchema,
+    layout: {
+      errorAlertProps: { classNames: { message: 'text-red-700' } },
+    },
+    // classNames: { message: 'text-red-700' },
     title: 'Sign Up',
     // beforeSubmitText: 'Please enter your username and password',
     submitText: 'Sign Up',
@@ -79,6 +86,29 @@ export function SignupForm() {
                 // colSpan: 8,
                 // defaultValue: 'bill',
                 // gridColProps: { span: 8 },
+                onBlur: async (e: React.FocusEvent<HTMLElement>) => {
+                  const target = e.target as HTMLInputElement;
+                  const trimmed = target.value.trim();
+                  if (trimmed.length < 3 || trimmed === prevUsername) return;
+
+                  setPrevUsername(trimmed);
+                  console.log(`Username is ${trimmed}`);
+
+                  const formData = new FormData();
+                  formData.append('csrf_token', CSRFToken || '');
+                  formData.append('username', trimmed);
+
+                  try {
+                    const response = await checkUsernameAction(formData);
+                    if (!response.success) {
+                      console.error('Error:', response.message);
+                    } else {
+                      console.log('Response:', response.message);
+                    }
+                  } catch (error) {
+                    console.error('Error during username check:', error);
+                  }
+                },
               },
             ],
           },

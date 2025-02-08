@@ -28,6 +28,8 @@
     "error_invalid_form_data": "Invalid form data"
   },
   "errors": {
+    "404": "Page not found",
+    "resource_not_found": "Resource not found.",
     "an_error_occurred": "An error occurred.",
     "error_unexpected": "An unexpected error occurred.",
     "failed_to_submit_form": "Failed to submit form. Please try again later.",
@@ -39,7 +41,9 @@
       "password_length": "Password must be at least zmin characters long.",
       "password_mismatch": "Passwords do not match.",
       "required": "This field is required.",
-      "invalid": "Invalid value."
+      "invalid": "Invalid value.",
+      "username_exists": "That username is already taken.",
+      "username_available": "Nice! Username available"
     }
   }
 }

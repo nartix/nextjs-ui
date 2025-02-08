@@ -24,7 +24,7 @@ export default async function Home() {
         .fill(0)
         .map((_, index) => (
           //  className='max-w-2xl'
-          <Text size='md' key={index} className='max-w-2xl'>
+          <Text size='md' key={index} className='max-w-2xl text-red-700'>
             {lorem}
           </Text>
         ))}
