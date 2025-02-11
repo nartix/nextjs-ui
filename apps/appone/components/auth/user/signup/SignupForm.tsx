@@ -18,7 +18,7 @@ import { checkUsernameAction } from '@/app/[locale]/(auth)/actions/check-usernam
 import { cn } from '@/lib/utils';
 
 export function SignupForm() {
-  const t = useTranslations('errors');
+  const t = useTranslations();
   const signUpFormSchema = createSignUpFormSchema(t);
   const [prevUsername, setPrevUsername] = useState<string>('');
 
@@ -214,9 +214,10 @@ export function SignupForm() {
     ],
   };
 
-  const { handler: ActionHandler, isRedirecting } = useActionHandler({
+  const { formAction, isRedirecting } = useActionHandler({
     action: signupAction,
     onSuccessRedirect: true,
+    t,
   });
 
   return (
@@ -225,7 +226,7 @@ export function SignupForm() {
         <Loader size={30} mt='lg' />
       ) : (
         <Container w='100%' size={400} mt='lg'>
-          <FormBuilder formConfig={formConfig} submitHandler={ActionHandler} />
+          <FormBuilder formConfig={formConfig} submitHandler={formAction} />
         </Container>
       )}
     </>

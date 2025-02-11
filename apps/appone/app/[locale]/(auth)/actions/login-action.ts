@@ -6,10 +6,10 @@ import { redirect } from 'next/navigation';
 import { signIn } from '@nartix/next-security/src';
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
 import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
-import { serverActionType } from '@/app/[locale]/(common)/handlers/useActionHandler';
+import { ServerActionType } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { createLoginFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 
-export const loginAction: serverActionType<Record<string, unknown>> = async (formData) => {
+export const loginAction: ServerActionType<Record<string, unknown> | FormData> = async (formData) => {
   // export async function loginAction(formData: LoginFormValues | Record<string, unknown>): Promise<ActionResponse> {
   // Simulate a server call. We'll reject if username or password is wrong
 
@@ -47,6 +47,6 @@ export const loginAction: serverActionType<Record<string, unknown>> = async (for
     return { success: true };
   } catch (error) {
     console.error('Login error:', error);
-    return { success: false, message: t('errors.error_unexpected') };
+    return { success: false, message: t('errors.error_unexpected'), errorCode: 'UNEXPECTED_ERROR' };
   }
 };

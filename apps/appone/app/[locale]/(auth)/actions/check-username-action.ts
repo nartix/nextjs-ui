@@ -10,24 +10,24 @@ export async function checkUsernameAction(formData: FormData): Promise<ActionRes
   const schema = createCheckUsernameSchema(t);
 
   try {
-    const validatedData = schema.parse({
+    const { username } = schema.parse({
       username: formData.get('username'),
       csrf_token: formData.get('csrf_token'),
     });
 
-    const response = await fetchWrapper(
-      `${process.env.API_URL}/users/search/findByUsernameIgnoreCase?username=${validatedData.username}`,
-      { method: 'GET' }
-    );
+    const query = new URLSearchParams({ username });
+    const url = `${process.env.API_URL}/users/search/findByUsernameIgnoreCase?${query.toString()}`;
 
-    if (!response.ok) {
-      if (response.status === 404) {
-        return { success: true, message: t('errors.validation.username_available') };
-      }
+    const response = await fetchWrapper(url, { method: 'GET' });
+
+    if (response.ok) {
+      return { success: false, message: t('errors.validation.username_exists') };
+    } else if (response.status === 404) {
       return { success: true, message: t('errors.validation.username_available') };
+    } else {
+      return { success: false, error: t('errors.validation.error_unexpected') };
     }
-    return { success: false, message: t('errors.validation.username_exists') };
   } catch (error: unknown) {
-    return { success: true, error: t('errors.validation.error_unexpected') };
+    return { success: false, error: t('errors.validation.error_unexpected') };
   }
 }

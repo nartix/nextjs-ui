@@ -12,13 +12,15 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Controller } from 'react-hook-form';
 import classes from '@/components/auth/user/login/LoginForm.module.scss';
 import { useActionHandler } from '@/app/[locale]/(common)/handlers/useActionHandler';
+import { useTranslations } from 'next-intl';
 
 export function LoginForm() {
+  const t = useTranslations();
   const { CSRFToken } = useCSRFToken();
   const formConfig: FormConfig = {
-    title: 'Login',
+    title: t('auth.login'),
     // beforeSubmitText: 'Please enter your username and password',
-    submitText: 'Sign In',
+    submitText: t('auth.sign_in'),
     afterSubmitText: (
       <Text ta='center' size='sm'>
         Don't have an account?{' '}
@@ -273,9 +275,10 @@ export function LoginForm() {
   //   }}
   // >
 
-  const { handler: ActionHandler, isRedirecting } = useActionHandler({
+  const { formAction, isRedirecting } = useActionHandler({
     action: loginAction,
     onSuccessRedirect: true,
+    t,
   });
 
   return (
@@ -284,7 +287,7 @@ export function LoginForm() {
         <Loader size={30} mt='lg' />
       ) : (
         <Container w='100%' size={400} mt='lg'>
-          <FormBuilder formConfig={formConfig} submitHandler={ActionHandler} />
+          <FormBuilder formConfig={formConfig} submitHandler={formAction} />
         </Container>
       )}
     </>

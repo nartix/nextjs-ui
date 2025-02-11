@@ -2,10 +2,13 @@
 
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { unknown, z } from 'zod';
-import { UseFormReturn, FieldValues } from 'react-hook-form';
+import { z } from 'zod';
+import type { UseFormReturn, FieldValues } from 'react-hook-form';
 
-function mapZodIssuesToErrors(issues: z.ZodIssue[]): Record<string, string> {
+/**
+ * Converts an array of Zod issues into a field-to-message map.
+ */
+export function convertZodIssuesToErrors(issues: z.ZodIssue[]): Record<string, string> {
   return issues.reduce(
     (acc, issue) => {
       const field = issue.path.join('.');
@@ -18,83 +21,99 @@ function mapZodIssuesToErrors(issues: z.ZodIssue[]): Record<string, string> {
   );
 }
 
-export type actionParams<T> = FormData | Record<string, unknown> | T;
-
-export type serverActionType<T> = (actionParams: actionParams<T>) => Promise<ActionResponse>;
-
+export type ActionParams<T> = FormData | Record<string, unknown> | T;
 export type ActionResponse<T = unknown> = {
   success: boolean;
   message?: string;
   data?: T;
   errors?: z.ZodIssue[];
   error?: string;
+  errorCode?: string;
 };
-
-export type ServerAction<T = unknown> = (data: T) => Promise<ActionResponse>;
-
+export type ServerActionType<T> = (params: ActionParams<T>) => Promise<ActionResponse<T>>;
+export type ServerAction<T = unknown> = (data: T) => Promise<ActionResponse<T>>;
 export interface ActionHandlerOptions<T> {
-  action: serverActionType<T>;
+  action: ServerActionType<T>;
   onSuccessRedirect?: boolean;
   defaultRedirect?: string; // fallback redirect path (defaults to '/')
+  t: (key: string) => string;
 }
 
 /**
- * A custom hook that returns a generic action handler.
+ * Encapsulates the redirection logic after a successful action.
+ */
+function useRedirectHandler(onSuccessRedirect?: boolean, defaultRedirect?: string) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  function redirect() {
+    if (onSuccessRedirect) {
+      const next = searchParams.get('next');
+      router.push(next || defaultRedirect || '/');
+    }
+  }
+  return redirect;
+}
+
+function updateFormErrors(errors: z.ZodIssue[], setError: (field: string, error: { message: string; type?: string }) => void) {
+  const errorMap = convertZodIssuesToErrors(errors);
+  Object.entries(errorMap).forEach(([field, message]) => {
+    setError(field, { message });
+  });
+}
+
+/**
+ * Custom hook for handling server actions.
+ *
+ * - Calls the provided action.
+ * - On success, optionally redirects the user.
+ * - On failure, resets form errors and maps Zod issues to field errors.
  *
  * @param options.action - The server action function to call.
  * @param options.onSuccessRedirect - Whether to redirect after a successful action.
- * @param options.defaultRedirect - The default redirect URL if none is provided in the URL search params.
+ * @param options.defaultRedirect - Fallback URL for redirection.
  */
-
-export function useActionHandler<T extends FieldValues = FieldValues | FormData | Record<string, unknown>>(
-  options: ActionHandlerOptions<T>
-) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+export function useActionHandler<T extends FieldValues = FieldValues>(options: ActionHandlerOptions<T>) {
+  const { action, onSuccessRedirect, defaultRedirect, t } = options;
   const [isRedirecting, setIsRedirecting] = React.useState(false);
+  const redirect = useRedirectHandler(onSuccessRedirect, defaultRedirect);
 
-  /**
-   * The handler function that can be used as a submit handler.
-   *
-   * @param data - The data to pass to your server action.
-   * @param setError - A callback (from react-hook-form or similar) to set field/global errors.
-   */
-  async function handler(
+  async function formAction(
     data: T,
     setError: (field: string, error: { message: string; type?: string }) => void,
-    useFormMethods?: UseFormReturn<FormData | Record<string, unknown>>
+    formMethods: UseFormReturn<T>
   ): Promise<ActionResponse | undefined> {
     try {
-      const response = await options.action(data);
+      const response = await action(data);
 
       if (response.success) {
-        if (options.onSuccessRedirect) {
-          setIsRedirecting(true);
-          const next = searchParams.get('next');
-          router.push(next || options.defaultRedirect || '/');
-        }
+        // Trigger redirect and mark state as redirecting.
+        setIsRedirecting(true);
+        redirect();
         return response;
       } else {
+        // If error is not unexpected, reset form errors.
+        if (response.errorCode !== 'UNEXPECTED_ERROR') {
+          const { reset, getValues } = formMethods;
+          reset(getValues(), { keepErrors: true });
+        }
+        // If validation errors exist, map and set them.
         if (response.errors) {
-          const errors = mapZodIssuesToErrors(response.errors);
-          Object.entries(errors).forEach(([field, message]) => {
-            setError(field, { message });
-          });
+          updateFormErrors(response.errors, setError);
           return;
         }
-        throw new Error(response.error || response.message || 'Action failed');
+        // Fallback error handling.
+        throw new Error(response.error || response.message || t('errors.action_failed'));
       }
-    } catch (err: any) {
-      // For example, the server action might throw an error with message 'NEXT_REDIRECT'
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error));
       if (err.message === 'NEXT_REDIRECT') {
         setIsRedirecting(true);
         return;
       }
-      // Optionally, you can set a global form error or field-specific errors
-      //   setError('global', { message: err.message });
       throw err;
     }
   }
 
-  return { handler, isRedirecting };
+  return { formAction, isRedirecting };
 }

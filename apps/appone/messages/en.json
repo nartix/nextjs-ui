@@ -16,6 +16,7 @@
     "about": "Go to the about page"
   },
   "auth": {
+    "sign_in": "Sign in",
     "login": "Login",
     "logout": "Logout",
     "register": "Register",
@@ -33,6 +34,7 @@
     "an_error_occurred": "An error occurred.",
     "error_unexpected": "An unexpected error occurred.",
     "failed_to_submit_form": "Failed to submit form. Please try again later.",
+    "action_failed": "Action failed.",
     "validation": {
       "min": "This field must be at least zmin characters long.",
       "max": "This field must be at most zmax characters long.",
