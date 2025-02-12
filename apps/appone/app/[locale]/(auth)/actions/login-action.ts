@@ -6,10 +6,10 @@ import { redirect } from 'next/navigation';
 import { signIn } from '@nartix/next-security/src';
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
 import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
-import { ServerActionType } from '@/app/[locale]/(common)/handlers/useActionHandler';
+import { ServerActionResponse } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { createLoginFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 
-export const loginAction: ServerActionType<Record<string, unknown> | FormData> = async (formData) => {
+export const loginAction: ServerActionResponse<Record<string, unknown> | FormData> = async (formData) => {
   // export async function loginAction(formData: LoginFormValues | Record<string, unknown>): Promise<ActionResponse> {
   // Simulate a server call. We'll reject if username or password is wrong
 

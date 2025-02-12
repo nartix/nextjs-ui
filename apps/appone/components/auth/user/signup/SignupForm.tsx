@@ -16,11 +16,14 @@ import { useActionHandler } from '@/app/[locale]/(common)/handlers/useActionHand
 import { signupAction } from '@/app/[locale]/(auth)/actions/signup-action';
 import { checkUsernameAction } from '@/app/[locale]/(auth)/actions/check-username-action';
 import { cn } from '@/lib/utils';
+import { IconCheck } from '@tabler/icons-react';
 
 export function SignupForm() {
   const t = useTranslations();
   const signUpFormSchema = createSignUpFormSchema(t);
   const [prevUsername, setPrevUsername] = useState<string>('');
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean>(false);
+  const [checkUsernameError, setCheckUsernameError] = useState<string | null>(null);
 
   const { CSRFToken } = useCSRFToken();
 
@@ -86,13 +89,21 @@ export function SignupForm() {
                 // colSpan: 8,
                 // defaultValue: 'bill',
                 // gridColProps: { span: 8 },
+                layout: {
+                  props: {
+                    rightSectionWidth: usernameAvailable ? 36 : 0,
+                    rightSection: usernameAvailable ? <IconCheck size={16} color='green' /> : null,
+                    error: checkUsernameError ? checkUsernameError : null,
+                  },
+                },
                 onBlur: async (e: React.FocusEvent<HTMLElement>) => {
                   const target = e.target as HTMLInputElement;
                   const trimmed = target.value.trim();
+                  setUsernameAvailable(false);
+                  setCheckUsernameError(null);
                   if (trimmed.length < 3 || trimmed === prevUsername) return;
 
                   setPrevUsername(trimmed);
-                  console.log(`Username is ${trimmed}`);
 
                   const formData = new FormData();
                   formData.append('csrf_token', CSRFToken || '');
@@ -101,12 +112,16 @@ export function SignupForm() {
                   try {
                     const response = await checkUsernameAction(formData);
                     if (!response.success) {
-                      console.error('Error:', response.message);
+                      setCheckUsernameError(response.message ?? null);
+                      setUsernameAvailable(false);
                     } else {
-                      console.log('Response:', response.message);
+                      setCheckUsernameError(null);
+                      setUsernameAvailable(true);
                     }
                   } catch (error) {
-                    console.error('Error during username check:', error);
+                    setCheckUsernameError(null);
+                    setUsernameAvailable(false);
+                    console.error('Username check error:', error);
                   }
                 },
               },

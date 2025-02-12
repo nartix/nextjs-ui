@@ -26,14 +26,14 @@ export type ActionResponse<T = unknown> = {
   success: boolean;
   message?: string;
   data?: T;
-  errors?: z.ZodIssue[];
+  errors?: Array<z.ZodIssue | string>;
   error?: string;
   errorCode?: string;
 };
-export type ServerActionType<T> = (params: ActionParams<T>) => Promise<ActionResponse<T>>;
+export type ServerActionResponse<T> = (params: ActionParams<T>) => Promise<ActionResponse<T>>;
 export type ServerAction<T = unknown> = (data: T) => Promise<ActionResponse<T>>;
 export interface ActionHandlerOptions<T> {
-  action: ServerActionType<T>;
+  action: ServerActionResponse<T>;
   onSuccessRedirect?: boolean;
   defaultRedirect?: string; // fallback redirect path (defaults to '/')
   t: (key: string) => string;
@@ -55,8 +55,12 @@ function useRedirectHandler(onSuccessRedirect?: boolean, defaultRedirect?: strin
   return redirect;
 }
 
-function updateFormErrors(errors: z.ZodIssue[], setError: (field: string, error: { message: string; type?: string }) => void) {
-  const errorMap = convertZodIssuesToErrors(errors);
+function updateFormErrors(
+  errors: Array<z.ZodIssue | string>,
+  setError: (field: string, error: { message: string; type?: string }) => void
+) {
+  const zodErrors = errors.filter((error): error is z.ZodIssue => typeof error !== 'string');
+  const errorMap = convertZodIssuesToErrors(zodErrors);
   Object.entries(errorMap).forEach(([field, message]) => {
     setError(field, { message });
   });

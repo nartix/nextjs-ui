@@ -5,10 +5,10 @@ import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { signIn, ProviderType } from '@nartix/next-security/src';
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
-import { ServerActionType } from '@/app/[locale]/(common)/handlers/useActionHandler';
+import { ServerActionResponse } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { createSignUpFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 
-export const signupAction: ServerActionType<Record<string, unknown> | FormData> = async (formData) => {
+export const signupAction: ServerActionResponse<Record<string, unknown> | FormData> = async (formData) => {
   const t = await getTranslations('errors');
   const signupSchema = createSignUpFormSchema(t);
 
