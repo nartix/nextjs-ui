@@ -2,28 +2,46 @@
 
 import React, { useEffect, useState } from 'react';
 import { FormConfig, FormBuilder } from '@nartix/mantine-form-builder/src';
-import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
-import { createSchemas, createSignUpFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
-import { z, ZodObject } from 'zod';
-import { loginAction } from '@/app/[locale]/(auth)/actions/login-action';
+import { createSignUpFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
-import { Text, Anchor, Container, Loader } from '@mantine/core';
-import { Link } from '@/i18n/routing';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { Container, Loader } from '@mantine/core';
+// import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
-import { Controller } from 'react-hook-form';
+import { Controller, FieldValues, UseFormReturn } from 'react-hook-form';
 import { useActionHandler } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { signupAction } from '@/app/[locale]/(auth)/actions/signup-action';
 import { checkUsernameAction } from '@/app/[locale]/(auth)/actions/check-username-action';
-import { cn } from '@/lib/utils';
 import { IconCheck } from '@tabler/icons-react';
 
 export function SignupForm() {
   const t = useTranslations();
   const signUpFormSchema = createSignUpFormSchema(t);
-  const [prevUsername, setPrevUsername] = useState<string>('');
   const [usernameAvailable, setUsernameAvailable] = useState<boolean>(false);
-  const [checkUsernameError, setCheckUsernameError] = useState<string | null>(null);
+
+  const handleUsernameCheck = async (value: string, methods: UseFormReturn<FieldValues>) => {
+    const { setError, clearErrors } = methods;
+    const trimmed = value.trim();
+    setUsernameAvailable(false);
+    if (trimmed.length < 3) return;
+
+    const formData = new FormData();
+    formData.append('csrf_token', CSRFToken || '');
+    formData.append('username', trimmed);
+
+    try {
+      const response = await checkUsernameAction(formData);
+      if (!response.success) {
+        setError('username', { message: response.message ?? 'An unknown error occurred' });
+        setUsernameAvailable(false);
+      } else {
+        clearErrors('username');
+        setUsernameAvailable(true);
+      }
+    } catch (error: any) {
+      setUsernameAvailable(false);
+      console.error('Username check error:', error);
+    }
+  };
 
   const { CSRFToken } = useCSRFToken();
 
@@ -32,137 +50,47 @@ export function SignupForm() {
     layout: {
       errorAlertProps: { classNames: { message: 'text-red-700' } },
     },
-    // classNames: { message: 'text-red-700' },
     title: 'Sign Up',
-    // beforeSubmitText: 'Please enter your username and password',
     submitText: 'Sign Up',
-    // props: {
-    //   title: {
-    //     order: 1,
-    //     ta: 'center',
-    //   },
-    // },
     sections: [
       {
-        // title: 'Personal Information',
-        // description: 'Please enter your personal information',
-        // props: {
-        //   title: {
-        //     variant: 'unstyled',
-        //     classNames: { legend: 'text-left' },
-        //   },
-        // description: {
-        //   className: 'text-right',
-        // },
-        // },
-        // mb: 'sm',
         layout: {
           gridProps: { align: 'flex-end', justify: 'flex-start', mb: 'sm' },
         },
         rows: [
-          // {
-          //   fields: [
-          //     {
-          //       name: 'input1',
-          //       label: 'Name',
-          //       placeholder: 'Enter your name',
-          //       description: 'Input description',
-          //       type: 'text',
-          //     },
-          //     {
-          //       name: 'input2',
-          //       label: 'Form Input 2',
-          //       placeholder: 'Enter your name',
-          //       // description: 'Input description',
-          //       type: 'text',
-          //     },
-          //   ],
-          // },
           {
             fields: [
               {
                 name: 'username',
                 label: 'Username',
                 type: 'text',
-                // validation: signUpFormSchema._def.schema.shape.username,
-                // props: { withAsterisk: true },
-                // colSpan: 8,
-                // defaultValue: 'bill',
-                // gridColProps: { span: 8 },
                 layout: {
                   props: {
                     rightSectionWidth: usernameAvailable ? 36 : 0,
                     rightSection: usernameAvailable ? <IconCheck size={16} color='green' /> : null,
-                    error: checkUsernameError ? checkUsernameError : null,
+                    onKeyDown: async (e: React.KeyboardEvent<HTMLElement>) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        e.currentTarget.blur();
+                        const form = (e.currentTarget as HTMLInputElement).form;
+                        if (!form) return;
+                        const index = Array.prototype.indexOf.call(form, e.currentTarget);
+                        if (form.elements[index + 1]) {
+                          (form.elements[index + 1] as HTMLElement).focus();
+                        }
+                      }
+                    },
                   },
                 },
-                onBlur: async (e: React.FocusEvent<HTMLElement>) => {
-                  const target = e.target as HTMLInputElement;
-                  const trimmed = target.value.trim();
-                  setUsernameAvailable(false);
-                  setCheckUsernameError(null);
-                  if (trimmed.length < 3 || trimmed === prevUsername) return;
-
-                  setPrevUsername(trimmed);
-
-                  const formData = new FormData();
-                  formData.append('csrf_token', CSRFToken || '');
-                  formData.append('username', trimmed);
-
-                  try {
-                    const response = await checkUsernameAction(formData);
-                    if (!response.success) {
-                      setCheckUsernameError(response.message ?? null);
-                      setUsernameAvailable(false);
-                    } else {
-                      setCheckUsernameError(null);
-                      setUsernameAvailable(true);
-                    }
-                  } catch (error) {
-                    setCheckUsernameError(null);
-                    setUsernameAvailable(false);
-                    console.error('Username check error:', error);
-                  }
+                onBlur: async (e: React.FocusEvent<HTMLElement>, methods: UseFormReturn<FieldValues>) => {
+                  await handleUsernameCheck((e.target as HTMLInputElement).value, methods);
                 },
               },
             ],
           },
-          {
-            fields: [
-              {
-                name: 'email',
-                label: 'Email',
-                type: 'text',
-                // validation: signUpFormSchema._def.schema.shape.email,
-                // props: { withAsterisk: true },
-                // colSpan: 8,
-                // defaultValue: 'bill',
-                // gridColProps: { span: 8 },
-              },
-            ],
-          },
-          {
-            fields: [
-              {
-                name: 'password',
-                label: 'Password',
-                type: 'password',
-                // validation: signUpFormSchema._def.schema.shape.password,
-                // gridColProps: { span: 6 },
-              },
-            ],
-          },
-          {
-            fields: [
-              {
-                name: 'password2',
-                label: 'Confirm Password',
-                type: 'password',
-                // validation: signUpFormSchema._def.schema.shape.password2,
-                // gridColProps: { span: 6 },
-              },
-            ],
-          },
+          { fields: [{ name: 'email', label: 'Email', type: 'text' }] },
+          { fields: [{ name: 'password', label: 'Password', type: 'password' }] },
+          { fields: [{ name: 'password2', label: 'Confirm Password', type: 'password' }] },
           {
             fields: [
               {
@@ -189,43 +117,6 @@ export function SignupForm() {
           },
         ],
       },
-      // {
-      //   title: 'Test Section',
-      //   rows: [
-      //     {
-      //       fields: [
-      //         {
-      //           name: 'showUserInfo',
-      //           type: 'component',
-      //           component: ({ watch, formState, setValue }) => {
-      //             // watch returns the value of any field
-      //             const username = watch('username', '');
-      //             const rememberMe = watch('rememberme', false);
-
-      //             // You can also read errors or isValid, etc., from formState
-      //             const { errors } = formState;
-
-      //             // // For demonstration, let's update some hidden field if username changes
-      //             // if (username.includes('test')) {
-      //             //   setValue('password', 'TestUserCSRF');
-      //             // } else {
-      //             //   setValue('password', '');
-      //             // }
-
-      //             return (
-      //               <div style={{ color: 'blue' }}>
-      //                 {`Username: ${username}`}
-      //                 <br />
-      //                 {`Remember me? ${rememberMe}`}
-      //                 {errors.username && <p style={{ color: 'red' }}>Username Error: {String(errors.username.message)}</p>}
-      //               </div>
-      //             );
-      //           },
-      //         },
-      //       ],
-      //     },
-      //   ],
-      // },
     ],
   };
 

@@ -7,6 +7,7 @@ import { signIn, ProviderType } from '@nartix/next-security/src';
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
 import { ServerActionResponse } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { createSignUpFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
+import fetchWrapper from '@/lib/fetch-wrapper';
 
 export const signupAction: ServerActionResponse<Record<string, unknown> | FormData> = async (formData) => {
   const t = await getTranslations('errors');
@@ -15,6 +16,13 @@ export const signupAction: ServerActionResponse<Record<string, unknown> | FormDa
   try {
     // Validate form inputs.
     const validatedData = signupSchema.parse(formData);
+
+    console.log('Signup data:', validatedData);
+
+    // const response = await fetchWrapper('/api/auth/signup', {
+    //   method: 'POST',
+    //   body: JSON.stringify(validatedData),
+    // });
 
     // TODO: api Registration
 

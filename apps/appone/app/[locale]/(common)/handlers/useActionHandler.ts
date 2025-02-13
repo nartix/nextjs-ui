@@ -2,23 +2,100 @@
 
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { z } from 'zod';
-import type { UseFormReturn, FieldValues } from 'react-hook-form';
+import { z, ZodIssue } from 'zod';
+import type { UseFormReturn, FieldValues, UseFormSetError, Path } from 'react-hook-form';
 
 /**
  * Converts an array of Zod issues into a field-to-message map.
  */
-export function convertZodIssuesToErrors(issues: z.ZodIssue[]): Record<string, string> {
-  return issues.reduce(
-    (acc, issue) => {
-      const field = issue.path.join('.');
-      if (!acc[field]) {
-        acc[field] = issue.message;
+// export function mapActionResponseErrorsToForm<T extends FieldValues>(
+//   response: ActionResponse,
+//   setError: UseFormSetError<T>
+// ): void {
+//   if (response.error) {
+//     throw new Error(response.error);
+//   }
+
+//   // Iterate over each error in the errors array and set it directly.
+//   if (response.errors && Array.isArray(response.errors)) {
+//     response.errors.forEach((err) => {
+//       if (typeof err === 'string') {
+//         // // For a string error, assign it to a generic field.
+//         // setError('_root' as keyof T, {
+//         //   type: 'server',
+//         //   message: err,
+//         // });
+//       } else {
+//         // For a ZodIssue, create the field key by joining the path.
+//         const fieldKey = err.path.join('.') as Path<T>;
+//         setError(fieldKey, {
+//           type: 'server',
+//           message: err.message,
+//         });
+//       }
+//     });
+//   }
+// }
+
+export function mapActionResponseErrorsToForm<T extends FieldValues>(
+  response: ActionResponse,
+  setError: UseFormSetError<T>
+): void {
+  if (response.error) {
+    throw new Error(response.error);
+  }
+
+  // Process the errors property if it exists.
+  if (response.errors) {
+    if (!Array.isArray(response.errors)) {
+      // Assume a flattened error object.
+      // Expected shape:
+      // {
+      //   formErrors: string[] | Array<{ message: string; errorCode: string }>;
+      //   fieldErrors: Record<string, string[] | Array<{ message: string; errorCode: string }>>;
+      // }
+      const flattened = response.errors as {
+        formErrors: Array<string | { message: string; errorCode: string }>;
+        fieldErrors: Record<string, Array<string | { message: string; errorCode: string }>>;
+      };
+
+      // Process form-level errors.
+      if (flattened.formErrors && flattened.formErrors.length > 0) {
+        const combinedFormErrors = flattened.formErrors.map((e) => (typeof e === 'string' ? e : e.message)).join(' ');
+        setError('root.serverError', {
+          type: 'server',
+          message: combinedFormErrors,
+        });
       }
-      return acc;
-    },
-    {} as Record<string, string>
-  );
+
+      // Process field-level errors.
+      if (flattened.fieldErrors) {
+        Object.entries(flattened.fieldErrors).forEach(([field, errors]) => {
+          const combinedFieldError = errors.map((err) => (typeof err === 'string' ? err : err.message)).join(' ');
+          setError(field as Path<T>, {
+            type: 'server',
+            message: combinedFieldError,
+          });
+        });
+      }
+    } else {
+      // Process errors if they are in array format.
+      (response.errors as Array<ZodIssue | string>).forEach((err) => {
+        if (typeof err === 'string') {
+          setError('root.serverError', {
+            type: 'server',
+            message: err,
+          });
+        } else {
+          const fieldKey = err.path.join('.') as Path<T>;
+          setError(fieldKey, {
+            type: 'server',
+            message: err.message,
+          });
+        }
+      });
+    }
+  }
 }
 
 export type ActionParams<T> = FormData | Record<string, unknown> | T;
@@ -55,16 +132,15 @@ function useRedirectHandler(onSuccessRedirect?: boolean, defaultRedirect?: strin
   return redirect;
 }
 
-function updateFormErrors(
-  errors: Array<z.ZodIssue | string>,
-  setError: (field: string, error: { message: string; type?: string }) => void
-) {
-  const zodErrors = errors.filter((error): error is z.ZodIssue => typeof error !== 'string');
-  const errorMap = convertZodIssuesToErrors(zodErrors);
-  Object.entries(errorMap).forEach(([field, message]) => {
-    setError(field, { message });
-  });
-}
+// function updateFormErrors(
+//   response: ActionResponse,
+//   setError: (field: string, error: { message: string; type?: string }) => void
+// ) {
+//   const errorMap = mapActionResponseErrorsToForm(response);
+//   Object.entries(errorMap).forEach(([field, message]) => {
+//     setError(field, { message });
+//   });
+// }
 
 /**
  * Custom hook for handling server actions.
@@ -84,7 +160,7 @@ export function useActionHandler<T extends FieldValues = FieldValues>(options: A
 
   async function formAction(
     data: T,
-    setError: (field: string, error: { message: string; type?: string }) => void,
+    setError: UseFormSetError<T>,
     formMethods: UseFormReturn<T>
   ): Promise<ActionResponse | undefined> {
     try {
@@ -103,7 +179,7 @@ export function useActionHandler<T extends FieldValues = FieldValues>(options: A
         }
         // If validation errors exist, map and set them.
         if (response.errors) {
-          updateFormErrors(response.errors, setError);
+          mapActionResponseErrorsToForm(response, setError);
           return;
         }
         // Fallback error handling.
