@@ -25,9 +25,9 @@ export async function checkUsernameAction(formData: FormData): Promise<ActionRes
     } else if (response.status === 404) {
       return { success: true, message: t('errors.validation.username_available') };
     } else {
-      return { success: false, error: t('errors.validation.error_unexpected') };
+      return { success: false, error: t('errors.error_unexpected') };
     }
   } catch (error: unknown) {
-    return { success: false, error: t('errors.validation.error_unexpected') };
+    return { success: false, error: t('errors.error_unexpected') };
   }
 }

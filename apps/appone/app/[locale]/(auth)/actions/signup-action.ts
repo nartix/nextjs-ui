@@ -10,12 +10,12 @@ import { createSignUpFormSchema } from '@/app/[locale]/(common)/form/fieldSchema
 import fetchWrapper from '@/lib/fetch-wrapper';
 
 export const signupAction: ServerActionResponse = async (formData) => {
-  const t = await getTranslations('errors');
+  const t = await getTranslations();
   const signupSchema = createSignUpFormSchema(t);
 
   try {
     // Validate form inputs.
-    const validatedData = signupSchema.parse(formData);
+    const validatedData = signupSchema.parseAsync(formData);
 
     console.log('Signup data:', validatedData);
 
@@ -36,9 +36,14 @@ export const signupAction: ServerActionResponse = async (formData) => {
     // );
 
     return { success: true, message: 'Signup successful' };
-  } catch (errors) {
+  } catch (errors: unknown) {
     if (errors instanceof z.ZodError) {
       return { success: false, errors: errors.issues };
+    }
+    if (errors instanceof Error) {
+      console.error('Signup error:', errors.message);
+    } else {
+      console.error('Signup error:', errors);
     }
     return { success: false, message: 'An unknown error occurred' };
   }

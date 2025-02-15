@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FormConfig, FormBuilder } from '@nartix/mantine-form-builder/src';
 import { createSignUpFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
@@ -18,13 +18,15 @@ export function SignupForm() {
   const t = useTranslations();
 
   const [usernameAvailable, setUsernameAvailable] = useState<boolean>(false);
+  const lastCheckedUsername = useRef<string>('');
   const signUpFormSchema = createSignUpFormSchema(t);
   type SchemaType = z.infer<typeof signUpFormSchema>;
   const handleUsernameCheck = async (value: string, methods: UseFormReturn<SchemaType>) => {
     const { setError, clearErrors } = methods;
     const trimmed = value.trim();
     setUsernameAvailable(false);
-    if (trimmed.length < 3) return;
+    if (trimmed.length < 3 || trimmed === lastCheckedUsername.current) return;
+    lastCheckedUsername.current = trimmed;
 
     const formData = new FormData();
     formData.append('csrf_token', CSRFToken || '');
@@ -93,6 +95,12 @@ export function SignupForm() {
                       },
                     },
                   },
+                  // onChange: (m) => {
+                  //   setCheckUsername(false);
+                  // },
+                  // onBlur: async (e: React.FocusEvent<HTMLElement>) => {
+                  //   setCheckUsername(true);
+                  // },
                   onBlur: async (e: React.FocusEvent<HTMLElement>) => {
                     await handleUsernameCheck((e.target as HTMLInputElement).value, methods);
                   },
@@ -132,79 +140,6 @@ export function SignupForm() {
     };
   };
 
-  const formConfig: FormConfig = {
-    validationSchema: signUpFormSchema,
-    layout: {
-      errorAlertProps: { classNames: { message: 'text-red-700' } },
-    },
-    title: 'Sign Up',
-    submitText: 'Sign Up',
-    sections: [
-      {
-        layout: {
-          gridProps: { align: 'flex-end', justify: 'flex-start', mb: 'sm' },
-        },
-        rows: [
-          {
-            fields: [
-              {
-                name: 'username',
-                label: 'Username',
-                type: 'text',
-                layout: {
-                  props: {
-                    rightSectionWidth: usernameAvailable ? 36 : 0,
-                    rightSection: usernameAvailable ? <IconCheck size={16} color='green' /> : null,
-                    onKeyDown: async (e: React.KeyboardEvent<HTMLElement>) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        e.currentTarget.blur();
-                        const form = (e.currentTarget as HTMLInputElement).form;
-                        if (!form) return;
-                        const index = Array.prototype.indexOf.call(form, e.currentTarget);
-                        if (form.elements[index + 1]) {
-                          (form.elements[index + 1] as HTMLElement).focus();
-                        }
-                      }
-                    },
-                  },
-                },
-                // onBlur: useCustomUsernameCheck(),
-              },
-            ],
-          },
-          { fields: [{ name: 'email', label: 'Email', type: 'text' }] },
-          { fields: [{ name: 'password', label: 'Password', type: 'password' }] },
-          { fields: [{ name: 'password2', label: 'Confirm Password', type: 'password' }] },
-          {
-            fields: [
-              {
-                name: 'csrf_token',
-                type: 'component',
-                component: ({ setValue }) => {
-                  useEffect(() => {
-                    if (CSRFToken) setValue('csrf_token', CSRFToken);
-                  }, [CSRFToken]);
-                  return (
-                    <>
-                      <Controller
-                        name='csrf_token'
-                        defaultValue={CSRFToken}
-                        render={({ field: { onChange, onBlur, value, ref } }) => (
-                          <input name='csrf_token' type='hidden' value={value} ref={ref} onChange={onChange} onBlur={onBlur} />
-                        )}
-                      />
-                    </>
-                  );
-                },
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  };
-
   const { formAction, isRedirecting } = useActionHandler<SchemaType>({
     action: signupAction,
     onSuccessRedirect: true,
@@ -217,7 +152,12 @@ export function SignupForm() {
         <Loader size={30} mt='lg' />
       ) : (
         <Container w='100%' size={400} mt='lg'>
-          <FormBuilder<SchemaType> schema={signUpFormSchema} config={config2} submitHandler={formAction} />
+          <FormBuilder<SchemaType>
+            useFormProps={{ mode: 'onBlur' }}
+            schema={signUpFormSchema}
+            config={config2}
+            submitHandler={formAction}
+          />
         </Container>
       )}
     </>

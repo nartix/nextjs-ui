@@ -132,16 +132,6 @@ function useRedirectHandler(onSuccessRedirect?: boolean, defaultRedirect?: strin
   return redirect;
 }
 
-// function updateFormErrors(
-//   response: ActionResponse,
-//   setError: (field: string, error: { message: string; type?: string }) => void
-// ) {
-//   const errorMap = mapActionResponseErrorsToForm(response);
-//   Object.entries(errorMap).forEach(([field, message]) => {
-//     setError(field, { message });
-//   });
-// }
-
 /**
  * Custom hook for handling server actions.
  *
