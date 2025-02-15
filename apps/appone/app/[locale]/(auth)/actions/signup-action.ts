@@ -9,7 +9,7 @@ import { ServerActionResponse } from '@/app/[locale]/(common)/handlers/useAction
 import { createSignUpFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 import fetchWrapper from '@/lib/fetch-wrapper';
 
-export const signupAction: ServerActionResponse<Record<string, unknown> | FormData> = async (formData) => {
+export const signupAction: ServerActionResponse = async (formData) => {
   const t = await getTranslations('errors');
   const signupSchema = createSignUpFormSchema(t);
 

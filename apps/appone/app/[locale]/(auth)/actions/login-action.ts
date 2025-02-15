@@ -9,7 +9,7 @@ import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { ServerActionResponse } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { createLoginFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 
-export const loginAction: ServerActionResponse<Record<string, unknown> | FormData> = async (formData) => {
+export const loginAction: ServerActionResponse = async (formData) => {
   // export async function loginAction(formData: LoginFormValues | Record<string, unknown>): Promise<ActionResponse> {
   // Simulate a server call. We'll reject if username or password is wrong
 

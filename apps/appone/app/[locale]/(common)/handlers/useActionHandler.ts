@@ -98,19 +98,19 @@ export function mapActionResponseErrorsToForm<T extends FieldValues>(
   }
 }
 
-export type ActionParams<T> = FormData | Record<string, unknown> | T;
-export type ActionResponse<T = unknown> = {
+export type ActionParams = FormData | Record<string, unknown> | unknown;
+export type ActionResponse = {
   success: boolean;
   message?: string;
-  data?: T;
+  data?: unknown;
   errors?: Array<z.ZodIssue | string>;
   error?: string;
   errorCode?: string;
 };
-export type ServerActionResponse<T> = (params: ActionParams<T>) => Promise<ActionResponse<T>>;
-export type ServerAction<T = unknown> = (data: T) => Promise<ActionResponse<T>>;
+export type ServerActionResponse = (params: ActionParams) => Promise<ActionResponse>;
+export type ServerAction<T = unknown> = (data: T) => Promise<ActionResponse>;
 export interface ActionHandlerOptions<T> {
-  action: ServerActionResponse<T>;
+  action: ServerActionResponse;
   onSuccessRedirect?: boolean;
   defaultRedirect?: string; // fallback redirect path (defaults to '/')
   t: (key: string) => string;
@@ -158,11 +158,7 @@ export function useActionHandler<T extends FieldValues = FieldValues>(options: A
   const [isRedirecting, setIsRedirecting] = React.useState(false);
   const redirect = useRedirectHandler(onSuccessRedirect, defaultRedirect);
 
-  async function formAction(
-    data: T,
-    setError: UseFormSetError<T>,
-    formMethods: UseFormReturn<T>
-  ): Promise<ActionResponse | undefined> {
+  async function formAction(data: T, useFormMethods: UseFormReturn<T>): Promise<ActionResponse | unknown | void> {
     try {
       const response = await action(data);
 
@@ -172,9 +168,9 @@ export function useActionHandler<T extends FieldValues = FieldValues>(options: A
         redirect();
         return response;
       } else {
+        const { reset, getValues, setError } = useFormMethods;
         // If error is not unexpected, reset form errors.
         if (response.errorCode !== 'UNEXPECTED_ERROR') {
-          const { reset, getValues } = formMethods;
           reset(getValues(), { keepErrors: true });
         }
         // If validation errors exist, map and set them.
