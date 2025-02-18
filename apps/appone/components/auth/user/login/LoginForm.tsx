@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect } from 'react';
 
-import { FormConfig, FormBuilder } from '@nartix/mantine-form-builder/src';
+import { FormConfig, FormBuilder, FormConfigFn } from '@nartix/mantine-form-builder/src';
 import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { z } from 'zod';
 import { loginAction } from '@/app/[locale]/(auth)/actions/login-action';
@@ -13,10 +13,104 @@ import { Controller } from 'react-hook-form';
 import classes from '@/components/auth/user/login/LoginForm.module.scss';
 import { useActionHandler } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { useTranslations } from 'next-intl';
+import { createLoginFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 
 export function LoginForm() {
   const t = useTranslations();
   const { CSRFToken } = useCSRFToken();
+  const loginFormSchema = createLoginFormSchema(t);
+  type loginFormType = z.infer<typeof loginFormSchema>;
+  const formConfig2: FormConfigFn<loginFormType> = (methods) => {
+    return {
+      title: t('auth.login'),
+      // beforeSubmitText: 'Please enter your username and password',
+      submitText: t('auth.sign_in'),
+      afterSubmitText: (
+        <Text ta='center' size='sm'>
+          Don't have an account?{' '}
+          <Anchor component={Link} href='/user/signup'>
+            Register
+          </Anchor>
+        </Text>
+      ),
+      sections: [
+        {
+          layout: {
+            gridProps: { align: 'flex-end', justify: 'flex-start', mb: 'sm' },
+          },
+          rows: [
+            {
+              fields: [
+                {
+                  name: 'username',
+                  label: 'Username',
+                  type: 'text',
+                  defaultValue: 'bill',
+                },
+              ],
+            },
+            {
+              fields: [
+                {
+                  name: 'password',
+                  label: 'Password',
+                  type: 'password',
+                },
+              ],
+            },
+            {
+              fields: [
+                {
+                  name: 'rememberme',
+                  label: 'Keep me logged in',
+                  type: 'checkbox',
+                  layout: {
+                    gridColProps: { span: 6 },
+                  },
+                },
+                {
+                  name: 'forgotpassword',
+                  type: 'component',
+                  layout: {
+                    gridColProps: { ta: 'right', span: 6 },
+                  },
+                  component: (
+                    <Anchor href='/user/reset-password' component={Link} size='sm'>
+                      Forgot Password
+                    </Anchor>
+                  ),
+                },
+              ],
+            },
+            {
+              fields: [
+                {
+                  name: 'csrf_token',
+                  type: 'component',
+                  component: ({ setValue }) => {
+                    useEffect(() => {
+                      if (CSRFToken) setValue('csrf_token', CSRFToken);
+                    }, [CSRFToken]);
+                    return (
+                      <>
+                        <Controller
+                          name='csrf_token'
+                          defaultValue={CSRFToken}
+                          render={({ field: { onChange, onBlur, value, ref } }) => (
+                            <input type='hidden' value={value} ref={ref} onChange={onChange} onBlur={onBlur} />
+                          )}
+                        />
+                      </>
+                    );
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+  };
   const formConfig: FormConfig = {
     title: t('auth.login'),
     // beforeSubmitText: 'Please enter your username and password',
@@ -78,7 +172,7 @@ export function LoginForm() {
                 name: 'username',
                 label: 'Username',
                 type: 'text',
-                validation: loginFormSchema.shape.username,
+                // validation: loginFormSchema.shape.username,
                 // props: { withAsterisk: true },
                 // colSpan: 8,
                 defaultValue: 'bill',
@@ -102,7 +196,7 @@ export function LoginForm() {
                 name: 'password',
                 label: 'Password',
                 type: 'password',
-                validation: loginFormSchema.shape.password,
+                // validation: loginFormSchema.shape.password,
                 // gridColProps: { span: 6 },
               },
             ],
@@ -275,7 +369,7 @@ export function LoginForm() {
   //   }}
   // >
 
-  const { formAction, isRedirecting } = useActionHandler({
+  const { formAction, isRedirecting } = useActionHandler<loginFormType>({
     action: loginAction,
     onSuccessRedirect: true,
     t,
@@ -287,7 +381,7 @@ export function LoginForm() {
         <Loader size={30} mt='lg' />
       ) : (
         <Container w='100%' size={400} mt='lg'>
-          <FormBuilder formConfig={formConfig} submitHandler={formAction} />
+          <FormBuilder<loginFormType> schema={loginFormSchema} config={formConfig2} submitHandler={formAction} />
         </Container>
       )}
     </>

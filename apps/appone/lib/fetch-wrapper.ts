@@ -73,4 +73,4 @@ const fetchWrapper = async (url: string, options: FetchOptions = {}): Promise<Re
   return response;
 };
 
-export default fetchWrapper;
+export { fetchWrapper };

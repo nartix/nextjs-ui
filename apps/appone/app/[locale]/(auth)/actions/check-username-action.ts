@@ -1,25 +1,25 @@
 'use server';
 
 import { getTranslations } from 'next-intl/server';
-import { ActionResponse } from '@/app/[locale]/(common)/handlers/useActionHandler';
+import { ServerActionResponse } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { createCheckUsernameSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
-import fetchWrapper from '@/lib/fetch-wrapper';
+import { fetchWrapper } from '@/lib/fetch-wrapper';
 
-export async function checkUsernameAction(formData: FormData): Promise<ActionResponse> {
+export const checkUsernameAction: ServerActionResponse = async (formData) => {
   const t = await getTranslations();
-  const schema = createCheckUsernameSchema(t);
+  const schema: ReturnType<typeof createCheckUsernameSchema> = createCheckUsernameSchema(t);
 
   try {
+    const fd = formData as FormData;
     const { username } = schema.parse({
-      username: formData.get('username'),
-      csrf_token: formData.get('csrf_token'),
+      username: fd.get('username'),
+      csrf_token: fd.get('csrf_token'),
     });
 
     const query = new URLSearchParams({ username });
     const url = `${process.env.API_URL}/users/search/findByUsernameIgnoreCase?${query.toString()}`;
 
     const response = await fetchWrapper(url, { method: 'GET' });
-
     if (response.ok) {
       return { success: false, message: t('errors.validation.username_exists') };
     } else if (response.status === 404) {
@@ -30,4 +30,4 @@ export async function checkUsernameAction(formData: FormData): Promise<ActionRes
   } catch (error: unknown) {
     return { success: false, error: t('errors.error_unexpected') };
   }
-}
+};

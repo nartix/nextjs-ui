@@ -61,6 +61,8 @@ export interface FormRow {
   fields: FormFieldConfig[];
 }
 
+export type FormConfigFn<T extends FieldValues> = (methods: UseFormReturn<T>) => FormConfig;
+
 // A section can contain a title, optional description, and multiple rows
 export interface FormSection {
   title?: string;

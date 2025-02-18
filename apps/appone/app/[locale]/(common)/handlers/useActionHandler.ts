@@ -161,7 +161,7 @@ export function useActionHandler<T extends FieldValues = FieldValues>(options: A
         const { reset, getValues, setError } = useFormMethods;
         // If error is not unexpected, reset form errors.
         if (response.errorCode !== 'UNEXPECTED_ERROR') {
-          reset(getValues(), { keepErrors: true });
+          // reset(getValues(), { keepErrors: true });
         }
         // If validation errors exist, map and set them.
         if (response.errors) {

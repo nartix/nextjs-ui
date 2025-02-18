@@ -58,7 +58,7 @@ export function SignupForm() {
 
   const { CSRFToken } = useCSRFToken();
 
-  const config2 = (methods: UseFormReturn<SchemaType>): FormConfig => {
+  const formConfig = (methods: UseFormReturn<SchemaType>): FormConfig => {
     return {
       layout: {
         errorAlertProps: { classNames: { message: 'text-red-700' } },
@@ -155,7 +155,7 @@ export function SignupForm() {
           <FormBuilder<SchemaType>
             useFormProps={{ mode: 'onBlur' }}
             schema={signUpFormSchema}
-            config={config2}
+            config={formConfig}
             submitHandler={formAction}
           />
         </Container>
