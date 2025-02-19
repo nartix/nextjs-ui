@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Credentials, Provider } from '@nartix/next-security';
 
-import fetchWrapper from '@/lib/fetch-wrapper';
+import { fetchWrapper } from '@/lib/fetch-wrapper';
 
 const API_BASE_URL = process.env.API_URL_GLOBAL;
 const API_VERSION = process.env.API_URL_VERSION;

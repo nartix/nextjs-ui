@@ -31,8 +31,6 @@ export const loginAction: ServerActionResponse = async (formData) => {
   const t = await getTranslations();
   const loginformSchemas = createLoginFormSchema(t);
 
-  // return { success: false, errorCode: 'data', error: 'Custom error  ' };
-
   const parsedData = loginformSchemas.safeParse(formData);
   if (!parsedData.success) {
     return { success: false, message: t('auth.error_invalid_form_data') };

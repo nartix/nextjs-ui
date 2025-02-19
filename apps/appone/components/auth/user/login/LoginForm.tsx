@@ -45,7 +45,6 @@ export function LoginForm() {
                   name: 'username',
                   label: 'Username',
                   type: 'text',
-                  defaultValue: 'bill',
                 },
               ],
             },
@@ -123,71 +122,20 @@ export function LoginForm() {
         </Anchor>
       </Text>
     ),
-    // props: {
-    //   title: {
-    //     order: 1,
-    //     ta: 'center',
-    //   },
-    // },
+
     sections: [
       {
-        // title: 'Personal Information',
-        // description: 'Please enter your personal information',
-        // props: {
-        //   title: {
-        //     variant: 'unstyled',
-        //     classNames: { legend: 'text-left' },
-        //   },
-        // description: {
-        //   className: 'text-right',
-        // },
-        // },
-        // mb: 'sm',
         layout: {
           gridProps: { align: 'flex-end', justify: 'flex-start', mb: 'sm' },
-          // fieldsetProps: { description: { className: 'text-center' } },
         },
         rows: [
-          // {
-          //   fields: [
-          //     {
-          //       name: 'input1',
-          //       label: 'Name',
-          //       placeholder: 'Enter your name',
-          //       description: 'Input description',
-          //       type: 'text',
-          //     },
-          //     {
-          //       name: 'input2',
-          //       label: 'Form Input 2',
-          //       placeholder: 'Enter your name',
-          //       // description: 'Input description',
-          //       type: 'text',
-          //     },
-          //   ],
-          // },
           {
             fields: [
               {
                 name: 'username',
                 label: 'Username',
                 type: 'text',
-                // validation: loginFormSchema.shape.username,
-                // props: { withAsterisk: true },
-                // colSpan: 8,
-                defaultValue: 'bill',
-                // gridColProps: { span: 8 },
               },
-              // {
-              //   name: 'username2',
-              //   label: 'Username',
-              //   type: 'text',
-              //   validation: loginFormSchema.shape.username,
-              //   // props: { withAsterisk: true },
-              //   // colSpan: 8,
-              //   defaultValue: 'bill',
-              //   gridColProps: { span: 9 },
-              // },
             ],
           },
           {
@@ -196,8 +144,6 @@ export function LoginForm() {
                 name: 'password',
                 label: 'Password',
                 type: 'password',
-                // validation: loginFormSchema.shape.password,
-                // gridColProps: { span: 6 },
               },
             ],
           },
@@ -210,7 +156,6 @@ export function LoginForm() {
                 layout: {
                   gridColProps: { span: 6 },
                 },
-                // props: { size: 'xs', classNames: { body: 'flex justify-end ' } },
               },
               {
                 name: 'forgotpassword',
@@ -226,15 +171,6 @@ export function LoginForm() {
               },
             ],
           },
-          // {
-          //   fields: [
-          //     {
-          //       name: 'csrf_token',
-          //       type: 'hidden',
-          //       defaultValue: CSRFToken || '',
-          //     },
-          //   ],
-          // },
           {
             fields: [
               {
@@ -249,9 +185,7 @@ export function LoginForm() {
                       <Controller
                         name='csrf_token'
                         defaultValue={CSRFToken}
-                        render={({ field: { onChange, onBlur, value, ref } }) => (
-                          <input type='hidden' value={value} ref={ref} onChange={onChange} onBlur={onBlur} />
-                        )}
+                        render={({ field: { value, ref } }) => <input type='hidden' value={value} ref={ref} />}
                       />
                     </>
                   );
@@ -261,43 +195,6 @@ export function LoginForm() {
           },
         ],
       },
-      // {
-      //   title: 'Test Section',
-      //   rows: [
-      //     {
-      //       fields: [
-      //         {
-      //           name: 'showUserInfo',
-      //           type: 'component',
-      //           component: ({ watch, formState, setValue }) => {
-      //             // watch returns the value of any field
-      //             const username = watch('username', '');
-      //             const rememberMe = watch('rememberme', false);
-
-      //             // You can also read errors or isValid, etc., from formState
-      //             const { errors } = formState;
-
-      //             // // For demonstration, let's update some hidden field if username changes
-      //             // if (username.includes('test')) {
-      //             //   setValue('password', 'TestUserCSRF');
-      //             // } else {
-      //             //   setValue('password', '');
-      //             // }
-
-      //             return (
-      //               <div style={{ color: 'blue' }}>
-      //                 {`Username: ${username}`}
-      //                 <br />
-      //                 {`Remember me? ${rememberMe}`}
-      //                 {errors.username && <p style={{ color: 'red' }}>Username Error: {String(errors.username.message)}</p>}
-      //               </div>
-      //             );
-      //           },
-      //         },
-      //       ],
-      //     },
-      //   ],
-      // },
     ],
   };
 
@@ -328,47 +225,6 @@ export function LoginForm() {
     });
   }
 
-  // const searchParams = useSearchParams();
-  // const router = useRouter();
-  // const [isRedirecting, setIsRedirecting] = React.useState(false);
-  // async function loginActionHandler(data: any, setError: any) {
-  //   try {
-  //     const response = await loginAction(data);
-  //     if (response && response.success) {
-  //       setIsRedirecting(true);
-  //       const next = searchParams.get('next');
-  //       router.push(next || '/');
-  //       return;
-  //     } else {
-  //       // setError('username', { message: 'Invalid username or password' });
-  //       // setError('password', { type: 'manual', message: 'Invalid username or password' });
-  //       throw new Error(response.message);
-  //     }
-  //   } catch (err: any) {
-  //     // next redirect from server throws an error with message 'NEXT_REDIRECT'
-  //     if (err.message === 'NEXT_REDIRECT') {
-  //       setIsRedirecting(true);
-  //       return;
-  //     }
-  //     // server action will throw unexpected error for csrf validation fails
-  //     // The server says username or password is incorrect
-  //     // We can show a "global" form error or field-specific errors
-  //     // Example: a global form error
-  //     // setError('username', { message: 'Invalid username or password' });
-  //     throw err;
-  //   }
-  // }
-
-  //   <Container
-  //   // size='md' // Adjusts the max-width based on predefined sizes
-  //   style={{
-  //     // minWidth: '200px', // Set your desired minimum width
-  //     width: '100%', // Ensures the container takes full available width
-  //     maxWidth: '400px', // Optional: Set a maximum width if desired
-  //     margin: '0 auto', // Centers the container horizontally
-  //   }}
-  // >
-
   const { formAction, isRedirecting } = useActionHandler<loginFormType>({
     action: loginAction,
     onSuccessRedirect: true,
@@ -381,7 +237,12 @@ export function LoginForm() {
         <Loader size={30} mt='lg' />
       ) : (
         <Container w='100%' size={400} mt='lg'>
-          <FormBuilder<loginFormType> schema={loginFormSchema} config={formConfig2} submitHandler={formAction} />
+          <FormBuilder<loginFormType>
+            defaultValues={{ username: 'test' }}
+            schema={loginFormSchema}
+            config={formConfig2}
+            submitHandler={formAction}
+          />
         </Container>
       )}
     </>

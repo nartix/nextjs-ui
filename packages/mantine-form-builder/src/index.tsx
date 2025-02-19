@@ -17,6 +17,7 @@ import {
   Radio,
   Group,
   Textarea,
+  ComboboxItem,
 } from '@mantine/core';
 import {
   useFormContext,
@@ -26,14 +27,12 @@ import {
   UseFormReturn,
   Controller,
   ControllerProps,
-  UseFormSetError,
   FieldValues,
   UseFormProps,
   DefaultValues,
-  DeepPartial,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 export type FieldComponentFn = (methods: UseFormReturn<any>) => React.ReactNode;
 
@@ -43,11 +42,14 @@ export interface FormFieldConfig {
   type: 'text' | 'textarea' | 'select' | 'checkbox' | 'radio' | 'password' | 'number' | 'hidden' | 'component';
   placeholder?: string;
   description?: string;
-  defaultValue?: unknown;
-  validation?: ZodTypeAny;
+  // defaultValue?: unknown;
+  // validation?: ZodTypeAny;
   options?: { label: string; value: string }[];
   component?: ReactNode | FieldComponentFn;
-  onChange?: (methods: UseFormReturn<any>) => void;
+  onChange?: {
+    (e: React.ChangeEvent<HTMLElement>): void;
+    (value: string | null, option?: ComboboxItem): void;
+  };
   onBlur?: (event: React.FocusEvent<HTMLElement>) => void;
   controllerProps?: Omit<ControllerProps, 'render' | 'control' | 'name'>;
   layout?: {
@@ -141,7 +143,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
         <Controller
           name={field.name}
           {...field.controllerProps}
-          defaultValue={field.defaultValue ?? ''}
+          // defaultValue={field.defaultValue ?? ''}
           render={({ field: { onChange, onBlur, value, ref } }) => (
             <TextInput
               id={field.name}
@@ -153,7 +155,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
               onChange={(e) => {
                 onChange(e);
                 if (field.onChange) {
-                  field.onChange(methods);
+                  field.onChange(e);
                 }
               }}
               onBlur={(e) => {
@@ -171,7 +173,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
         <Controller
           name={field.name}
           {...field.controllerProps}
-          defaultValue={field.defaultValue ?? ''}
+          // defaultValue={field.defaultValue ?? ''}
           render={({ field: { onChange, onBlur, value, ref } }) => (
             <Textarea
               id={field.name}
@@ -183,7 +185,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
               onChange={(e) => {
                 onChange(e);
                 if (field.onChange) {
-                  field.onChange(methods);
+                  field.onChange(e);
                 }
               }}
               onBlur={(e) => {
@@ -201,7 +203,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
         <Controller
           name={field.name}
           {...field.controllerProps}
-          defaultValue={field.defaultValue ?? ''}
+          // defaultValue={field.defaultValue ?? ''}
           render={({ field: { onChange, onBlur, value, ref } }) => (
             <PasswordInput
               id={field.name}
@@ -213,7 +215,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
               onChange={(e) => {
                 onChange(e);
                 if (field.onChange) {
-                  field.onChange(methods);
+                  field.onChange(e);
                 }
               }}
               onBlur={(e) => {
@@ -231,7 +233,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
         <Controller
           name={field.name}
           {...field.controllerProps}
-          defaultValue={field.defaultValue ?? false}
+          // defaultValue={field.defaultValue ?? false}
           render={({ field: { onChange, onBlur, value, ref } }) => (
             <Checkbox
               id={field.name}
@@ -243,7 +245,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
               onChange={(e) => {
                 onChange(e);
                 if (field.onChange) {
-                  field.onChange(methods);
+                  field.onChange(e);
                 }
               }}
               onBlur={(e) => {
@@ -262,7 +264,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
         <Controller
           name={field.name}
           {...field.controllerProps}
-          defaultValue={field.defaultValue ?? ''}
+          // defaultValue={field.defaultValue ?? ''}
           render={({ field: { onChange, value } }) => (
             <Select
               label={field.label}
@@ -272,7 +274,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
               onChange={(val) => {
                 onChange(val);
                 if (field.onChange) {
-                  field.onChange(methods);
+                  field.onChange(val, undefined);
                 }
               }}
               value={value}
@@ -285,7 +287,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
         <Controller
           name={field.name}
           {...field.controllerProps}
-          defaultValue={field.defaultValue ?? ''}
+          // defaultValue={field.defaultValue ?? ''}
           render={({ field: { onChange, onBlur, value } }) => (
             <Radio.Group
               label={field.label}
@@ -297,7 +299,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
               onChange={(e) => {
                 onChange(e);
                 if (field.onChange) {
-                  field.onChange(methods);
+                  field.onChange(e);
                 }
               }}
               error={error}
@@ -315,7 +317,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
         <Controller
           name={field.name}
           {...field.controllerProps}
-          defaultValue={field.defaultValue ?? 0}
+          // defaultValue={field.defaultValue ?? 0}
           render={({ field: { onChange, onBlur, value } }) => (
             <NumberInput
               label={field.label}
@@ -336,7 +338,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
         <Controller
           name={field.name}
           {...field.controllerProps}
-          defaultValue={field.defaultValue ?? ''}
+          // defaultValue={field.defaultValue ?? ''}
           render={({ field: { onChange, value, ref } }) => (
             <input type='hidden' {...field.layout?.props} onChange={onChange} value={value} ref={ref} />
           )}
@@ -358,33 +360,33 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
 /**
  * Returns a default value based on the field type.
  */
-function getDefaultValueByType(type: FormFieldConfig['type']): any {
-  switch (type) {
-    case 'checkbox':
-      return false;
-    case 'select':
-    case 'radio':
-      return '';
-    case 'number':
-      return 0;
-    case 'hidden':
-      return '';
-    default:
-      return '';
-  }
-}
+// function getDefaultValueByType(type: FormFieldConfig['type']): any {
+//   switch (type) {
+//     case 'checkbox':
+//       return false;
+//     case 'select':
+//     case 'radio':
+//       return '';
+//     case 'number':
+//       return 0;
+//     case 'hidden':
+//       return '';
+//     default:
+//       return '';
+//   }
+// }
 
-export function buildDefaultValues(formConfig: FormConfig): Record<string, any> {
-  const defaultValues: Record<string, any> = {};
-  formConfig.sections.forEach((section) => {
-    section.rows.forEach((row) => {
-      row.fields.forEach((field) => {
-        defaultValues[field.name] = field.defaultValue ?? getDefaultValueByType(field.type);
-      });
-    });
-  });
-  return defaultValues;
-}
+// export function buildDefaultValues(formConfig: FormConfig): Record<string, any> {
+//   const defaultValues: Record<string, any> = {};
+//   formConfig.sections.forEach((section) => {
+//     section.rows.forEach((row) => {
+//       row.fields.forEach((field) => {
+//         defaultValues[field.name] = field.defaultValue ?? getDefaultValueByType(field.type);
+//       });
+//     });
+//   });
+//   return defaultValues;
+// }
 
 export type AsyncDefaultValues<T> = Promise<DefaultValues<T>>;
 
@@ -479,19 +481,19 @@ export const FormBuilder = <T extends FieldValues = FieldValues>({
 /**
  * Builds a Zod schema based on the form configuration.
  */
-export function buildZodSchema(formConfig: FormConfig): z.ZodObject<any> | z.ZodEffects<z.ZodObject<any>> {
-  if (formConfig.validationSchema) {
-    return formConfig.validationSchema;
-  }
+// export function buildZodSchema(formConfig: FormConfig): z.ZodObject<any> | z.ZodEffects<z.ZodObject<any>> {
+//   if (formConfig.validationSchema) {
+//     return formConfig.validationSchema;
+//   }
 
-  const shape: Record<string, ZodTypeAny> = {};
-  formConfig.sections.forEach((section) => {
-    section.rows.forEach((row) => {
-      row.fields.forEach((field) => {
-        shape[field.name] = field.validation ?? z.any();
-      });
-    });
-  });
+//   const shape: Record<string, ZodTypeAny> = {};
+//   formConfig.sections.forEach((section) => {
+//     section.rows.forEach((row) => {
+//       row.fields.forEach((field) => {
+//         shape[field.name] = field.validation ?? z.any();
+//       });
+//     });
+//   });
 
-  return z.object(shape);
-}
+//   return z.object(shape);
+// }

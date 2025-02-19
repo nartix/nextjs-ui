@@ -1,7 +1,7 @@
 import 'server-only';
 import { v4 as uuidv4 } from 'uuid';
 
-import fetchWrapper from '@/lib/fetch-wrapper';
+import { fetchWrapper } from '@/lib/fetch-wrapper';
 import { SessionAdaptor, SessionObj } from '@nartix/next-security';
 
 export default function ApiAdaptor(): SessionAdaptor {
