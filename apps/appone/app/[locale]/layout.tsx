@@ -69,7 +69,7 @@ export default async function LocaleLayout({
       <head>
         <ColorSchemeScript />
       </head>
-      <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
+      <body className={cn('min-h-screen', 'bg-background', 'font-sans', 'antialiased', fontSans.variable)}>
         <Providers
           session={session}
           locale={locale}

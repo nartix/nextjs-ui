@@ -59,7 +59,9 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
               <UnstyledButton className={classes.control} component={Link} href='/'>
                 Home
               </UnstyledButton>
-              <UnstyledButton className={classes.control}>Blog</UnstyledButton>
+              <UnstyledButton className={classes.control} component={Link} href='/products'>
+                Products
+              </UnstyledButton>
               <UnstyledButton className={classes.control}>Contacts</UnstyledButton>
               <UnstyledButton className={classes.control}>Support</UnstyledButton>
               <UnstyledButton className={classes.control} component={Link} href='/formtest'>

@@ -1,0 +1,60 @@
+# ct "docker-compose.yml:temp.yml" && sudo docker compose -f temp.yml up nextjs-ui --build; rm temp.yml
+
+services:
+  nextjs-ui:
+    container_name: nextjs-ui
+    image: node:22.8-alpine3.20
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    # user: '1000:1000' # runs as node user, gets permission issues
+    ports:
+      - '3001:3000'
+      - '3002:3001'
+      - '3003:3002'
+      - '3004:3003'
+      - '3005:3004'
+      - '6006:6006'
+    volumes:
+      - .:/app
+    working_dir: /app
+    # command: tail -f /dev/null
+    environment:
+      - ENVCONSUL_VERSION=0.13.2
+      # 
+      - VAULT_ADDR=https://vault.iamdb.net
+      - VAULT_TOKEN=hvs.CAESIN2vKb57D3syi-zUcu4DP6oGG0EQVBkz-HyO3FZFVUEAGh4KHGh2cy5tcGlRVHJoVWpUdDF1Q0kydFlrcEhmTEY
+      # 
+    # command:
+    #   - /bin/sh
+    #   - -c
+    #   - |
+    #     if ! command -v envconsul &> /dev/null; then
+    #       apk add --no-cache wget unzip \
+    #           && wget https://releases.hashicorp.com/envconsul/0.13.2/envconsul_0.13.2_linux_amd64.zip \
+    #           && unzip envconsul_0.13.2_linux_amd64.zip -d /usr/local/bin \
+    #           && chmod +x /usr/local/bin/envconsul \
+    #           && rm -rf envconsul_0.13.2_linux_amd64.zip
+    #     fi
+    #     if [ -d "appone" ] ; then
+    #       cd appone
+    #       npm install
+    #       npm run dev
+    #     fi
+    # command:
+    #   - /bin/sh
+    #   - -c
+    #   - |
+    #     apk add --no-cache wget unzip \
+    #         && wget https://releases.hashicorp.com/envconsul/${ENVCONSUL_VERSION}/envconsul_${ENVCONSUL_VERSION}_linux_amd64.zip \
+    #         && unzip envconsul_${ENVCONSUL_VERSION}_linux_amd64.zip -d /usr/local/bin \
+    #         && chmod +x /usr/local/bin/envconsul \
+    #         && rm -rf envconsul_${ENVCONSUL_VERSION}_linux_amd64.zip
+    #     if [ ! -d "appone" ] ; then
+    #       npx create-next-app@latest appone --use-npm --example "https://github.com/vercel/next-learn/tree/main/basics/learn-starter"
+    #     else
+    #       cd appone
+    #       npm install
+    #       npm run dev
+    #     fi
+    restart: unless-stopped
