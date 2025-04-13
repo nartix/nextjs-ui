@@ -82,7 +82,7 @@ export default async function Products() {
   return (
     <SessionContainer justify='flex-start' align='center'>
       <Container size='md' w='100%'>
-        <DataTable data={combinedData} columns={columns as unknown as ColumnDef<Person>[]} pageSize={5} />
+        <DataTable data={combinedData} columns={columns as unknown as ColumnDef<Person>[]} pageSize={2} />
       </Container>
     </SessionContainer>
   );

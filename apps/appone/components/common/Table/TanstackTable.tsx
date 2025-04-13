@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Table, Button, Group, Container } from '@mantine/core';
+import { Table, Container, Pagination } from '@mantine/core';
 import {
   flexRender,
   getCoreRowModel,
@@ -38,6 +38,8 @@ export function DataTable<T>({ data, columns, pageSize = 10 }: DataTableProps<T>
     enableSorting: true,
   });
 
+  const totalPages = table.getPageCount();
+
   return (
     <Container className='p-2'>
       <Table className='w-full table-auto'>
@@ -53,7 +55,10 @@ export function DataTable<T>({ data, columns, pageSize = 10 }: DataTableProps<T>
                     }}
                   >
                     {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    {{ asc: ' 🔼', desc: ' 🔽' }[header.column.getIsSorted() as string] ?? null}
+                    {{
+                      asc: ' 🔼',
+                      desc: ' 🔽',
+                    }[header.column.getIsSorted() as string] ?? null}
                   </div>
                 </Table.Th>
               ))}
@@ -71,31 +76,16 @@ export function DataTable<T>({ data, columns, pageSize = 10 }: DataTableProps<T>
         </Table.Tbody>
       </Table>
 
-      <Group justify='center' gap='xs' mt='md'>
-        <Button variant='outline' onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
-          {'<<'}
-        </Button>
-        <Button variant='outline' onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-          {'<'}
-        </Button>
-
-        {Array.from({ length: table.getPageCount() }, (_, i) => (
-          <Button
-            key={i}
-            variant={table.getState().pagination.pageIndex === i ? 'filled' : 'outline'}
-            onClick={() => table.setPageIndex(i)}
-          >
-            {i + 1}
-          </Button>
-        ))}
-
-        <Button variant='outline' onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-          {'>'}
-        </Button>
-        <Button variant='outline' onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
-          {'>>'}
-        </Button>
-      </Group>
+      {/* Mantine Pagination */}
+      <Pagination
+        total={totalPages}
+        value={pagination.pageIndex + 1}
+        onChange={(page) => table.setPageIndex(page - 1)}
+        mt='md'
+        withEdges
+        siblings={1}
+        boundaries={1}
+      />
     </Container>
   );
 }
