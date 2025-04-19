@@ -5,7 +5,7 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     '../../packages/mantine-form-builder/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  safelist: ['border-red-700', 'text-red-700'],
+  // safelist: ['border-red-700', 'text-red-700', 'font-bold'],
   theme: {
     extend: {
       //   fontFamily: {

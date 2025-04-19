@@ -1,4 +1,5 @@
-import '@/styles/globals.scss';
+// import '@/styles/globals.scss';
+import '@/styles/globals.css';
 // import '@/styles/_mantine.scss';
 import '@mantine/core/styles.css';
 

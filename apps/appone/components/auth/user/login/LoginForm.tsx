@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect } from 'react';
 
-import { FormConfig, FormBuilder, FormConfigFn } from '@nartix/mantine-form-builder/src';
+import { FormConfig, FormBuilder, FormConfigFn } from '@nartix/mantine-form-builder';
 import { loginFormSchema } from '@/app/[locale]/(auth)/form/login-schemas';
 import { z } from 'zod';
 import { loginAction } from '@/app/[locale]/(auth)/actions/login-action';
