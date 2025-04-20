@@ -2,6 +2,7 @@
 import '@/styles/globals.css';
 // import '@/styles/_mantine.scss';
 import '@mantine/core/styles.css';
+import 'mantine-react-table/styles.css';
 
 import { Metadata, Viewport } from 'next';
 import React, { useMemo } from 'react';

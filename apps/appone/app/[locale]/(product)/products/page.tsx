@@ -2,16 +2,17 @@ import React from 'react';
 import { getTranslations } from 'next-intl/server';
 import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
 import { SessionContainer } from '@/components/common/SessionContainer/SessionContainer';
-import { Table, Text, Title, TableTd, TableTr, TableTh, TableTbody, TableThead, Container } from '@mantine/core';
-// import { DataTable } from '@/components/common/Table/DataTable';
-import { DataTable } from '@/components/common/Table/TanstackTable';
-import { createColumnHelper, type ColumnDef } from '@tanstack/react-table';
+import { Container } from '@mantine/core';
+import { GenericMantineTable } from '@/components/common/Table/MantineReactTable';
+import { type MRT_ColumnDef } from 'mantine-react-table';
 
 type Person = {
   firstName: string;
   lastName: string;
   age: number;
   visits: number;
+  status: string;
+  progress: number;
 };
 
 export default async function Products() {
@@ -19,33 +20,6 @@ export default async function Products() {
   const user = session?.user;
 
   const t = await getTranslations('HomePage');
-
-  const elements = [
-    { position: 6, mass: 12.011, symbol: 'C', name: 'Carbon' },
-    { position: 7, mass: 14.007, symbol: 'N', name: 'Nitrogen' },
-    { position: 39, mass: 88.906, symbol: 'Y', name: 'Yttrium' },
-    { position: 56, mass: 137.33, symbol: 'Ba', name: 'Barium' },
-    { position: 58, mass: 140.12, symbol: 'Ce', name: 'Cerium' },
-  ];
-
-  const elements2 = [
-    [6, 'Carbon', 'C', 12.011],
-    [7, 'Nitrogen', 'N', 14.007],
-    [39, 'Yttrium', 'Y', 88.906],
-    [56, 'Barium', 'Ba', 137.33],
-    [58, 'Cerium', 'Ce', 140.12],
-  ];
-
-  const rows = elements.map((element) => (
-    <TableTr key={element.position}>
-      <TableTd>{element.position}</TableTd>
-      <TableTd>{element.name}</TableTd>
-      <TableTd>{element.symbol}</TableTd>
-      <TableTd className='text-center'>{element.mass}</TableTd>
-    </TableTr>
-  ));
-
-  const columnHelper = createColumnHelper<Person>();
 
   const additionalData: Person[] = Array.from({ length: 20 }, (_, i) => ({
     firstName: `First${i + 1}`,
@@ -56,41 +30,74 @@ export default async function Products() {
     progress: (i + 1) * 4,
   }));
 
-  const columns = [
-    columnHelper.accessor('firstName', {
-      header: 'First Name',
-    }),
-    columnHelper.accessor('lastName', {
-      header: 'Last Name',
-    }),
-    columnHelper.accessor('age', {
-      header: 'Age',
-    }),
-    columnHelper.accessor('visits', {
-      header: 'Visits',
-    }),
-  ];
-
   const data: Person[] = [
-    { firstName: 'John', lastName: 'Doe', age: 28, visits: 100 },
-    { firstName: 'Jane', lastName: 'Smith', age: 32, visits: 150 },
+    { firstName: 'JohnJonJonJONONN', lastName: 'Doe', age: 28, visits: 100, status: 'Single', progress: 80 },
+    { firstName: 'Jane', lastName: 'Smith', age: 32, visits: 150, status: 'In Relationship', progress: 90 },
     // additional data...
   ];
 
   const combinedData: Person[] = [...additionalData, ...data];
 
+  const columns: MRT_ColumnDef<Person>[] = [
+    {
+      accessorKey: 'firstName',
+      header: 'First Name',
+    },
+    {
+      accessorKey: 'lastName',
+      header: 'Last Name',
+    },
+    {
+      accessorKey: 'age',
+      header: 'Age',
+    },
+    {
+      accessorKey: 'visits',
+      header: 'Visits',
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+    },
+    {
+      accessorKey: 'progress',
+      header: 'Profile Progress',
+    },
+  ];
+
   return (
     <SessionContainer justify='flex-start' align='center'>
       <Container size='md' w='100%'>
-        <DataTable data={combinedData} columns={columns as unknown as ColumnDef<Person>[]} pageSize={2} />
+        <GenericMantineTable
+          data={combinedData}
+          columns={columns}
+          options={{
+            initialState: { pagination: { pageSize: 5, pageIndex: 0 }, density: 'xs' },
+            mantinePaginationProps: {
+              rowsPerPageOptions: ['5', '10', '20'],
+              withEdges: false,
+            },
+            mantineTableContainerProps: {
+              style: {
+                // overflowY: 'auto',
+                overflowX: 'auto',
+              },
+            },
+            defaultColumn: {
+              size: 40,
+            },
+            enableSorting: true,
+            paginationDisplayMode: 'pages',
+            mantinePaperProps: {
+              style: {
+                border: 'none',
+                boxShadow: 'none',
+              },
+            },
+            enableColumnActions: false,
+          }}
+        />
       </Container>
     </SessionContainer>
   );
-  // return (
-  //   <SessionContainer justify='flex-start' align='center'>
-  //     <Container size='md' w='100%'>
-  //       <DataTable head={['Position', 'Name', 'Symbol', 'Mass']} body={elements2} />
-  //     </Container>
-  //   </SessionContainer>
-  // );
 }
