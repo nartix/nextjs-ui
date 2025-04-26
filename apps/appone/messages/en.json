@@ -11,6 +11,11 @@
     "no_action_provided": "No action provided",
     "redirecting": "Redirecting..."
   },
+  "products": {
+    "title": "Products",
+    "price": "Price",
+    "category": "Category"
+  },
   "HomePage": {
     "title": "Hello world!",
     "about": "Go to the about page"
