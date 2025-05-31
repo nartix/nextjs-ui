@@ -12,9 +12,15 @@
     "redirecting": "Redirecting..."
   },
   "products": {
-    "title": "Products",
+    "name": "Name",
+    "title": "Name",
     "price": "Price",
-    "category": "Category"
+    "category": "Category",
+    "year": "Year",
+    "manufacturer": "Manufacturer",
+    "brand": "Brand",
+    "color": "Color",
+    "quantity": "Quantity"
   },
   "HomePage": {
     "title": "Hello world!",
