@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback } from 'react';
 // import { usePathname, useSearchParams } from 'next/navigation';
 import type { SessionObj } from '@nartix/next-security/src';
 

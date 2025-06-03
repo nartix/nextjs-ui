@@ -1,10 +1,8 @@
 import React from 'react';
 import { getTranslations } from 'next-intl/server';
 import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
-import { BaseContainer } from '@/components/common/BaseContainer/BaseContainer';
 import { SessionContainer } from '@/components/common/SessionContainer/SessionContainer';
 import { Text, Title } from '@mantine/core';
-import { extractSessionForClientside } from '@/app/[locale]/(auth)/lib/exgract-session-for-clientside';
 
 export default async function Home() {
   const session = await getServerSession();

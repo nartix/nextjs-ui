@@ -1,5 +1,4 @@
 import z from 'zod';
-import { checkUsernameAction } from '@/app/[locale]/(auth)/actions/check-username-action';
 
 export const emailSchema = z.string().email('Invalid email address');
 export const passwordSchema = z.string().min(6, 'Password must be at least 6 characters long');
@@ -53,8 +52,8 @@ export const createLoginFormSchema = (t: Translator) => {
 };
 
 export const createSignUpFormSchema = (t: Translator) => {
-  let lastCheckedUsername = '';
-  let usernameIsAvailable = false;
+  // let lastCheckedUsername = '';
+  // let usernameIsAvailable = false;
   return z
     .object({
       username: z.string().min(3, t('errors.validation.username_length').replace('zmin', '3')),

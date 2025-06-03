@@ -10,8 +10,8 @@ import {
   Box,
   Divider,
   Button,
-  List,
-  ThemeIcon,
+  // List,
+  // ThemeIcon,
   Stack,
 } from '@mantine/core';
 import { useDisclosure, useHover } from '@mantine/hooks';
@@ -136,6 +136,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
   );
 };
 
+/*
 function VerticalMenu() {
   const handleLogout = () => {
     // Logout logic here
@@ -192,3 +193,4 @@ function VerticalMenu() {
     </Box>
   );
 }
+*/

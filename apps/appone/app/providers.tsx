@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { ThemeProviderProps } from 'next-themes';
 import { AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
@@ -21,8 +20,6 @@ export interface ProvidersProps {
 }
 
 export function Providers({ children, themeProps, messages, locale, session, csrfToken }: ProvidersProps) {
-  const router = useRouter();
-
   return (
     <SessionProvider initialSession={session}>
       <CSRFProvider initialCSRFToken={csrfToken || null}>

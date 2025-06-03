@@ -2,9 +2,6 @@
 
 import { z } from 'zod';
 import { getTranslations } from 'next-intl/server';
-import { redirect } from 'next/navigation';
-import { signIn, ProviderType } from '@nartix/next-security/src';
-import { authConfig } from '@/app/[locale]/(auth)/auth-options';
 import { ServerActionResponse } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { createSignUpFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 import { fetchWrapper } from '@/lib/fetch-wrapper';

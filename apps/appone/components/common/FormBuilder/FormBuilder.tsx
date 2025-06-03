@@ -17,6 +17,8 @@ import {
   Radio,
   Group,
   Textarea,
+  TitleProps,
+  MantineTheme,
 } from '@mantine/core';
 import {
   useFormContext,
@@ -26,11 +28,12 @@ import {
   UseFormReturn,
   Controller,
   ControllerProps,
+  FieldValues,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReactNode } from 'react';
 
-export type FieldComponentFn = (methods: UseFormReturn<any>) => React.ReactNode;
+export type FieldComponentFn = (methods: UseFormReturn<FieldValues>) => React.ReactNode;
 
 export interface FormFieldConfig {
   name: string;
@@ -42,11 +45,11 @@ export interface FormFieldConfig {
   validation?: ZodTypeAny;
   options?: { label: string; value: string }[];
   component?: ReactNode | FieldComponentFn;
-  onChange?: (methods: UseFormReturn<any>) => void;
+  onChange?: (methods: UseFormReturn<FieldValues>) => void;
   controllerProps?: Omit<ControllerProps, 'render' | 'control' | 'name'>;
   layout?: {
-    props?: Record<string, any>; // e.g. { withAsterisk: true } for the all the mantine types
-    gridColProps?: Record<string, any>; // e.g. { span: 8 }
+    props?: Record<string, unknown>; // e.g. { withAsterisk: true } for the all the mantine types
+    gridColProps?: Record<string, unknown>; // e.g. { span: 8 }
   };
 }
 
@@ -60,8 +63,8 @@ export interface FormSection {
   description?: string;
   rows: FormRow[];
   layout?: {
-    gridProps?: Record<string, any>; // e.g. { gutter: 'md' }
-    fieldsetProps?: Record<string, any>;
+    gridProps?: Record<string, unknown>; // e.g. { gutter: 'md' }
+    fieldsetProps?: Record<string, unknown>;
   };
 }
 
@@ -73,14 +76,14 @@ export interface FormConfig {
   submitText?: string;
   afterSubmitText?: ReactNode;
   layout?: {
-    titleProps?: Record<string, any>;
-    errorAlertProps?: Record<string, any>;
+    titleProps?: Record<string, unknown>;
+    errorAlertProps?: Record<string, unknown>;
   };
 }
 
 interface SectionRendererProps {
   section: FormSection;
-  formState: any;
+  formState: FieldValues;
 }
 
 const SectionRenderer: React.FC<SectionRendererProps> = ({ section, formState }) => {
@@ -88,14 +91,14 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({ section, formState })
 
   const fieldSetProps = {
     legend: section.title,
-    ...section.layout?.fieldsetProps?.title,
+    ...(section.layout?.fieldsetProps?.title || {}),
   };
 
   const descriptionProps = {
     mt: 'xs',
     mb: 'md',
     size: 'sm',
-    ...section.layout?.fieldsetProps?.description,
+    ...(section.layout?.fieldsetProps?.description ?? {}),
   };
 
   return (
@@ -328,7 +331,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
 /**
  * Returns a default value based on the field type.
  */
-function getDefaultValueByType(type: FormFieldConfig['type']): any {
+function getDefaultValueByType(type: FormFieldConfig['type']): unknown {
   switch (type) {
     case 'checkbox':
       return false;
@@ -344,8 +347,8 @@ function getDefaultValueByType(type: FormFieldConfig['type']): any {
   }
 }
 
-export function buildDefaultValues(formConfig: FormConfig): Record<string, any> {
-  const defaultValues: Record<string, any> = {};
+export function buildDefaultValues(formConfig: FormConfig): Record<string, unknown> {
+  const defaultValues: Record<string, unknown> = {};
   formConfig.sections.forEach((section) => {
     section.rows.forEach((row) => {
       row.fields.forEach((field) => {
@@ -356,59 +359,64 @@ export function buildDefaultValues(formConfig: FormConfig): Record<string, any> 
   return defaultValues;
 }
 
-export interface FormBuilderProps<T = unknown> {
+function getServerErrorMessage(err: unknown): string {
+  return err instanceof Error ? err.message || 'Unknown server error' : 'Unknown server error';
+}
+
+interface FormBuilderProps<T extends FieldValues> {
   formConfig: FormConfig;
   submitHandler: (data: T, setError: unknown) => Promise<unknown>;
   loading?: boolean;
 }
 
-export const FormBuilder = <T extends Record<string, any>>({ formConfig, submitHandler }: FormBuilderProps<T>) => {
+export const FormBuilder = <T extends FieldValues>({ formConfig, submitHandler }: FormBuilderProps<T>) => {
+  // 1. Build Zod schema from formConfig
   const zodSchema = buildZodSchema(formConfig);
 
-  const methods = useForm({
+  // 2. Infer TypeScript type from Zod schema
+  type SchemaType = z.infer<typeof zodSchema>;
+
+  // 3. Parse default values using the schema
+  const defaultValues: SchemaType = zodSchema.parse(buildDefaultValues(formConfig));
+
+  // 4. Initialize useForm with inferred types and parsed default values
+  const methods = useForm<SchemaType>({
     resolver: zodResolver(zodSchema),
-    defaultValues: buildDefaultValues(formConfig), // or from the config
+    defaultValues,
   });
 
   const { handleSubmit, setError, formState } = methods;
-
   const { errors, isSubmitting } = formState;
 
-  const onSubmit: SubmitHandler<any> = async (data) => {
+  const onSubmit: SubmitHandler<SchemaType> = async (data) => {
     try {
-      await submitHandler(data, setError);
-    } catch (err: any) {
+      await submitHandler(data as unknown as T, setError);
+    } catch (err: unknown) {
       setError('root.serverError', {
         type: 'server',
-        message: err.message || 'Unknown server error',
+        message: getServerErrorMessage(err),
       });
     }
   };
 
-  const titleProps = {
-    order: 2,
+  const titleProps: TitleProps = {
+    order: 2 as 1 | 2 | 3 | 4 | 5 | 6,
     ta: 'center',
-    ...formConfig.layout?.titleProps?.title,
+    ...(formConfig.layout?.titleProps?.title || {}),
   };
 
   const errorAlertProps = {
     variant: 'light',
     color: 'red',
-    styles: (theme: any) => ({ message: { color: theme.colors.red[8] } }),
+    styles: (theme: MantineTheme) => ({ message: { color: theme.colors.red[8] } }),
     ...formConfig.layout?.errorAlertProps,
   };
 
   return (
-    // <Container
-    //   w='100%'
-    //   size={400}
-
-    // ></Container>
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack align='stretch'>
           {formConfig.title && <Title {...titleProps}>{formConfig.title}</Title>}
-          {/* Global/Root Error Display */}
           {errors.root?.serverError && <Alert {...errorAlertProps}>{errors.root.serverError.message}</Alert>}
           {formConfig.sections.map((section, index) => (
             <SectionRenderer key={index} section={section} formState={formState} />
@@ -427,7 +435,7 @@ export const FormBuilder = <T extends Record<string, any>>({ formConfig, submitH
 /**
  * Builds a Zod schema based on the form configuration.
  */
-export function buildZodSchema(formConfig: FormConfig): z.ZodObject<any> {
+export function buildZodSchema(formConfig: FormConfig): z.ZodObject<Record<string, ZodTypeAny>> {
   const shape: Record<string, ZodTypeAny> = {};
 
   formConfig.sections.forEach((section) => {

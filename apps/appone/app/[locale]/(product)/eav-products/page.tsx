@@ -1,17 +1,14 @@
-//–– this file stays a Server Component (no ‘use client’ at the top) ––
 import React from 'react';
 import { getTranslations } from 'next-intl/server';
-import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
+// import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
 import { SessionContainer } from '@/components/common/SessionContainer/SessionContainer';
 import { Container } from '@mantine/core';
-import { ProductsTable } from '@/components/product/ProductsTable/ProductsTable';
-// import { type Product } from '@/types';
 import { fetchWrapper } from '@/lib/fetch-wrapper';
 import { EAVProductsTable, Product } from '@/components/product/ProductsTable/EAVProductTable';
 
 export default async function EAVProductsPage() {
-  const session = await getServerSession();
-  const user = session?.user;
+  // const session = await getServerSession();
+  // const user = session?.user;
 
   const t = await getTranslations('products');
 

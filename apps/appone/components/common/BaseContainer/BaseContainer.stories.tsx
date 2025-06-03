@@ -1,7 +1,6 @@
 import React from 'react';
 import { BaseContainer } from './BaseContainer';
 import { Text } from '@mantine/core';
-import { cn } from '@/lib/utils';
 import { Layout } from '@/components/common/Layout/Layout';
 
 // Optional: Only if you want to log actions (e.g., from '@storybook/addon-actions'):
@@ -38,7 +37,7 @@ export default {
     },
     direction: {
       control: { type: 'select' },
-      options: ['row', 'row-reverse', 'column', 'column-reverse'] as any[],
+      options: ['row', 'row-reverse', 'column', 'column-reverse'] as Array<'row' | 'row-reverse' | 'column' | 'column-reverse'>,
     },
     gap: {
       control: { type: 'text' },
@@ -58,7 +57,7 @@ export default {
 interface TemplateProps {
   align: string;
   justify: string;
-  direction: any;
+  direction: 'row' | 'row-reverse' | 'column' | 'column-reverse';
   gap: string;
   className: string;
   itemCount: number;

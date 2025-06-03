@@ -5,7 +5,7 @@ import '@mantine/core/styles.css';
 import 'mantine-react-table/styles.css';
 
 import { Metadata, Viewport } from 'next';
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';

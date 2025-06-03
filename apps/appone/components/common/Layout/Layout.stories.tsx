@@ -1,4 +1,3 @@
-import React from 'react';
 import { Layout } from './Layout';
 
 // Optional: Only if you want to log actions (e.g., from '@storybook/addon-actions'):

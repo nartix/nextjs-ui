@@ -1,6 +1,6 @@
 'use client';
 
-import { Table, Text, Title, TableTd, TableTr, TableTh, TableTbody, TableThead, Container } from '@mantine/core';
+import { Table, TableTd, TableTr, TableTh, TableTbody, TableThead } from '@mantine/core';
 
 interface DataTableProps {
   head: (string | number)[];

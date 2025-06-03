@@ -1,3 +1,4 @@
+/*
 import React from 'react';
 import { getTranslations } from 'next-intl/server';
 import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
@@ -94,3 +95,4 @@ export default async function Products() {
   //   </SessionContainer>
   // );
 }
+*/

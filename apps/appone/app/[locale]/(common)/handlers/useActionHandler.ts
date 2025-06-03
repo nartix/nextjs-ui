@@ -110,7 +110,7 @@ export type ActionResponse = {
 export type ServerActionResponse = (params: ActionParams) => Promise<ActionResponse>;
 export type ServerAction<T = unknown> = (data: T) => Promise<ActionResponse>;
 export interface ActionHandlerOptions<T> {
-  action: ServerActionResponse;
+  action: ServerAction<T>;
   onSuccessRedirect?: boolean;
   defaultRedirect?: string; // fallback redirect path (defaults to '/')
   t: (key: string) => string;
@@ -158,7 +158,7 @@ export function useActionHandler<T extends FieldValues = FieldValues>(options: A
         redirect();
         return response;
       } else {
-        const { reset, getValues, setError } = useFormMethods;
+        const { setError } = useFormMethods;
         // If error is not unexpected, reset form errors.
         if (response.errorCode !== 'UNEXPECTED_ERROR') {
           // reset(getValues(), { keepErrors: true });
