@@ -1,3 +1,4 @@
+/*
 import { FormField } from '@/components/common/FormBuilder';
 
 export const emailField: FormField = {
@@ -23,3 +24,4 @@ export const usernameField: FormField = {
 
 export const loginFields: FormField[] = [usernameField, passwordField];
 export type LoginFormFields = typeof usernameField.name | typeof passwordField.name;
+*/

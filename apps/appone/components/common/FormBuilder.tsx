@@ -1,3 +1,4 @@
+/*
 'use client';
 
 import React from 'react';
@@ -201,3 +202,4 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
 };
 
 export default FormBuilder;
+*/

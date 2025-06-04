@@ -1,6 +1,6 @@
 // types.ts
-import { ZodType } from 'zod';
-import { ButtonProps as NextUIButtonProps } from '@nextui-org/react';
+// import { ZodType } from 'zod';
+// import { ButtonProps as NextUIButtonProps } from '@nextui-org/react';
 
 export type FormFieldType =
   | 'text'
@@ -31,23 +31,23 @@ export interface ActionResponse<T = unknown> {
   data?: T;
 }
 
-export interface FormBuilderProps<T = unknown> {
-  fields: FormField[];
-  heading?: string;
-  buttons?: CustomButtonProps[];
-  variant?: 'bordered' | 'faded' | 'underlined' | 'flat';
-  className?: string;
-  action?: (data: FormDataValues, req?: Request) => Promise<ActionResponse>;
-  formSchema?: ZodType<T>;
-  handleRedirect?: boolean;
-  csrfToken?: string;
-  csrfTokenFieldName?: string;
-}
+// export interface FormBuilderProps<T = unknown> {
+//   fields: FormField[];
+//   heading?: string;
+//   buttons?: CustomButtonProps[];
+//   variant?: 'bordered' | 'faded' | 'underlined' | 'flat';
+//   className?: string;
+//   action?: (data: FormDataValues, req?: Request) => Promise<ActionResponse>;
+//   formSchema?: ZodType<T>;
+//   handleRedirect?: boolean;
+//   csrfToken?: string;
+//   csrfTokenFieldName?: string;
+// }
 
-export interface CustomButtonProps extends Omit<NextUIButtonProps, 'children' | 'onClick'> {
-  text: string;
-  onClick?: () => void;
-}
+// export interface CustomButtonProps extends Omit<NextUIButtonProps, 'children' | 'onClick'> {
+//   text: string;
+//   onClick?: () => void;
+// }
 
 export interface FormDataValues {
   [key: string]: string | number | File | boolean;
