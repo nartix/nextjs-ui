@@ -1,6 +1,6 @@
 'use client';
 
-import { z } from 'zod';
+import { z, ZodTypeAny } from 'zod';
 import {
   Grid,
   Fieldset,
@@ -18,8 +18,6 @@ import {
   Group,
   Textarea,
   ComboboxItem,
-  TitleProps,
-  MantineTheme,
 } from '@mantine/core';
 import {
   useFormContext,
@@ -36,7 +34,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReactNode, useState } from 'react';
 
-export type FieldComponentFn = (methods: UseFormReturn<FieldValues>) => React.ReactNode;
+export type FieldComponentFn = (methods: UseFormReturn<any>) => React.ReactNode;
 
 export interface FormFieldConfig {
   name: string;
@@ -55,8 +53,8 @@ export interface FormFieldConfig {
   onBlur?: (event: React.FocusEvent<HTMLElement>) => void;
   controllerProps?: Omit<ControllerProps, 'render' | 'control' | 'name'>;
   layout?: {
-    props?: Record<string, unknown>; // e.g. { withAsterisk: true } for the all the mantine types
-    gridColProps?: Record<string, unknown>; // e.g. { span: 8 }
+    props?: Record<string, any>; // e.g. { withAsterisk: true } for the all the mantine types
+    gridColProps?: Record<string, any>; // e.g. { span: 8 }
   };
   // [key: string]: any;
 }
@@ -73,8 +71,8 @@ export interface FormSection {
   description?: string;
   rows: FormRow[];
   layout?: {
-    gridProps?: Record<string, unknown>; // e.g. { gutter: 'md' }
-    fieldsetProps?: Record<string, unknown>;
+    gridProps?: Record<string, any>; // e.g. { gutter: 'md' }
+    fieldsetProps?: Record<string, any>;
   };
 }
 
@@ -86,15 +84,15 @@ export interface FormConfig {
   submitText?: string;
   afterSubmitText?: ReactNode;
   layout?: {
-    titleProps?: TitleProps;
-    errorAlertProps?: Record<string, unknown>;
+    titleProps?: Record<string, any>;
+    errorAlertProps?: Record<string, any>;
   };
-  // validationSchema?: z.ZodObject<any> | z.ZodEffects<z.ZodObject<any>>;
+  validationSchema?: z.ZodObject<any> | z.ZodEffects<z.ZodObject<any>>;
 }
 
 interface SectionRendererProps {
   section: FormSection;
-  formState: FieldValues;
+  formState: any;
 }
 
 const SectionRenderer: React.FC<SectionRendererProps> = ({ section, formState }) => {
@@ -102,14 +100,14 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({ section, formState })
 
   const fieldSetProps = {
     legend: section.title,
-    ...(section.layout?.fieldsetProps?.title || {}),
+    ...section.layout?.fieldsetProps?.title,
   };
 
   const descriptionProps = {
     mt: 'xs',
     mb: 'md',
     size: 'sm',
-    ...(section.layout?.fieldsetProps?.description ?? {}),
+    ...section.layout?.fieldsetProps?.description,
   };
 
   return (
@@ -401,10 +399,6 @@ export interface FormBuilderProps<T extends FieldValues = FieldValues> {
   useFormProps?: UseFormProps<T>;
 }
 
-function getServerErrorMessage(err: unknown): string {
-  return err instanceof Error ? err.message || 'Unknown server error' : 'Unknown server error';
-}
-
 export const FormBuilder = <T extends FieldValues = FieldValues>({
   config,
   submitHandler,
@@ -438,26 +432,25 @@ export const FormBuilder = <T extends FieldValues = FieldValues>({
         return;
       }
       await submitHandler(data, methods);
-    } catch (err: unknown) {
+    } catch (err: any) {
       setError('root.serverError', {
         type: 'server',
-        message: getServerErrorMessage(err),
+        message: err.message || 'Unknown server error',
       });
     }
   };
 
-  const titleProps: TitleProps = {
-    order: 2 as const,
+  const titleProps = {
+    order: 2,
     ta: 'center',
-    // ...(formConfig.layout?.titleProps?.title || {}),
-    ...formConfig.layout?.titleProps,
+    ...formConfig.layout?.titleProps?.title,
   };
 
   // styles: (theme: any) => ({ message: { color: theme.colors.red[8] } }),
   const errorAlertProps = {
     variant: 'light',
     color: 'red',
-    styles: (theme: MantineTheme) => ({
+    styles: (theme: any) => ({
       message: { color: theme.colors.red[8] },
       root: { border: `1px solid ${theme.colors.red[3]}` },
     }),

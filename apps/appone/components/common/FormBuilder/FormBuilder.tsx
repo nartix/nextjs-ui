@@ -76,7 +76,7 @@ export interface FormConfig {
   submitText?: string;
   afterSubmitText?: ReactNode;
   layout?: {
-    titleProps?: Record<string, unknown>;
+    titleProps?: TitleProps;
     errorAlertProps?: Record<string, unknown>;
   };
 }
@@ -402,7 +402,8 @@ export const FormBuilder = <T extends FieldValues>({ formConfig, submitHandler }
   const titleProps: TitleProps = {
     order: 2 as 1 | 2 | 3 | 4 | 5 | 6,
     ta: 'center',
-    ...(formConfig.layout?.titleProps?.title || {}),
+    // ...(formConfig.layout?.titleProps?.title || {}),
+    ...formConfig.layout?.titleProps,
   };
 
   const errorAlertProps = {
