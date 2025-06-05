@@ -130,5 +130,5 @@ export function EAVProductsTable({ data, translations }: ProductsTableProps) {
     []
   );
 
-  return <GenericMantineTable data={data} columns={columns} options={options} />;
+  return <GenericMantineTable<Product> data={data} columns={columns} options={options} />;
 }

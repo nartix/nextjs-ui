@@ -9,21 +9,20 @@ import {
   type MRT_TableOptions,
 } from 'mantine-react-table';
 
-interface GenericMantineTableProps<T extends Record<string, unknown>> {
+// const customSortIcons: Partial<MRT_Icons> = {
+//   IconArrowsSort: () => null,
+// };
+
+interface GenericMantineTableProps<T extends object> {
   data: T[];
   columns: MRT_ColumnDef<T>[];
   options?: Partial<MRT_TableOptions<T>>;
 }
 
-// const customSortIcons: Partial<MRT_Icons> = {
-//   IconArrowsSort: () => null,
-// };
-
-function GenericMantineTable<T extends Record<string, unknown>>({ data, columns, options = {} }: GenericMantineTableProps<T>) {
+function GenericMantineTable<T extends object>({ data, columns, options = {} }: GenericMantineTableProps<T>) {
   const table = useMantineReactTable<T>({
     data,
     columns,
-    // icons: customSortIcons,
     ...options,
   });
 

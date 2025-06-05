@@ -1,4 +1,4 @@
-import { Credentials } from '@/providers/credential-provider';
+import { Credentials } from './providers/credential-provider';
 
 export type ProviderType = 'credentials' | 'oauth';
 

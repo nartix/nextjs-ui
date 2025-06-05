@@ -1,4 +1,4 @@
-import { Provider, User } from '@/provider';
+import { Provider, User } from '../provider';
 
 export interface Credentials {
   username: string;

@@ -1,5 +1,3 @@
-// packages/auth-package/src/tokens.ts
-
 export async function fetchToken(username: string, password: string) {
   try {
     const response = await fetch('http://localhost:8001/api/login/', {
