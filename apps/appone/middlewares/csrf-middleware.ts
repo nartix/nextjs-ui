@@ -1,3 +1,4 @@
+import 'server-only';
 import { MiddlewareFactory } from '@nartix/next-middleware-chain/src';
 import { createNextCsrfMiddleware } from '@nartix/next-csrf/src';
 import { NextRequest, NextResponse, NextFetchEvent } from 'next/server';
@@ -29,7 +30,7 @@ export const csrfMiddlewareFactory: MiddlewareFactory =
       cookie: {
         name: process.env.CSRF_COOKIE_NAME,
         maxAge: process.env.CSRF_COOKIE_MAXAGE ? parseInt(process.env.CSRF_COOKIE_MAXAGE, 10) : undefined,
-        secure: process.env.NODE_ENV === 'production',
+        secure: false, // process.env.NODE_ENV === 'production',
       },
     });
     return next(req, event, result);

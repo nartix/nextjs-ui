@@ -26,6 +26,7 @@
     "@nartix/mantine-form-builder": "*",
     "@nartix/next-middleware-chain": "*",
     "@nartix/next-security": "*",
+    "@nartix/next-csrf": "*",
     "@nartix/ui-appone": "*",
     "@tabler/icons-react": "^3.31.0",
     "@tanstack/react-table": "^8.21.3",
