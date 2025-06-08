@@ -1,4 +1,5 @@
 import 'server-only';
+import { API_BASE_URL } from '@/app/[locale]/(common)/config/global-config';
 
 let accessToken: string | null = null;
 let tokenExpiry: number | null = null; // Expiration timestamp in milliseconds
@@ -38,12 +39,11 @@ export async function invalidateToken(): Promise<void> {
  * Fetches a new token from the API.
  */
 async function fetchNewToken(): Promise<string> {
-  const baseURL = process.env.PRODUCTION ? process.env.API_URL_PRODUCTION : process.env.API_URL_DEVELOPMENT;
-  if (!baseURL) {
+  if (!API_BASE_URL) {
     throw new Error('API base URL is not defined in environment variables');
   }
   try {
-    const response = await fetch(`${baseURL}/oauth2/token`, {
+    const response = await fetch(`${API_BASE_URL}/oauth2/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
