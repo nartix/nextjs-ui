@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { ServerActionResponse } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { createCheckUsernameSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 import { fetchWrapper } from '@/lib/fetch-wrapper';
+import { API_URL } from '@/app/[locale]/(common)/config/global-config';
 
 export const checkUsernameAction: ServerActionResponse = async (formData) => {
   const t = await getTranslations();
@@ -17,7 +18,7 @@ export const checkUsernameAction: ServerActionResponse = async (formData) => {
     });
 
     const query = new URLSearchParams({ username });
-    const url = `${process.env.API_URL}/users/search/findByUsernameIgnoreCase?${query.toString()}`;
+    const url = `${API_URL}/users/search/findByUsernameIgnoreCase?${query.toString()}`;
 
     const response = await fetchWrapper(url, { method: 'GET' });
     if (response.ok) {

@@ -1,11 +1,15 @@
 import 'server-only';
+import { API_URL } from '@/app/[locale]/(common)/config/global-config';
 import { v4 as uuidv4 } from 'uuid';
 
 import { fetchWrapper } from '@/lib/fetch-wrapper';
 import { SessionAdaptor, SessionObj } from '@nartix/next-security';
 
 export default function ApiAdaptor(): SessionAdaptor {
-  const apiBaseUrl = `${process.env.API_URL_GLOBAL}/${process.env.API_URL_PREFIX}/${process.env.API_URL_VERSION}`;
+  if (API_URL === '') {
+    throw new Error('API_URL is not defined. Please set the API_URL environment variable.');
+  }
+  const apiBaseUrl = API_URL;
 
   return {
     // async createUser(user: Omit<AdapterUser, 'id'>): Promise<AdapterUser> {
