@@ -29,11 +29,3 @@ export default async function Home() {
     </SessionContainer>
   );
 }
-
-// export default async function Home() {
-//   return (
-//     <BaseContainer justify='flex-start' align='center'>
-//       <HomeContent />
-//     </BaseContainer>
-//   );
-// }

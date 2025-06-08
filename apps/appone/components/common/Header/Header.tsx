@@ -64,8 +64,8 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
               </UnstyledButton>
               <UnstyledButton className={classes.control}>Contacts</UnstyledButton>
               <UnstyledButton className={classes.control}>Support</UnstyledButton>
-              <UnstyledButton className={classes.control} component={Link} href='/formtest'>
-                FormTest
+              <UnstyledButton className={classes.control} component={Link} href='/eav-products'>
+                EAV Products
               </UnstyledButton>
             </Group>
             <Avatar
