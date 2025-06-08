@@ -20,7 +20,9 @@ services:
     working_dir: /app
     # command: tail -f /dev/null
     environment:
-      - ENVCONSUL_VERSION=0.13.2
+      - NODE_ENV=development
+      - PRODUCTION=false
+      # - ENVCONSUL_VERSION=0.13.2
       # {{ with secret "kv/data/django_token" }}
       - VAULT_ADDR={{ .Data.data.VAULT_ADDR }}
       - VAULT_TOKEN={{ .Data.data.VAULT_TOKEN }}

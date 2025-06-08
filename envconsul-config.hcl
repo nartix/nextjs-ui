@@ -1,6 +1,6 @@
 
 secret {
-  path = "kv/data/NEXTJS/DEV"
+  path = "kv/data/NEXTJS/NEXTJS-UI"
   no_prefix = true
 }
 

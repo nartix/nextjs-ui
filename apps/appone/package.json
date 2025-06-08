@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "envconsul -config=/app/envconsul-config.hcl next dev ",
+    "dev": "next dev ",
     "build": "next build",
-    "start": "envconsul -config=/app/envconsul-config.hcl next start",
+    "start": "next start",
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "envconsul -config=/app/envconsul-config.hcl storybook build"
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
