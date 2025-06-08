@@ -6,6 +6,7 @@ import { ServerActionResponse } from '@/app/[locale]/(common)/handlers/useAction
 import { createSignUpFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 import { fetchWrapper } from '@/lib/fetch-wrapper';
 import { checkUsernameAction } from '@/app/[locale]/(auth)/actions/check-username-action';
+import { API_URL } from '@/app/[locale]/(common)/config/global-config';
 
 export const signupAction: ServerActionResponse = async (formData) => {
   const t = await getTranslations();
@@ -33,7 +34,7 @@ export const signupAction: ServerActionResponse = async (formData) => {
       };
     }
 
-    const response = await fetchWrapper(`${process.env.API_URL}/users`, {
+    const response = await fetchWrapper(`${API_URL}/users`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

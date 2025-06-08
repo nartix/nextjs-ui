@@ -1,11 +1,8 @@
 import { getTranslations } from 'next-intl/server';
 import { Credentials, Provider } from '@nartix/next-security';
+import { API_URL } from '@/app/[locale]/(common)/config/global-config';
 
 import { fetchWrapper } from '@/lib/fetch-wrapper';
-
-const API_BASE_URL = process.env.API_URL_GLOBAL;
-const API_VERSION = process.env.API_URL_VERSION;
-const API_PREFIX = process.env.API_URL_PREFIX;
 
 export const credentialsProvider: Provider = {
   id: 'credentials',
@@ -17,7 +14,7 @@ export const credentialsProvider: Provider = {
     }
 
     try {
-      const response = await fetchWrapper(`${API_BASE_URL}/${API_PREFIX}/${API_VERSION}/auth/login`, {
+      const response = await fetchWrapper(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

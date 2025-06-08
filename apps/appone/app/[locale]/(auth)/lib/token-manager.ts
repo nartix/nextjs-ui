@@ -38,8 +38,12 @@ export async function invalidateToken(): Promise<void> {
  * Fetches a new token from the API.
  */
 async function fetchNewToken(): Promise<string> {
+  const baseURL = process.env.PRODUCTION ? process.env.API_URL_PRODUCTION : process.env.API_URL_DEVELOPMENT;
+  if (!baseURL) {
+    throw new Error('API base URL is not defined in environment variables');
+  }
   try {
-    const response = await fetch(`${process.env.API_URL_GLOBAL}/oauth2/token`, {
+    const response = await fetch(`${baseURL}/oauth2/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

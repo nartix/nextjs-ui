@@ -5,6 +5,7 @@ import { SessionContainer } from '@/components/common/SessionContainer/SessionCo
 import { Container } from '@mantine/core';
 import { fetchWrapper } from '@/lib/fetch-wrapper';
 import { EAVProductsTable, Product } from '@/components/product/ProductsTable/EAVProductTable';
+import { API_URL } from '@/app/[locale]/(common)/config/global-config';
 
 export default async function EAVProductsPage() {
   // const session = await getServerSession();
@@ -25,7 +26,7 @@ export default async function EAVProductsPage() {
 
   //   const allData = [...additional, ...staticData];
 
-  const response = await fetchWrapper(`${process.env.API_URL}/eav/products`);
+  const response = await fetchWrapper(`${API_URL}/eav/products`);
   let eavData: Product[] = [];
   if (response.ok) {
     const data = await response.json();
