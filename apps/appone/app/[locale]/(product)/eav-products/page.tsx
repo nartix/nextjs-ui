@@ -27,6 +27,8 @@ export default async function EAVProductsPage() {
   //   const allData = [...additional, ...staticData];
 
   const response = await fetchWrapper(`${API_URL}/eav/products`);
+  console.log('Fetching EAV products from:', `${API_URL}/eav/products`);
+  console.log('env production:', process.env.PRODUCTION);
   let eavData: Product[] = [];
   if (response.ok) {
     const data = await response.json();
