@@ -21,7 +21,7 @@ services:
     working_dir: /app
     # command: tail -f /dev/null
     environment:
-      - NODE_ENV=development
+      # - NODE_ENV=development
       - PRODUCTION=false
       # - ENVCONSUL_VERSION=0.13.2
       # {{ with secret "kv/data/django_token" }}
