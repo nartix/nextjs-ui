@@ -47,19 +47,19 @@ interface ProductWithMap extends Product {
 export function EAVProductsTable({ data, translations }: ProductsTableProps) {
   // Helper to get attribute value by name.
   // Now safely handles null/undefined 'attributes' or 'attributeName'.
-  const getAttributeValue = (attributes: ProductAttribute[] | null | undefined, name: string): string | number => {
-    // 1) If there's no attributes array, bail out early
-    if (!attributes?.length) return '';
+  // const getAttributeValue = (attributes: ProductAttribute[] | null | undefined, name: string): string | number => {
+  //   // 1) If there's no attributes array, bail out early
+  //   if (!attributes?.length) return '';
 
-    // 2) Safe lookup with optional‐chaining
-    const attr = attributes.find((a) => a.attributeName?.toLowerCase() === name.toLowerCase());
+  //   // 2) Safe lookup with optional‐chaining
+  //   const attr = attributes.find((a) => a.attributeName?.toLowerCase() === name.toLowerCase());
 
-    // 3) If found, pick numeric over string; if still nullish, return empty string
-    if (attr) {
-      return attr.attributeValueNumeric ?? attr.attributeValueString ?? '';
-    }
-    return '';
-  };
+  //   // 3) If found, pick numeric over string; if still nullish, return empty string
+  //   if (attr) {
+  //     return attr.attributeValueNumeric ?? attr.attributeValueString ?? '';
+  //   }
+  //   return '';
+  // };
 
   // 4. Build your data once, in a useMemo, typing it explicitly
   const dataWithMaps: ProductWithMap[] = useMemo(() => {
