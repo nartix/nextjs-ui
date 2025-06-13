@@ -1,3 +1,4 @@
+import 'server-only';
 import { FlexProps } from '@mantine/core';
 import { ReactNode } from 'react';
 import { SessionObj } from '@nartix/next-security/src';

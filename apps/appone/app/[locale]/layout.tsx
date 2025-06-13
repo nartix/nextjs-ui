@@ -15,7 +15,7 @@ import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core';
 
 import { routing, Locale } from '@/i18n/routing';
 
-import { Providers } from './../providers';
+import { Providers } from '../providers';
 import { siteConfig } from '@/config/site';
 import { fontSans } from '@/config/fonts';
 import { Layout } from '@/components/common/Layout/Layout';
