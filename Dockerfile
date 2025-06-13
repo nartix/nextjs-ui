@@ -25,6 +25,9 @@ COPY packages ./packages
 # 4.1. Copy root-level envconsul configuration
 COPY envconsul-config.hcl ./envconsul-config.hcl
 
+RUN echo "Root workspaces:" && grep -R '"workspaces"' package.json || echo "no workspaces"
+RUN echo "Lockfile workspaces:" && grep -R '"workspaces"' package-lock.json || echo "no workspaces"
+
 # 5. Install root dependencies (including workspaces) without running build scripts
 RUN npm ci --ignore-scripts                   
 # Ensures all workspace symlinks resolve 
