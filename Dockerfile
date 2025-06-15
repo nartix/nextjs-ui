@@ -34,6 +34,7 @@ RUN echo "Lockfile workspaces:" && grep -R '"workspaces"' package-lock.json || e
 # 5. Install root dependencies (including workspaces) 
 RUN npm ci                  
 # Ensures all workspace symlinks resolve 
+RUN npm run build:packages
 
 RUN ls -l /repo-root/node_modules/@nartix
 
