@@ -37,6 +37,7 @@ RUN echo "Lockfile workspaces:" && grep -R '"workspaces"' package-lock.json || e
 # Ensures all workspace symlinks resolve 
 # RUN npm run build:packages
 RUN npm install --legacy-peer-deps --no-audit --prefer-offline
+RUN npm run build:packages
 RUN ls packages/next-security/dist
 
 RUN ls -l /repo-root/node_modules/@nartix
