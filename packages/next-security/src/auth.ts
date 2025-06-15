@@ -1,7 +1,7 @@
 import 'server-only';
 import { cookies } from 'next/headers';
 import deepmerge from 'deepmerge';
-import { generateToken, verifyToken, getHmacKey } from '@nartix/edge-token/src';
+import { generateToken, verifyToken, getHmacKey } from '@nartix/edge-token';
 import { SessionAdaptor, Provider, authenticateWithProvider } from '@nartix/next-security';
 
 export interface CookieOptions {

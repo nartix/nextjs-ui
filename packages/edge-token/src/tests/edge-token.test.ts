@@ -1,4 +1,4 @@
-import { edgeToken } from '@nartix/edge-token/src';
+import { edgeToken } from '@nartix/edge-token';
 
 describe('Token Utility Tests', () => {
   const secret = 'supersecretkey';
