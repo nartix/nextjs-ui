@@ -6,7 +6,8 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "build:packages": "turbo run build --filter=packages/*"
   },
   "overrides": {
     "@mantine/core": "7.17.8"
@@ -29,6 +30,7 @@
     "apps/*",
     "packages/*"
   ],
+  
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
     "@radix-ui/react-icons": "^1.3.2",
