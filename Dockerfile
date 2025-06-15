@@ -28,9 +28,14 @@ COPY envconsul-config.hcl ./envconsul-config.hcl
 RUN echo "Root workspaces:" && grep -R '"workspaces"' package.json || echo "no workspaces"
 RUN echo "Lockfile workspaces:" && grep -R '"workspaces"' package-lock.json || echo "no workspaces"
 
-# 5. Install root dependencies (including workspaces) without running build scripts
-RUN npm ci --ignore-scripts                   
+# 4.2. Install dependencies for all workspaces
+RUN npm run build:packages
+
+# 5. Install root dependencies (including workspaces) 
+RUN npm ci                  
 # Ensures all workspace symlinks resolve 
+
+RUN ls -l /repo-root/node_modules/@nartix
 
 # 6. Navigate to the Next.js app folder and build in standalone mode
 WORKDIR /repo-root/apps/appone
