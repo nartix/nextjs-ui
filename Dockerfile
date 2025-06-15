@@ -1,7 +1,7 @@
 # ------------------------------------------------
 # Stage 1: Turborepo Build + Next.js Standalone
 # ------------------------------------------------
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 
 # 1. Create and set the root working directory
 WORKDIR /repo-root
@@ -35,6 +35,7 @@ RUN echo "Lockfile workspaces:" && grep -R '"workspaces"' package-lock.json || e
 RUN npm ci                  
 # Ensures all workspace symlinks resolve 
 RUN npm run build:packages
+RUN ls packages/next-security/dist
 
 RUN ls -l /repo-root/node_modules/@nartix
 
@@ -46,7 +47,7 @@ RUN npm run build
 # ------------------------------------------------
 # Stage 2: Production Runtime with Envconsul
 # ------------------------------------------------
-FROM node:22-alpine AS runner
+FROM node:24-alpine AS runner
 
 # 1. Install dependencies to download & install envconsul
 ENV ENVCONSUL_VERSION=0.13.2
