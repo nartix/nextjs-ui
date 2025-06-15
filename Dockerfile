@@ -32,9 +32,11 @@ RUN echo "Lockfile workspaces:" && grep -R '"workspaces"' package-lock.json || e
 # RUN npm run build:packages
 
 # 5. Install root dependencies (including workspaces) 
-RUN npm ci                  
+# Throws Module not found error for packages/next-security
+# RUN npm ci                  
 # Ensures all workspace symlinks resolve 
-RUN npm run build:packages
+# RUN npm run build:packages
+RUN npm install --legacy-peer-deps --no-audit --prefer-offline
 RUN ls packages/next-security/dist
 
 RUN ls -l /repo-root/node_modules/@nartix

@@ -1,6 +1,6 @@
 'use client';
 
-import { z } from 'zod';
+import { z, ZodTypeAny } from 'zod';
 import {
   Grid,
   Fieldset,
@@ -397,7 +397,7 @@ export interface FormBuilderProps<T extends FieldValues = FieldValues> {
   submitHandler: (data: T, useFormMethods: UseFormReturn<T>) => Promise<unknown>;
   loading?: boolean;
   defaultValues?: DefaultValues<T> | undefined;
-  schema?: z.ZodType<T>;
+  schema?: ZodTypeAny;
   useFormProps?: UseFormProps<T>;
 }
 

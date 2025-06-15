@@ -28,7 +28,7 @@ export const checkUsernameAction: ServerActionResponse = async (formData) => {
     } else {
       return { success: false, error: t('errors.error_unexpected') };
     }
-  } catch (error: unknown) {
+  } catch  {
     return { success: false, error: t('errors.error_unexpected') };
   }
 };
