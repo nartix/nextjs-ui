@@ -11,7 +11,7 @@ WORKDIR /repo-root
 #    For npm-only monorepo, skip this step if you don't need a global turbo binary.
 
 # 3. Copy root manifests to leverage Docker layer caching
-COPY package.json package-lock.json ./       
+COPY package.json package-lock.json turbo.json ./       
 # Root-level manifests 
 COPY turbo.json ./
 
