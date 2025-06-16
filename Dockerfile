@@ -22,6 +22,9 @@ COPY apps ./apps
 COPY packages ./packages                      
 # Copy shared packages 
 
+# Debug #1: is the source folder actually there?
+RUN ls -R /repo-root/packages/mantine-form-builder
+
 # 4.1. Copy root-level envconsul configuration
 COPY envconsul-config.hcl ./envconsul-config.hcl
 
