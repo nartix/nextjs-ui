@@ -1,0 +1,15 @@
+{
+  "extends": "@repo/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@nartix/mantine-form-builder": ["src/index.ts"],
+      "@nartix/mantine-form-builder/*": ["src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["dist", "*.js", "*.d.ts", "node_modules"]
+}

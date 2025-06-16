@@ -1,7 +1,4 @@
-tsconfig.json
-jest.config.js
-.turbo
-node_modules
+
 
 # Ignore all test folders
 test/
