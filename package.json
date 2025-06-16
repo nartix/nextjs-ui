@@ -7,7 +7,7 @@
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "test": "turbo run test",
-    "build:packages": "turbo run build --filter=packages/*"
+    "build:packages": "turbo run build --filter=packages/\\*"
   },
   "overrides": {
     "@mantine/core": "7.17.8"
