@@ -1,9 +1,0 @@
-
-
-# Ignore all test folders
-test/
-tests/
-
-# Ignore all files ending with .test.ts or .test.js
-*.test.ts
-*.test.js

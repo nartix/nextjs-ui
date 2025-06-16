@@ -40,11 +40,27 @@ RUN npm install --legacy-peer-deps --no-audit --prefer-offline
 RUN npm run build:packages
 RUN ls packages/next-security/dist
 
-# Verify the built file exists in the package folder
-RUN ls -l /repo-root/packages/mantine-form-builder/dist/index.js
+# # Verify the built file exists in the package folder
+# RUN ls -l /repo-root/packages/mantine-form-builder/dist/index.js
 
-# Verify the symlinked workspace package points at that dist folder
-RUN ls -l /repo-root/node_modules/@nartix/mantine-form-builder/dist/index.js
+# # Verify the symlinked workspace package points at that dist folder
+# RUN ls -l /repo-root/node_modules/@nartix/mantine-form-builder/dist/index.js
+
+# 1) Check the package’s dist file
+RUN if [ ! -f /repo-root/packages/mantine-form-builder/dist/index.js ]; then \
+      echo "ERROR: packages/mantine-form-builder/dist/index.js is missing" >&2; \
+      exit 1; \
+    else \
+      echo "OK: built dist/index.js exists"; \
+    fi
+
+# 2) Check the workspace symlink target
+RUN if [ ! -f /repo-root/node_modules/@nartix/mantine-form-builder/dist/index.js ]; then \
+      echo "ERROR: workspace link not pointing at built code" >&2; \
+      exit 1; \
+    else \
+      echo "OK: node_modules link resolves to dist/index.js"; \
+    fi
 
 RUN ls -l /repo-root/node_modules/@nartix
 
