@@ -40,6 +40,12 @@ RUN npm install --legacy-peer-deps --no-audit --prefer-offline
 RUN npm run build:packages
 RUN ls packages/next-security/dist
 
+# Verify the built file exists in the package folder
+RUN ls -l /repo-root/packages/mantine-form-builder/dist/index.js
+
+# Verify the symlinked workspace package points at that dist folder
+RUN ls -l /repo-root/node_modules/@nartix/mantine-form-builder/dist/index.js
+
 RUN ls -l /repo-root/node_modules/@nartix
 
 # 6. Navigate to the Next.js app folder and build in standalone mode

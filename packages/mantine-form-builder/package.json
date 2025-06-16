@@ -17,10 +17,10 @@
   },
   "keywords": [
     "nextjs",
-    "middleware",
-    "csrf",
-    "next-csrf",
-    "edge-token"
+    "mantinejs",
+    "reacthookform",
+    "zod",
+    "form-builder"
   ],
   "repository": {
     "type": "git",
@@ -40,6 +40,7 @@
     "react": ">=17.0.0",
     "react-hook-form": ">=7.0.0",
     "zod": ">=3.0.0",
-    "@hookform/resolvers": ">=3.0.0"
+    "@hookform/resolvers": ">=3.0.0",
+    "@mantine/core": ">=7.0.0"
   }
 }
