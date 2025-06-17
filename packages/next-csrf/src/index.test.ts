@@ -8,7 +8,7 @@ import {
   invalidCsrfResponse, // renamed from invalidResponse
   getTokenFromRequest,
   createNextCsrfMiddleware,
-} from '@nartix/next-csrf/src';
+} from '@nartix/next-csrf';
 
 // Define mock functions at the top level
 var mockGenerate = jest.fn<(data?: string) => Promise<string>>().mockResolvedValue('generatedToken');

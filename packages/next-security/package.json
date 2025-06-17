@@ -15,18 +15,18 @@
     "test": "echo \"No test run\" && exit 0",
     "dev": "tsc --watch",
     "build": "tsc",
-    "prepare": "npm run build"
+    "prepare": "pnpm run build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nartix/next-security.git"
   },
   "devDependencies": {
-    "@repo/typescript-config": "*",
+    "@repo/typescript-config": "workspace:*",
     "typescript": "latest"
   },
   "dependencies": {
-    "@nartix/edge-token": "*",
+    "@nartix/edge-token": "workspace:*",
     "@types/deepmerge": "^2.1.0",
     "deepmerge": "^4.3.1",
     "server-only": "^0.0.1"

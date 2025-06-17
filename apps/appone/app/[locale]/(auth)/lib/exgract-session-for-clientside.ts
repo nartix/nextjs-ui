@@ -1,6 +1,6 @@
 import 'server-only';
 
-import type { SessionObj } from '@nartix/next-security/src';
+import type { SessionObj } from '@nartix/next-security';
 
 export function extractSessionForClientside(sessionObject: SessionObj | null) {
   interface UserRole {

@@ -2,7 +2,7 @@
 import { Flex, FlexProps } from '@mantine/core';
 import { ReactNode, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { SessionObj } from '@nartix/next-security/src';
+import { SessionObj } from '@nartix/next-security';
 import { useSession } from '@/app/[locale]/(auth)/context/session-context';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
 

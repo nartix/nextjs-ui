@@ -10,7 +10,7 @@
     "test": "jest",
     "dev": "tsc --watch",
     "build": "tsc",
-    "prepare": "npm run build"
+    "prepare": "pnpm run build"
   },
   "publishConfig": {
     "access": "public"
@@ -29,7 +29,7 @@
   "author": "Feroz Faiz",
   "license": "MIT",
   "devDependencies": {
-    "@repo/typescript-config": "*",
+    "@repo/typescript-config": "workspace:*",
     "@types/jest": "^29.5.14",
     "jest": "^29.7.0",
     "ts-jest": "^29.3.2",

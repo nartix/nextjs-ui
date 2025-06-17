@@ -1,6 +1,6 @@
 import 'server-only';
-import { MiddlewareFactory } from '@nartix/next-middleware-chain/src';
-import { createNextCsrfMiddleware } from '@nartix/next-csrf/src';
+import { MiddlewareFactory } from '@nartix/next-middleware-chain';
+import { createNextCsrfMiddleware } from '@nartix/next-csrf';
 import { NextRequest, NextResponse, NextFetchEvent } from 'next/server';
 
 // export const csrfMiddleware: MiddlewareHandler = async (req, res) => {

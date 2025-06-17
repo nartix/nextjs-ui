@@ -1,7 +1,7 @@
 'use server';
 
 import { getTranslations } from 'next-intl/server';
-import { signIn } from '@nartix/next-security/src';
+import { signIn } from '@nartix/next-security';
 import { authConfig } from '@/app/[locale]/(auth)/auth-options';
 import { ServerActionResponse } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { createLoginFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';

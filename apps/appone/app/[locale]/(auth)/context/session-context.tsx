@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useCallback } from 'react';
 // import { usePathname, useSearchParams } from 'next/navigation';
-import type { SessionObj } from '@nartix/next-security/src';
+import type { SessionObj } from '@nartix/next-security';
 
 interface SessionContextValue {
   session: SessionObj | null;

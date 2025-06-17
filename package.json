@@ -2,12 +2,12 @@
   "name": "testrep",
   "private": true,
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "test": "turbo run test",
-    "build:packages": "turbo run build --filter=packages/\\*"
+    "build": "pnpm turbo build",
+    "dev": "pnpm turbo dev",
+    "lint": "pnpm turbo lint",
+    "format": "pnpm prettier --write \"**/*.{ts,tsx,md}\"",
+    "test": "pnpm turbo run test",
+    "build:packages": "pnpm turbo run build --filter=packages/\\*"
   },
   "overrides": {
     "@mantine/core": "7.17.8"
@@ -25,7 +25,7 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "npm@11.4.2",
+  "packageManager": "pnpm@10.12.1",
   "workspaces": [
     "apps/*",
     "packages/*"
