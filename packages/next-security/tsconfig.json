@@ -5,6 +5,7 @@
     "outDir": "dist",
     "rootDir": "src",
     "baseUrl": ".",
+    "jsx": "react-jsx",
     "paths": {
       "@nartix/next-security": ["src/index.ts"],
       "@nartix/next-security/*": ["src/*"]

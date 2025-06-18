@@ -22,7 +22,7 @@ COPY envconsul-config.hcl ./envconsul-config.hcl
 RUN pnpm install --frozen-lockfile
 
 # TEMP: List packages and exit for debugging
-RUN ls -l /app/packages/mantine-form-builder/dist && exit 1
+RUN ls -l /app/packages/mantine-form-builder/dist
 
 RUN pnpm turbo run build
 
