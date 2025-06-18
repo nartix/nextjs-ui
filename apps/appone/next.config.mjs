@@ -29,12 +29,12 @@ const nextConfig = {
       '../../packages/**/*'
     ],
   },
-  // transpilePackages: [
-  //   '@nartix/mantine-form-builder',
-  //   '@nartix/next-middleware-chain',
-  //   '@nartix/next-security',
-  //   '@nartix/next-csrf',
-  // ],
+  transpilePackages: [
+    '@nartix/mantine-form-builder',
+    '@nartix/next-middleware-chain',
+    '@nartix/next-security',
+    '@nartix/next-csrf',
+  ],
 };
 
 export default withNextIntl(nextConfig);
