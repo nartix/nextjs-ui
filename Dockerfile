@@ -20,6 +20,10 @@ COPY packages ./packages
 COPY envconsul-config.hcl ./envconsul-config.hcl
 
 RUN pnpm install --frozen-lockfile
+
+# TEMP: List packages and exit for debugging
+RUN ls -l /app/packages && exit 1
+
 RUN pnpm turbo run build
 
 RUN turbo prune appone --docker --use-gitignore=false
