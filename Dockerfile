@@ -27,6 +27,10 @@ COPY packages ./packages
 # 4.1. Copy root-level envconsul configuration
 COPY envconsul-config.hcl ./envconsul-config.hcl
 
+# Install dependencies and build all packages before pruning
+RUN pnpm install --frozen-lockfile --shamefully-hoist
+RUN pnpm turbo run build
+
 # Prune to only dependencies/files needed for 'appone'
 RUN turbo prune appone --docker --use-gitignore=false
 
@@ -49,9 +53,6 @@ COPY --from=builder /app/out/json ./
 
 # Copy full source for build
 COPY --from=builder /app/out/full ./
-
-# TEMP: List packages and exit for debugging
-RUN ls -l /app/packages/mantine-form-builder && exit 1
 
 # Install dependencies deterministically
 RUN pnpm install --frozen-lockfile --shamefully-hoist
