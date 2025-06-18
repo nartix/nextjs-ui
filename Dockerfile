@@ -50,6 +50,9 @@ COPY --from=builder /app/out/json ./
 # Copy full source for build
 COPY --from=builder /app/out/full ./
 
+# TEMP: List packages and exit for debugging
+RUN ls -l /app/packages && exit 1
+
 # Install dependencies deterministically
 RUN pnpm install --frozen-lockfile --shamefully-hoist
 
