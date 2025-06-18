@@ -54,6 +54,8 @@ COPY --from=builder /app/out/json ./
 # Copy full source for build
 COPY --from=builder /app/out/full ./
 
+RUN ls -l /app/packages/mantine-form-builder && exit 1
+
 # Install dependencies deterministically
 RUN pnpm install --frozen-lockfile --shamefully-hoist
 
