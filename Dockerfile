@@ -1,80 +1,56 @@
-# ------------------------------------------------
-# Stage 1: Turborepo Build + Next.js Standalone
-# ------------------------------------------------
-FROM node:24-alpine AS builder
+# ──────────────── Base: Configure pnpm & Turbo ────────────────
+FROM node:24-alpine AS base
 
-# 1. Create and set the root working directory
-WORKDIR /repo-root
+# Configure pnpm home and PATH for global installs
+ENV PNPM_HOME="/var/lib/pnpm"
+ENV PATH="${PNPM_HOME}:$PATH"
 
-# 2. Install Turborepo globally if using pnpm/yarn (optional; see your workspace setup)
-#    e.g., for pnpm: RUN corepack enable && corepack prepare pnpm@latest --activate
-#    For npm-only monorepo, skip this step if you don't need a global turbo binary.
+# Enable Corepack (manages pnpm) and install turbo CLI
+RUN corepack enable \
+ && pnpm add -g turbo
 
-# 3. Copy root manifests to leverage Docker layer caching
-COPY package.json package-lock.json turbo.json ./       
-# Root-level manifests 
-COPY turbo.json ./
+# ──────────────── Builder: Prune monorepo ────────────────
+FROM base AS builder
 
-# 4. Copy all workspace definitions (apps and packages), but do not copy build artifacts
-# Copy top-level apps folder 
-COPY apps ./apps                    
+# Install compatibility libs
+RUN apk update && apk add --no-cache libc6-compat
 
-COPY packages ./packages                      
-# Copy shared packages 
+WORKDIR /app
 
-# Debug #1: is the source folder actually there?
-RUN ls -R /repo-root/packages/mantine-form-builder
+# Copy root manifests and turbo config
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+
+# Copy only the 'appone' app sources
+COPY apps/appone ./apps/appone
+COPY packages ./packages
 
 # 4.1. Copy root-level envconsul configuration
 COPY envconsul-config.hcl ./envconsul-config.hcl
 
-RUN echo "Root workspaces:" && grep -R '"workspaces"' package.json || echo "no workspaces"
-RUN echo "Lockfile workspaces:" && grep -R '"workspaces"' package-lock.json || echo "no workspaces"
+# Prune to only dependencies/files needed for 'appone'
+RUN turbo prune appone --docker --use-gitignore=false
 
-# 4.2. Install dependencies for all workspaces
-# RUN npm run build:packages
+# ──────────────── Installer: Install deps ────────────────
+FROM base AS installer
 
-# 5. Install root dependencies (including workspaces) 
-# Throws Module not found error for packages/next-security
-# RUN npm ci                  
-# Ensures all workspace symlinks resolve 
-# RUN npm run build:packages
-RUN npm install --legacy-peer-deps --no-audit --prefer-offline
-RUN npm run build:packages
-RUN ls packages/next-security/dist
+# Install compatibility libs again
+RUN apk update && apk add --no-cache libc6-compat
 
-# # Verify the built file exists in the package folder
-# RUN ls -l /repo-root/packages/mantine-form-builder/dist/index.js
+WORKDIR /app
 
-# # Verify the symlinked workspace package points at that dist folder
-# RUN ls -l /repo-root/node_modules/@nartix/mantine-form-builder/dist/index.js
+# Copy pruned JSON (lockfile & manifests)
+COPY --from=builder /app/out/json ./
 
-# 1) Check the package’s dist file
-RUN if [ ! -f /repo-root/packages/mantine-form-builder/dist/index.js ]; then \
-      echo "ERROR: packages/mantine-form-builder/dist/index.js is missing" >&2; \
-      exit 1; \
-    else \
-      echo "OK: built dist/index.js exists"; \
-    fi
+# Copy full source for build
+COPY --from=builder /app/out/full ./
 
-# 2) Check the workspace symlink target
-RUN if [ ! -f /repo-root/node_modules/@nartix/mantine-form-builder/dist/index.js ]; then \
-      echo "ERROR: workspace link not pointing at built code" >&2; \
-      exit 1; \
-    else \
-      echo "OK: node_modules link resolves to dist/index.js"; \
-    fi
+# Install dependencies deterministically
+RUN pnpm install --frozen-lockfile
 
-RUN ls -l /repo-root/node_modules/@nartix
+# Build the Next.js application (only 'appone' workspace)
+RUN pnpm turbo run build --filter=appone...
 
-# 6. Navigate to the Next.js app folder and build in standalone mode
-WORKDIR /repo-root/apps/appone
-RUN npm run build                              
-# `next build` emits .next/standalone 
-
-# ------------------------------------------------
-# Stage 2: Production Runtime with Envconsul
-# ------------------------------------------------
+# ──────────────── Runner: Production image ────────────────
 FROM node:24-alpine AS runner
 
 # 1. Install dependencies to download & install envconsul
@@ -85,22 +61,23 @@ RUN apk add --no-cache wget unzip xdg-utils \
     && unzip "envconsul_${ENVCONSUL_VERSION}_linux_amd64.zip" -d /usr/local/bin \
     && chmod +x /usr/local/bin/envconsul \
     && rm -f "envconsul_${ENVCONSUL_VERSION}_linux_amd64.zip"; \
-    fi                                     # Install Envconsul binary :contentReference[oaicite:19]{index=19}
+    fi     
 
-# 2. Create and set working directory for the standalone output
 WORKDIR /app
 
-# 3. Copy Next.js standalone build output from builder stage
-#    This includes `server.js` and only the traced dependencies under .next/standalone/node_modules
-COPY --from=builder /repo-root/apps/appone/.next/standalone .     
-# Minimal server + traced node_modules 
+# Create non-root user for security
+RUN addgroup --system --gid 1001 nodejs \
+ && adduser  --system --uid 1001 nextjs
 
-# 4. Manually copy static assets so that `server.js` can serve them
-COPY --from=builder /repo-root/apps/appone/public ./apps/appone/public
-COPY --from=builder /repo-root/apps/appone/.next/static ./apps/appone/.next/static  
+USER nextjs
+
+# Copy standalone output and static assets
+COPY --from=installer --chown=nextjs:nodejs /app/apps/appone/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/appone/.next/static   ./apps/appone/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/appone/public          ./apps/appone/public
 
 # 5. Copy the root-level envconsul configuration into the image
-COPY --from=builder /repo-root/envconsul-config.hcl /etc/envconsul.hcl               
+COPY --from=builder /app/envconsul-config.hcl /etc/envconsul.hcl       
 
 # 6. Expose Next.js default port
 EXPOSE 3000
@@ -111,6 +88,5 @@ ENV NODE_ENV=production
 # 8. Use Envconsul as the entrypoint to fetch KV pairs, then run `node server.js`
 ENTRYPOINT ["envconsul", "-config", "/etc/envconsul.hcl", "--"]
 
-# Launch the Next.js minimal server
-CMD ["node", "apps/appone/server.js"]   
-
+# Start the Next.js server
+CMD ["node", "apps/appone/server.js"]
