@@ -2,7 +2,7 @@
 
 import createMiddleware from 'next-intl/middleware';
 import { routing } from '@/i18n/routing';
-import { MiddlewareFactory } from '@nartix/next-middleware-chain/src';
+import { MiddlewareFactory } from '@nartix/next-middleware-chain';
 import { NextRequest, NextFetchEvent, NextResponse } from 'next/server';
 import { isPublicPath } from '@/lib/locale-util';
 

@@ -1,0 +1,67 @@
+# ──────────────── Base: Configure pnpm & Turbo ────────────────
+FROM node:24-alpine AS base
+
+# Configure pnpm home and PATH for global installs
+ENV PNPM_HOME="/var/lib/pnpm"
+ENV PATH="${PNPM_HOME}:$PATH"
+
+# Enable Corepack (manages pnpm) and install turbo CLI
+RUN corepack enable \
+ && pnpm add -g turbo
+
+# ──────────────── Builder: Prune monorepo ────────────────
+FROM base AS builder
+
+# Install compatibility libs
+RUN apk update && apk add --no-cache libc6-compat
+
+WORKDIR /app
+
+# Copy root manifests and turbo config
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+
+# Copy only the 'appone' app sources
+COPY apps/appone ./apps/appone
+COPY packages ./packages
+
+# Prune to only dependencies/files needed for 'appone'
+RUN turbo prune appone --docker --use-gitignore=false
+
+# ──────────────── Installer: Install deps ────────────────
+FROM base AS installer
+
+# Install compatibility libs again
+RUN apk update && apk add --no-cache libc6-compat
+
+WORKDIR /app
+
+# Copy pruned JSON (lockfile & manifests)
+COPY --from=builder /app/out/json ./
+
+# Copy full source for build
+COPY --from=builder /app/out/full ./
+
+# Install dependencies deterministically
+RUN pnpm install --frozen-lockfile
+
+# Build the Next.js application (only 'appone' workspace)
+RUN pnpm turbo run build --filter=appone...
+
+# ──────────────── Runner: Production image ────────────────
+FROM node:24-alpine AS runner
+
+WORKDIR /app
+
+# Create non-root user for security
+RUN addgroup --system --gid 1001 nodejs \
+ && adduser  --system --uid 1001 nextjs
+
+USER nextjs
+
+# Copy standalone output and static assets
+COPY --from=installer --chown=nextjs:nodejs /app/apps/appone/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/appone/.next/static   ./apps/appone/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/appone/public          ./apps/appone/public
+
+# Start the Next.js server
+CMD ["node", "apps/appone/server.js"]

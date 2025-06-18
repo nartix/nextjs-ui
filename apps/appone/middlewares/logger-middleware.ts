@@ -1,6 +1,6 @@
 'user server';
 
-import { MiddlewareFactory } from '@nartix/next-middleware-chain/src';
+import { MiddlewareFactory } from '@nartix/next-middleware-chain';
 import { NextResponse, NextRequest, NextFetchEvent } from 'next/server';
 
 export const loggerMiddlewareFactory: MiddlewareFactory = (next) => {

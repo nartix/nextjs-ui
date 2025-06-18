@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"All tests passed\" && exit 0",
     "dev": "tsc --watch",
-    "build": "tsc"
+    "build": "tsc -p tsconfig.json",
+    "prepare": "pnpm run build"
   },
   "publishConfig": {
     "access": "public"
@@ -27,10 +28,11 @@
   "author": "Feroz Faiz",
   "license": "MIT",
   "peerDependencies": {
-    "next": ">=14.0.0"
+    "next": "^15.3.3"
   },
   "devDependencies": {
-    "next": "^15.1.2",
-    "typescript": "^5.7.2"
+    "next": "^15.3.3",
+    "typescript": "^5.7.2",
+    "@repo/typescript-config": "workspace:*"
   }
 }

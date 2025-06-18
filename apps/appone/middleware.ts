@@ -3,7 +3,7 @@ import { loggerMiddlewareFactory } from '@/middlewares/logger-middleware';
 import { nextIntlMiddlewareFactory } from '@/middlewares/nextintl-middleware';
 import { testMiddlewareFactory } from '@/middlewares/test-middleware';
 import { csrfMiddlewareFactory } from '@/middlewares/csrf-middleware';
-import { createMiddlewareChain } from '@nartix/next-middleware-chain/src';
+import { createMiddlewareChain } from '@nartix/next-middleware-chain';
 
 const factories = [
   nextIntlMiddlewareFactory,

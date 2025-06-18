@@ -3,8 +3,8 @@
 import { NextResponse, NextFetchEvent, NextRequest } from 'next/server';
 // import { MiddlewareHandler } from '@/types/middleware-handler';
 // import { isPublicPath, isLocaleSupported } from '@/lib/locale-util';
-// import { edgeToken } from '@nartix/edge-token/src';
-import { MiddlewareFactory } from '@nartix/next-middleware-chain/src';
+// import { edgeToken } from '@nartix/edge-token';
+import { MiddlewareFactory } from '@nartix/next-middleware-chain';
 
 export const testMiddlewareFactory: MiddlewareFactory = (next) => {
   return async (req: NextRequest, event: NextFetchEvent, response?: NextResponse) => {

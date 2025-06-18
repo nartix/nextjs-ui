@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { FormConfig, FormBuilder } from '@nartix/mantine-form-builder/src';
+import { FormConfig, FormBuilder } from '@nartix/mantine-form-builder';
 import { createSignUpFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
 import { Container, Loader } from '@mantine/core';

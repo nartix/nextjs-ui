@@ -10,7 +10,11 @@
     "build:packages": "pnpm turbo run build --filter=packages/\\*"
   },
   "overrides": {
-    "@mantine/core": "7.17.8"
+    "@mantine/core": "7.17.8",
+    "next": "15.3.3",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "next-intl": "^4.1.0"
   },
   "devDependencies": {
     "@types/node": "^24",
