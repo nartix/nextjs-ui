@@ -38,6 +38,12 @@ RUN apk update && apk add --no-cache libc6-compat
 
 WORKDIR /app
 
+# Bring in your pnpm config so workspace packages get linked
+# COPY .npmrc ./
+
+# copy THE real workspace manifest so pnpm can link local packages
+COPY pnpm-workspace.yaml ./
+
 # Copy pruned JSON (lockfile & manifests)
 COPY --from=builder /app/out/json ./
 
