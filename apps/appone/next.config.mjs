@@ -21,7 +21,13 @@ const nextConfig = {
   outputFileTracingRoot: path.join(__dirname, '../../'),
   outputFileTracingIncludes: {
     //'node_modules/@nartix/next-middleware-chain/**/*', 'node_modules/@nartix/next-security/**/*',
-    '/': ['node_modules/@nartix/next-middleware-chain/**/*', 'node_modules/@nartix/next-security/**/*', '../../packages/**/*'],
+    '/': [
+      'node_modules/@nartix/next-middleware-chain/**/*', 
+      'node_modules/@nartix/next-security/**/*',
+      'node_modules/@nartix/next-csrf/**/*', 
+      'node_modules/@nartix/mantine-form-builder/**/*',
+      '../../packages/**/*'
+    ],
   },
   // transpilePackages: [
   //   '@nartix/mantine-form-builder',
