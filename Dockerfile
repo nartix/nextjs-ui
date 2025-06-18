@@ -42,7 +42,7 @@ WORKDIR /app
 # COPY .npmrc ./
 
 # copy THE real workspace manifest so pnpm can link local packages
-# COPY pnpm-workspace.yaml ./
+COPY pnpm-workspace.yaml ./
 
 # Copy pruned JSON (lockfile & manifests)
 COPY --from=builder /app/out/json ./
