@@ -41,11 +41,11 @@ WORKDIR /app
 # Copy pruned JSON (lockfile & manifests)
 COPY --from=builder /app/out/json ./
 
-# Copy full source for build
-COPY --from=builder /app/out/full ./
-
 # Install dependencies deterministically
 RUN pnpm install --frozen-lockfile
+
+# Copy full source for build
+COPY --from=builder /app/out/full ./
 
 # Build the Next.js application (only 'appone' workspace)
 RUN pnpm turbo run build --filter=appone...
