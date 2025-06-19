@@ -60,7 +60,7 @@
     "@storybook/test": "^8.6.14",
     "@tailwindcss/postcss": "^4.1.10",
     "@types/negotiator": "^0.6.4",
-    "@types/node": "^24.0.1",
+    "@types/node": "^24.0.3",
     "autoprefixer": "^10.4.21",
     "eslint-plugin-storybook": "^0.9.0",
     "postcss": "^8.5.5",

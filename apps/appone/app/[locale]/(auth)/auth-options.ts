@@ -7,7 +7,7 @@ const authOptions: Partial<AuthOptions> = {
   secret: process.env.NEXT_SECURITY_SECRET,
   providers: [credentialsProvider],
   cookie: {
-    secure: false, //process.env.NODE_ENV === 'production', // enable this in production
+    secure: process.env.PRODUCTION === 'true', 
     maxAge: process.env.SESSION_COOKIE_MAXAGE ? parseInt(process.env.SESSION_COOKIE_MAXAGE, 10) : 0,
   },
 };

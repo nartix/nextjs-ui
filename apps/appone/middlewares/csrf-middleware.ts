@@ -30,7 +30,7 @@ export const csrfMiddlewareFactory: MiddlewareFactory =
       cookie: {
         name: process.env.CSRF_COOKIE_NAME,
         maxAge: process.env.CSRF_COOKIE_MAXAGE ? parseInt(process.env.CSRF_COOKIE_MAXAGE, 10) : undefined,
-        secure: false, // process.env.NODE_ENV === 'production',
+        secure: process.env.PRODUCTION === 'true',
       },
     });
     return next(req, event, result);
