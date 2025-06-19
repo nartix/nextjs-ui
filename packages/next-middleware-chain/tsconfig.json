@@ -1,10 +1,11 @@
 {
-  "extends": "@repo/typescript-config/base.json",
+  "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
     "noEmit": false,
     "outDir": "dist",
     "rootDir": "src",
     "baseUrl": ".",
+    "jsx": "react-jsx",
     "paths": {
       "@nartix/next-middleware-chain": ["src/index.ts"],
       "@nartix/next-middleware-chain/*": ["src/*"]
