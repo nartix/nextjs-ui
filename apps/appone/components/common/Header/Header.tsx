@@ -57,7 +57,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
             </Anchor>
             <Group ml='xl' gap={0} visibleFrom='sm'>
               <UnstyledButton className={classes.control} component={Link} href='/'>
-                Home
+                About
               </UnstyledButton>
               <UnstyledButton className={classes.control} component={Link} href='/products'>
                 Products
@@ -66,20 +66,29 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
                 EAV Products
               </UnstyledButton>
             </Group>
-            <Avatar
-              component={Link}
-              href={session?.user ? '#' : '/user/login'}
-              ref={ref}
-              radius='lg'
-              size='md'
-              variant={hovered ? 'filled' : 'light'}
-              onClick={(event) => {
-                if (session?.user) {
-                  event.preventDefault();
-                  openDrawer();
-                }
-              }}
-            />
+            {session?.user ? (
+              <Avatar
+                ref={ref}
+                radius='lg'
+                size='md'
+                variant={hovered ? 'filled' : 'light'}
+                onClick={(e: { preventDefault: () => void; }) => { e.preventDefault(); openDrawer(); }}
+                component={Link}
+                href='#'
+              />
+            ) : (
+              <Button
+                component={Link}
+                href='/user/login'
+                variant='default'
+                radius='md'
+                color='gray'
+                px='15'
+                classNames={{ label: '!text-md !font-semibold !text-base'}}
+              >
+                Login
+              </Button>
+            )}
           </Group>
         </Group>
       </AppShell.Header>
@@ -88,10 +97,46 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
         <Box style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <IconX onClick={closeDrawer} style={{ cursor: 'pointer' }} size={20} />
         </Box>
-
+{/* 
         <Group p='md' justify='center'>
           <Avatar radius='xl' size='xl' src='/path-to-user-avatar.png' />
         </Group>
+        <Group justify='center' mb='md'>
+          <Text
+            size='sm'
+            weight={500}
+            mt='xs'
+            align='center'
+            style={{ maxWidth: 200 }}
+            title={session?.user?.name}
+            className='truncate'
+          >
+            {session?.user?.username
+              ? session.user.username.length > 50
+                ? session.user.username.substring(0, 50) + '...'
+                : session.user.username
+              : ''}
+          </Text>
+        </Group> */}
+        <Stack gap='0' align='center'>
+          <Avatar radius='xl' size='xl' src='/path-to-user-avatar.png' />
+          <Text
+            size='sm'
+            weight={500}
+            mt='xs'
+            mb='md'
+            align='center'
+            style={{ maxWidth: 200 }}
+            title={session?.user?.name}
+            className='truncate'
+          >
+            {session?.user?.username
+              ? session.user.username.length > 50
+                ? session.user.username.substring(0, 50) + '...'
+                : session.user.username
+              : ''}
+          </Text>
+        </Stack>
 
         <Stack gap='0'>
           <Button
@@ -133,62 +178,3 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
     </>
   );
 };
-
-/*
-function VerticalMenu() {
-  const handleLogout = () => {
-    // Logout logic here
-    console.log('Logout logic here');
-  };
-
-  return (
-    <Box>
-      <List
-        spacing='sm'
-        size='sm'
-        icon={
-          <ThemeIcon color='blue' size={24} radius='xl'>
-            <IconUser size={16} />
-          </ThemeIcon>
-        }
-      >
-        <List.Item>
-          <Anchor component={Link} href='/settings'>
-            My Profile
-          </Anchor>
-        </List.Item>
-      </List>
-
-      <List
-        spacing='sm'
-        size='sm'
-        icon={
-          <ThemeIcon color='green' size={24} radius='xl'>
-            <IconSettings size={16} />
-          </ThemeIcon>
-        }
-      >
-        <List.Item>
-          <Anchor component={Link} href='/settings'>
-            Settings
-          </Anchor>
-        </List.Item>
-      </List>
-
-      <Divider my='sm' />
-
-      <List
-        spacing='sm'
-        size='sm'
-        icon={
-          <ThemeIcon color='red' size={24} radius='xl'>
-            <IconLogout size={16} />
-          </ThemeIcon>
-        }
-      >
-        <List.Item onClick={handleLogout}>Logout</List.Item>
-      </List>
-    </Box>
-  );
-}
-*/
