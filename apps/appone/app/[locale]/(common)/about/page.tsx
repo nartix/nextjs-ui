@@ -1,6 +1,6 @@
 import React from 'react';
-import { getTranslations } from 'next-intl/server';
-import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
+// import { getTranslations } from 'next-intl/server';
+// import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
 import { SessionContainer } from '@/components/common/SessionContainer/SessionContainer';
 import { Text, Title } from '@mantine/core';
 
