@@ -17,8 +17,8 @@ services:
       - '6006:6006'
     volumes:
       - .:/app
-      - node_modules:/app/node_modules
-      - pnpm_store:/app/.pnpm-store
+      # - node_modules:/app/node_modules
+      # - pnpm_store:/app/.pnpm-store
     environment:
       # - NODE_ENV=development
       - PRODUCTION=false
@@ -60,6 +60,6 @@ services:
     #       npm run dev
     #     fi
     restart: unless-stopped
-volumes:
-  node_modules:
-  pnpm_store:
+# volumes:
+#   node_modules:
+#   pnpm_store:

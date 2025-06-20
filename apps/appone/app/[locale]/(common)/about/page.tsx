@@ -5,11 +5,6 @@ import { SessionContainer } from '@/components/common/SessionContainer/SessionCo
 import { Text, Title } from '@mantine/core';
 
 export default async function About() {
-  const session = await getServerSession();
-  const user = session?.user;
-
-  const t = await getTranslations('HomePage');
-
   const lorem =
     'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos ullam, ex cum repellat alias ea nemo. Ducimus ex nesciunt hic ad saepe molestiae nobis necessitatibus laboriosam officia, reprehenderit, earum fugiat?';
 
