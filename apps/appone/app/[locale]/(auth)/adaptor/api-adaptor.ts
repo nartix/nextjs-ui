@@ -1,5 +1,5 @@
 import 'server-only';
-import { API_URL } from '@/app/[locale]/(common)/config/global-config';
+import { API_URL } from '@/config/global-config';
 import { v4 as uuidv4 } from 'uuid';
 
 import { fetchWrapper } from '@/lib/fetch-wrapper';

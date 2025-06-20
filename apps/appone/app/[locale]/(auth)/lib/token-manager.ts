@@ -1,5 +1,5 @@
 import 'server-only';
-import { API_BASE_URL } from '@/app/[locale]/(common)/config/global-config';
+import { API_BASE_URL } from '@/config/global-config';
 
 let accessToken: string | null = null;
 let tokenExpiry: number | null = null; // Expiration timestamp in milliseconds
