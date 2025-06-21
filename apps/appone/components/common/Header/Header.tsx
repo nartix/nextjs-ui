@@ -56,7 +56,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
               </Text>
             </Anchor>
             <Group ml='xl' gap={0} visibleFrom='sm'>
-              <UnstyledButton className={classes.control} component={Link} href='/'>
+              <UnstyledButton className={classes.control} component={Link} href='/about'>
                 About
               </UnstyledButton>
               <UnstyledButton className={classes.control} component={Link} href='/products'>
@@ -72,7 +72,10 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
                 radius='lg'
                 size='md'
                 variant={hovered ? 'filled' : 'light'}
-                onClick={(e: { preventDefault: () => void; }) => { e.preventDefault(); openDrawer(); }}
+                onClick={(e: { preventDefault: () => void }) => {
+                  e.preventDefault();
+                  openDrawer();
+                }}
                 component={Link}
                 href='#'
               />
@@ -84,7 +87,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
                 radius='md'
                 color='gray'
                 px='15'
-                classNames={{ label: '!text-md !font-semibold !text-base'}}
+                classNames={{ label: '!text-md !font-semibold !text-base' }}
               >
                 Login
               </Button>
@@ -97,7 +100,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
         <Box style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <IconX onClick={closeDrawer} style={{ cursor: 'pointer' }} size={20} />
         </Box>
-{/* 
+        {/* 
         <Group p='md' justify='center'>
           <Avatar radius='xl' size='xl' src='/path-to-user-avatar.png' />
         </Group>
@@ -120,15 +123,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
         </Group> */}
         <Stack gap='0' align='center'>
           <Avatar radius='xl' size='xl' />
-          <Text
-            size='sm'
-            mt='xs'
-            mb='md'
-
-            style={{ maxWidth: 200 }}
-            title={session?.user?.name}
-            className='truncate'
-          >
+          <Text size='sm' mt='xs' mb='md' style={{ maxWidth: 200 }} title={session?.user?.name} className='truncate'>
             {session?.user?.username
               ? session.user.username.length > 50
                 ? session.user.username.substring(0, 50) + '...'

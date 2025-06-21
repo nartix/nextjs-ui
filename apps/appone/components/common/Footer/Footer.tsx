@@ -1,7 +1,8 @@
 'use client';
-import { IconBrandInstagram, IconBrandTwitter, IconBrandYoutube } from '@tabler/icons-react';
+import { IconBrandInstagram, IconBrandTwitter, IconBrandYoutube, IconBrandGithub } from '@tabler/icons-react';
 import { ActionIcon, Anchor, Group, Text } from '@mantine/core';
 import classes from './Footer.module.css';
+import { Link } from '@/i18n/routing';
 
 const links = [
   { link: '#', label: 'Contact' },
@@ -36,6 +37,16 @@ export function Footer() {
           </ActionIcon>
           <ActionIcon size='lg' variant='default' radius='xl'>
             <IconBrandInstagram size={18} stroke={1.5} />
+          </ActionIcon>
+          <ActionIcon
+            size='lg'
+            variant='default'
+            radius='xl'
+            component={Link}
+            href='https://github.com/ferozfaiz'
+            target='_blank'
+          >
+            <IconBrandGithub size={18} stroke={1.5} />
           </ActionIcon>
         </Group>
       </div>
