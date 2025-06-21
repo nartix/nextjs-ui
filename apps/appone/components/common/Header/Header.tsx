@@ -119,13 +119,12 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
           </Text>
         </Group> */}
         <Stack gap='0' align='center'>
-          <Avatar radius='xl' size='xl' src='/path-to-user-avatar.png' />
+          <Avatar radius='xl' size='xl' />
           <Text
             size='sm'
-            weight={500}
             mt='xs'
             mb='md'
-            align='center'
+
             style={{ maxWidth: 200 }}
             title={session?.user?.name}
             className='truncate'
