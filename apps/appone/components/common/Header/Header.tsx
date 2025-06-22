@@ -44,6 +44,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
       closeDrawer();
     }
   };
+
   return (
     <>
       <AppShell.Header>
@@ -100,27 +101,6 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
         <Box style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <IconX onClick={closeDrawer} style={{ cursor: 'pointer' }} size={20} />
         </Box>
-        {/* 
-        <Group p='md' justify='center'>
-          <Avatar radius='xl' size='xl' src='/path-to-user-avatar.png' />
-        </Group>
-        <Group justify='center' mb='md'>
-          <Text
-            size='sm'
-            weight={500}
-            mt='xs'
-            align='center'
-            style={{ maxWidth: 200 }}
-            title={session?.user?.name}
-            className='truncate'
-          >
-            {session?.user?.username
-              ? session.user.username.length > 50
-                ? session.user.username.substring(0, 50) + '...'
-                : session.user.username
-              : ''}
-          </Text>
-        </Group> */}
         <Stack gap='0' align='center'>
           <Avatar radius='xl' size='xl' />
           <Text size='sm' mt='xs' mb='md' style={{ maxWidth: 200 }} title={session?.user?.name} className='truncate'>
