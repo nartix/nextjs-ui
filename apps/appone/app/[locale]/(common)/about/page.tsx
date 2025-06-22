@@ -2,8 +2,9 @@ import React from 'react';
 // import { getTranslations } from 'next-intl/server';
 // import { getServerSession } from '@/app/[locale]/(auth)/get-server-session';
 import { SessionContainer } from '@/components/common/SessionContainer/SessionContainer';
-import { Anchor, Card, Container, Divider, Group, Paper, Stack, Text, Title } from '@mantine/core';
-import { IconBrandNpm, IconBrandMantine, IconShieldLock, IconForms, IconCode, IconLink } from '@tabler/icons-react';
+import { Anchor, Card, Center, Container, Divider, Group, Stack, Text, Title } from '@mantine/core';
+import { IconBrandNpm, IconBrandGithub, IconBrandMantine, IconShieldLock, IconForms, IconCode } from '@tabler/icons-react';
+import { Link } from '@/i18n/routing';
 
 export default async function About() {
   const lorem =
@@ -14,7 +15,14 @@ export default async function About() {
       <Container size='md' py='lg' px={0}>
         <Stack gap='md'>
           <Title order={3} ta='center' mb='sm'>
-            About this Next.js Project
+            <Anchor href='https://github.com/nartix/nextjs-ui' fw={600} fz='lg' target='_blank' underline='never'>
+              <Center inline>
+                <Group gap={4}>
+                  About this Next.js UI Project
+                  <IconBrandGithub size={20} />
+                </Group>
+              </Center>
+            </Anchor>
           </Title>
           <Card shadow='sm' padding='lg' radius='md' withBorder>
             <Text size='md'>
@@ -39,7 +47,15 @@ export default async function About() {
           <Card shadow='sm' padding='md' radius='md' withBorder>
             <Group gap='xs' mb={4}>
               <IconShieldLock size={20} />
-              <Title order={5}>Next Security</Title>
+              <Title order={5}>
+                <Anchor
+                  href='https://github.com/nartix/nextjs-ui/tree/main/packages/next-security'
+                  underline='never'
+                  target='_blank'
+                >
+                  Next Security
+                </Anchor>
+              </Title>
             </Group>
             <Text size='md'>
               My <b>Next Security</b> package is inspired by NextAuth.js but supports <b>database sessions</b> for
@@ -50,7 +66,11 @@ export default async function About() {
           <Card shadow='sm' padding='md' radius='md' withBorder>
             <Group gap='xs' mb={4}>
               <IconShieldLock size={20} />
-              <Title order={5}>Next CSRF</Title>
+              <Title order={5}>
+                <Anchor href='https://github.com/nartix/nextjs-ui/tree/main/packages/next-csrf' target='_blank' underline='never'>
+                  Next CSRF
+                </Anchor>
+              </Title>
               <Anchor
                 href='https://www.npmjs.com/package/@nartix/next-csrf'
                 target='_blank'
@@ -60,8 +80,7 @@ export default async function About() {
                 c='blue'
               >
                 <Group gap={2}>
-                  <IconBrandNpm size={18} />
-                  npm
+                  <IconBrandNpm size={30} />
                 </Group>
               </Anchor>
             </Group>
@@ -74,20 +93,15 @@ export default async function About() {
           <Card shadow='sm' padding='md' radius='md' withBorder>
             <Group gap='xs' mb={4}>
               <IconForms size={20} />
-              <Title order={5}>Mantine Form Builder</Title>
-              <Anchor
-                href='https://www.npmjs.com/package/@nartix/mantine-form-builder'
-                target='_blank'
-                ml='auto'
-                underline='always'
-                size='sm'
-                c='blue'
-              >
-                <Group gap={2}>
-                  <IconBrandNpm size={18} />
-                  npm
-                </Group>
-              </Anchor>
+              <Title order={5}>
+                <Anchor
+                  href='https://github.com/nartix/nextjs-ui/tree/main/packages/mantine-form-builder'
+                  target='_blank'
+                  underline='never'
+                >
+                  Mantine Form Builder
+                </Anchor>
+              </Title>
             </Group>
             <Text size='md'>
               <b>Mantine Form Builder</b> helps you build forms with MantineJS, Zod for validation, and React Hook Form for state
@@ -98,7 +112,21 @@ export default async function About() {
           <Card shadow='sm' padding='md' radius='md' withBorder>
             <Group gap='xs' mb={4}>
               <IconCode size={20} />
-              <Title order={5}>Next Middleware Chain</Title>
+              <Title order={5}>
+                <Anchor href='https://www.npmjs.com/package/@nartix/next-middleware-chain' target='_blank' underline='never'>
+                  Next Middleware Chain
+                </Anchor>
+              </Title>
+              <Anchor
+                href='https://github.com/nartix/nextjs-ui/tree/main/packages/next-middleware-chain'
+                target='_blank'
+                underline='always'
+                ml='auto'
+              >
+                <Group gap={2}>
+                  <IconBrandNpm size={30} />
+                </Group>
+              </Anchor>
             </Group>
             <Text size='md'>
               <b>Next Middleware Chain</b> lets you compose and chain multiple middleware functions for Next.js—perfect for
