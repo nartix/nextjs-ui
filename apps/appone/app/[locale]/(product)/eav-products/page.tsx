@@ -13,27 +13,11 @@ export default async function EAVProductsPage() {
 
   const t = await getTranslations('products');
 
-  //   const additional: Product[] = Array.from({ length: 20 }, (_, i) => ({
-  //     title: `Product ${i + 1}`,
-  //     category: ['Electronics', 'Books', 'Clothing'][i % 3],
-  //     price: (i + 1) * 10,
-  //   }));
-
-  //   const staticData: Product[] = [
-  //     { title: 'Smartphone XYZ', category: 'Electronics', price: 599 },
-  //     { title: 'The Great Gatsby', category: 'Books', price: 19 },
-  //   ];
-
-  //   const allData = [...additional, ...staticData];
-
   const response = await fetchWrapper(`${API_URL}/eav/products`);
-  console.log('Fetching EAV products from:', `${API_URL}/eav/products`);
-  console.log('env production:', process.env.PRODUCTION);
   let eavData: Product[] = [];
   if (response.ok) {
     const data = await response.json();
     eavData = data.content;
-    console.log('EAV Products:', eavData);
   } else {
     console.error('Failed to fetch EAV products:', response.statusText);
     return <div>Error loading EAV products</div>;

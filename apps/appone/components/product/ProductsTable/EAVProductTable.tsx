@@ -4,13 +4,13 @@ import React, { useMemo } from 'react';
 import { GenericMantineTable } from '@/components/common/Table/MantineReactTable';
 import type { MRT_ColumnDef } from 'mantine-react-table';
 
-// Update the Product type to match your new API data if not already
 export interface ProductAttribute {
   attributeName: string;
   attributeValueNumeric: number | null;
   attributeValueString: string | null;
   measurementUnit: string | null;
 }
+
 export interface Product {
   id: number;
   name: string;
@@ -27,41 +27,20 @@ interface ProductsTableProps {
     brand: string;
     manufacturer: string;
     price: string;
-    year: string; // translation for dynamic attribute, e.g. 'Year'
-    color: string; // translation for dynamic attribute, e.g. 'Color'
-    // add other attribute translations as needed
+    year: string;
+    color: string;
   };
 }
 
-// 1. Define a reusable alias for your attribute values
 type AttributeValue = string | number;
 
-// 2. Map string keys to only those value types
 type AttributesMap = Record<string, AttributeValue>;
 
-// 3. Extend your Product to carry that map
 interface ProductWithMap extends Product {
   attributesMap: AttributesMap;
 }
 
 export function EAVProductsTable({ data, translations }: ProductsTableProps) {
-  // Helper to get attribute value by name.
-  // Now safely handles null/undefined 'attributes' or 'attributeName'.
-  // const getAttributeValue = (attributes: ProductAttribute[] | null | undefined, name: string): string | number => {
-  //   // 1) If there's no attributes array, bail out early
-  //   if (!attributes?.length) return '';
-
-  //   // 2) Safe lookup with optional‐chaining
-  //   const attr = attributes.find((a) => a.attributeName?.toLowerCase() === name.toLowerCase());
-
-  //   // 3) If found, pick numeric over string; if still nullish, return empty string
-  //   if (attr) {
-  //     return attr.attributeValueNumeric ?? attr.attributeValueString ?? '';
-  //   }
-  //   return '';
-  // };
-
-  // 4. Build your data once, in a useMemo, typing it explicitly
   const dataWithMaps: ProductWithMap[] = useMemo(() => {
     return data.map((prod) => {
       const map: AttributesMap = {};
@@ -74,7 +53,6 @@ export function EAVProductsTable({ data, translations }: ProductsTableProps) {
     });
   }, [data]);
 
-  // Define columns, including dynamic attributes
   const columns: MRT_ColumnDef<ProductWithMap>[] = [
     {
       accessorKey: 'name',
