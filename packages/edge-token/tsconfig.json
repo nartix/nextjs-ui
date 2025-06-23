@@ -5,12 +5,11 @@
     "outDir": "dist",
     "rootDir": "src",
     "baseUrl": ".",
-
     "paths": {
       "@nartix/edge-token": ["src/index.ts"],
       "@nartix/edge-token/*": ["src/*"]
-    },
+    }
   },
   "include": ["**/*.ts", "**/*.tsx", "build/types/**/*.ts"],
-  "exclude": ["dist", "node_modules", "*.js", "*.d.ts"]
+  "exclude": ["dist", "*.js", "*.d.ts"]
 }
