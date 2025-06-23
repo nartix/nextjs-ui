@@ -145,6 +145,26 @@ export default async function About() {
               complex authentication, authorization, and more.
             </Text>
           </Card>
+
+          <Card shadow='sm' padding='md' radius='md' withBorder>
+            <Group gap='xs' mb={4}>
+              <IconCode size={20} />
+              <Title order={5}>
+                <Anchor
+                  href='https://github.com/nartix/spring-boot-api/tree/main/src/main/java/com/ferozfaiz/common/tree'
+                  target='_blank'
+                  underline='never'
+                  fw={600}
+                >
+                  Spring Boot – Materialized Path Hierarchy
+                </Anchor>
+              </Title>
+            </Group>
+            <Text size='md'>
+              I implemented and used a <b>materialized‐path</b> data hierarchy for product categories in the Spring Boot API to
+              enable efficient tree operations and fast ancestor/descendant queries.
+            </Text>
+          </Card>
         </Stack>
       </Container>
     </SessionContainer>

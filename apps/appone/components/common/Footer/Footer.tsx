@@ -43,7 +43,7 @@ export function Footer() {
             variant='default'
             radius='xl'
             component={Link}
-            href='https://github.com/ferozfaiz'
+            href='https://github.com/nartix/feroz'
             target='_blank'
           >
             <IconBrandGithub size={18} stroke={1.5} />
