@@ -15,7 +15,7 @@ export default async function About() {
       <Container size='md' py='lg' px={0}>
         <Stack gap='md'>
           <Title order={3} ta='center' mb='sm'>
-            <Anchor href='https://github.com/nartix/nextjs-ui' fw={600} fz='lg' target='_blank' underline='never'>
+            <Anchor href='https://github.com/nartix/nextjs-ui' fw={600} fz='xl' target='_blank' underline='never'>
               <Center inline>
                 <Group gap={4}>
                   About this Next.js UI Project
@@ -52,6 +52,7 @@ export default async function About() {
                   href='https://github.com/nartix/nextjs-ui/tree/main/packages/next-security'
                   underline='never'
                   target='_blank'
+                  fw={600}
                 >
                   Next Security
                 </Anchor>
@@ -67,7 +68,12 @@ export default async function About() {
             <Group gap='xs' mb={4}>
               <IconShieldLock size={20} />
               <Title order={5}>
-                <Anchor href='https://github.com/nartix/nextjs-ui/tree/main/packages/next-csrf' target='_blank' underline='never'>
+                <Anchor
+                  href='https://github.com/nartix/nextjs-ui/tree/main/packages/next-csrf'
+                  target='_blank'
+                  underline='never'
+                  fw={600}
+                >
                   Next CSRF
                 </Anchor>
               </Title>
@@ -98,6 +104,7 @@ export default async function About() {
                   href='https://github.com/nartix/nextjs-ui/tree/main/packages/mantine-form-builder'
                   target='_blank'
                   underline='never'
+                  fw={600}
                 >
                   Mantine Form Builder
                 </Anchor>
@@ -113,7 +120,12 @@ export default async function About() {
             <Group gap='xs' mb={4}>
               <IconCode size={20} />
               <Title order={5}>
-                <Anchor href='https://www.npmjs.com/package/@nartix/next-middleware-chain' target='_blank' underline='never'>
+                <Anchor
+                  href='https://www.npmjs.com/package/@nartix/next-middleware-chain'
+                  target='_blank'
+                  underline='never'
+                  fw={600}
+                >
                   Next Middleware Chain
                 </Anchor>
               </Title>
