@@ -153,6 +153,7 @@ export function SignupForm() {
   const { formAction, isRedirecting } = useActionHandler<SchemaType>({
     action: signupAction,
     onSuccessRedirect: true,
+    defaultRedirect: '/login',
     t,
   });
 

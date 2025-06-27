@@ -4,3 +4,9 @@ export type Product = {
   category: string;
   price: number;
 };
+
+export interface ApiValidationError {
+  field: string | (string | number)[];
+  message: string;
+  code?: string;
+}

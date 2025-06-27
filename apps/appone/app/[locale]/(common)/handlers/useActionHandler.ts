@@ -1,9 +1,10 @@
 'use client';
 
 import React from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { z, ZodIssue } from 'zod';
 import type { UseFormReturn, FieldValues, UseFormSetError, Path } from 'react-hook-form';
+import urlJoin from 'url-join';
 
 /**
  * Converts an array of Zod issues into a field-to-message map.
@@ -122,14 +123,19 @@ export interface ActionHandlerOptions<T> {
 function useRedirectHandler(onSuccessRedirect?: boolean, defaultRedirect?: string) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { locale } = useParams();
 
-  function redirect() {
-    if (onSuccessRedirect) {
-      const next = searchParams.get('next');
-      router.push(next || defaultRedirect || '/');
-    }
-  }
-  return redirect;
+  return () => {
+    if (!onSuccessRedirect) return;
+
+    const next = searchParams.get('next');
+    const base = `/${locale}`; // e.g. "/en"
+    const fallback = defaultRedirect ? urlJoin(base, defaultRedirect) : base;
+
+    const dest = next ? urlJoin(base, next) : fallback;
+
+    router.push(dest);
+  };
 }
 
 /**
