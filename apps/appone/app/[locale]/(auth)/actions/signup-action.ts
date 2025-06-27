@@ -1,16 +1,17 @@
 'use server';
 
-import { z } from 'zod';
 import { getTranslations } from 'next-intl/server';
 import { ServerActionResponse } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { createSignUpFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 import { fetchWrapper } from '@/lib/fetch-wrapper';
-// import { checkUsernameAction } from '@/app/[locale]/(auth)/actions/check-username-action';
 import { API_URL } from '@/config/global-config';
-import { isApiValidationErrorList, mapApiValidationErrorsToZodIssues } from '@/lib/utils';
 import { handleServerActionError } from '@/lib/server-action-error-handler';
 
 export const signupAction: ServerActionResponse = async (formData) => {
+  if (!formData || typeof formData !== 'object') {
+    return { success: false, message: 'Invalid form data' };
+  }
+
   const t = await getTranslations();
   const signupSchema = createSignUpFormSchema(t);
 

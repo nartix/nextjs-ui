@@ -7,23 +7,9 @@ import { ServerActionResponse } from '@/app/[locale]/(common)/handlers/useAction
 import { createLoginFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 
 export const loginAction: ServerActionResponse = async (formData) => {
-  // export async function loginAction(formData: LoginFormValues | Record<string, unknown>): Promise<ActionResponse> {
-  // Simulate a server call. We'll reject if username or password is wrong
-
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     if (data.username === 'user' && data.password === 'password') {
-  //       resolve({ success: true }); // success
-  //     } else {
-  //       resolve({
-  //         success: false,
-  //         message: 'Username or password is incorrect',
-  //       });
-  //     }
-  //   }, 1000);
-  // });
-
-  // redirect('/en');
+  if (!formData || typeof formData !== 'object') {
+    return { success: false, message: 'Invalid form data' };
+  }
 
   const t = await getTranslations();
   const loginformSchemas = createLoginFormSchema(t);
@@ -43,7 +29,6 @@ export const loginAction: ServerActionResponse = async (formData) => {
 
     return { success: true };
   } catch (error) {
-    console.error('Login error:', error);
     return { success: false, message: t('errors.error_unexpected'), errorCode: 'UNEXPECTED_ERROR' };
   }
 };
