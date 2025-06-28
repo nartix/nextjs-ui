@@ -19,17 +19,30 @@ export async function handleServerActionError(error: unknown, options: ErrorHand
 
   // Handle Zod validation errors
   if (error instanceof z.ZodError) {
-    return { success: false, errors: error.issues };
+    return {
+      success: false,
+      errors: error.issues,
+      message: error.issues.length === 1 ? error.issues[0].message : undefined,
+    };
   }
 
   // Handle fetch/API errors
   if (options.response && options.errorData) {
     const { response, errorData } = options;
-    // Example: API validation errors
     if (response.status === 400 && errorData.errorCode === 'VALIDATION_FAILED' && isApiValidationErrorList(errorData.errors)) {
+      const issues = mapApiValidationErrorsToZodIssues(errorData.errors);
       return {
         success: false,
-        errors: mapApiValidationErrorsToZodIssues(errorData.errors),
+        errors: issues,
+        message: issues.length === 1 ? issues[0].message : undefined,
+      };
+    }
+
+    // Handle 404 not found
+    if (response.status === 404) {
+      return {
+        success: false,
+        message: errorData.detail || t('errors.not_found') || 'Not found',
       };
     }
     // Other API error cases

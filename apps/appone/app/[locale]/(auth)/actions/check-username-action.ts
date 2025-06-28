@@ -5,30 +5,44 @@ import { ServerActionResponse } from '@/app/[locale]/(common)/handlers/useAction
 import { createCheckUsernameSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 import { fetchWrapper } from '@/lib/fetch-wrapper';
 import { API_URL } from '@/config/global-config';
+import { handleServerActionError } from '@/lib/server-action-error-handler';
+import { ZodError } from 'zod';
 
 export const checkUsernameAction: ServerActionResponse = async (formData) => {
+  if (!formData || typeof formData !== 'object') {
+    return { success: false, message: 'Invalid form data' };
+  }
+
   const t = await getTranslations();
-  const schema: ReturnType<typeof createCheckUsernameSchema> = createCheckUsernameSchema(t);
+  const schema = createCheckUsernameSchema(t);
 
   try {
-    const fd = formData as FormData;
-    const { username } = schema.parse({
-      username: fd.get('username'),
-      csrf_token: fd.get('csrf_token'),
+    const validatedData = await schema.parseAsync(Object.fromEntries((formData as FormData).entries()));
+
+    const response = await fetchWrapper(`${API_URL}/auth/check-username`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(validatedData),
     });
 
-    const query = new URLSearchParams({ username });
-    const url = `${API_URL}/users/search/findByUsernameIgnoreCase?${query.toString()}`;
-
-    const response = await fetchWrapper(url, { method: 'GET' });
-    if (response.ok) {
-      return { success: false, message: t('errors.validation.username_exists') };
-    } else if (response.status === 404) {
-      return { success: true, message: t('errors.validation.username_available') };
-    } else {
-      return { success: false, error: t('errors.error_unexpected') };
+    if (!response.ok) {
+      if (response.status === 404) {
+        // Username not found in the system, so it's available (treat as success)
+        return { success: true, message: t('errors.validation.username_available') };
+      }
+      // Centralized error handler: will parse validation errors, bad request, etc.
+      const errorData = await response.json();
+      return await handleServerActionError(null, { response, errorData, t });
     }
-  } catch  {
-    return { success: false, error: t('errors.error_unexpected') };
+
+    // Only runs if response.status === 200 (username exists)
+    const data = await response.json();
+    if (typeof data.available !== 'boolean') {
+      return { success: false, message: t('errors.error_unexpected') };
+    }
+    return { success: false, message: t('errors.validation.username_exists') };
+  } catch (err: unknown) {
+    // Handles schema parsing errors and other exceptions
+    return await handleServerActionError(err, { t });
   }
 };

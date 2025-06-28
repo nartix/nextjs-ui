@@ -2,3 +2,6 @@ export const API_BASE_URL = process.env.PRODUCTION === 'true' ? process.env.API_
 export const API_URL = `${API_BASE_URL}/${process.env.API_URL_PREFIX}/${process.env.API_URL_VERSION}`;
 
 export const API_CSRF_TOKEN_URL = `/api/auth/csrf-token`;
+
+export const MAXIMUM_USERNAME_LENGTH = 20;
+export const MINIMUM_USERNAME_LENGTH = 4;

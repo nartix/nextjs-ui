@@ -1,8 +1,12 @@
 import z from 'zod';
+import { MAXIMUM_USERNAME_LENGTH, MINIMUM_USERNAME_LENGTH } from '@/config/global-config';
 
 export const emailSchema = z.string().email('Invalid email address');
 export const passwordSchema = z.string().min(6, 'Password must be at least 6 characters long');
-export const usernameSchema = z.string().min(3, 'Username must be at least 3 characters long');
+export const usernameSchema = z
+  .string()
+  .min(MINIMUM_USERNAME_LENGTH, `Username must be at least ${MINIMUM_USERNAME_LENGTH} characters long`)
+  .max(MAXIMUM_USERNAME_LENGTH, `Username must be at most ${MAXIMUM_USERNAME_LENGTH} characters long`);
 
 type Translator = (key: string) => string;
 
@@ -38,14 +42,18 @@ export const createSignUpFormSchema2 = (t: Translator) => {
 
 export const createCheckUsernameSchema = (t: Translator) => {
   return z.object({
-    username: z.string().min(3, t('errors.validation.username_length').replace('zmin', '3')),
+    username: z
+      .string()
+      .min(MINIMUM_USERNAME_LENGTH, t('errors.validation.username_length').replace('zmin', String(MINIMUM_USERNAME_LENGTH))),
     csrf_token: z.string(),
   });
 };
 
 export const createLoginFormSchema = (t: Translator) => {
   return z.object({
-    username: z.string().min(3, t('errors.validation.username_length').replace('zmin', '3')),
+    username: z
+      .string()
+      .min(MINIMUM_USERNAME_LENGTH, t('errors.validation.username_length').replace('zmin', String(MINIMUM_USERNAME_LENGTH))),
     password: z.string().min(6, t('errors.validation.password_length').replace('zmin', '6')),
     csrf_token: z.string(),
   });
@@ -56,7 +64,9 @@ export const createSignUpFormSchema = (t: Translator) => {
   // let usernameIsAvailable = false;
   return z
     .object({
-      username: z.string().min(3, t('errors.validation.username_length').replace('zmin', '3')),
+      username: z
+        .string()
+        .min(MINIMUM_USERNAME_LENGTH, t('errors.validation.username_length').replace('zmin', String(MINIMUM_USERNAME_LENGTH))),
       email: z.string().email(t('errors.validation.email_invalid')),
       password: z.string().min(6, t('errors.validation.password_length').replace('zmin', '6')),
       password2: z.string(),
