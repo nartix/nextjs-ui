@@ -1,81 +1,46 @@
-# Turborepo starter
+# Next.js UI
 
-This is an official starter Turborepo.
+## About the Project
 
-## Using this example
+This is a modern Next.js UI application designed to interface with a Spring Boot API for product data, utilizing the Entity-Attribute-Value (EAV) model. The UI is built with TypeScript, Tailwind CSS, and leverages a modular monorepo structure. Authentication and authorization are implemented using a custom solution, and several in-house packages are integrated for enhanced security, CSRF protection, middleware chaining, and form building. The application is deployed on a self-managed Kubernetes cluster for scalability and reliability.
 
-Run the following command:
+**Live Demo:** <a href='https://nextjs.ferozfaiz.com' target='_blank'>nextjs.ferozfaiz.com</a>
 
-```sh
-npx create-turbo@latest
-```
+## Features
 
-## What's inside?
+- **Next.js 14 (App Router)**: Server-side rendering, static site generation, and API routes
+- **TypeScript**: Type-safe development
+- **Tailwind CSS**: Utility-first styling
+- **Custom Authentication & Authorization**: Secure login and access control
+- **Product Data via Spring Boot API**: Fetches products using EAV model
+- **Internationalization (i18n)**: Multi-language support
+- **Reusable UI Components**: Built with Storybook
+- **Docker & Kubernetes Ready**: Containerized and deployable
+- **Custom Middleware**: Flexible request/response processing
 
-This Turborepo includes the following packages/apps:
+## Custom Packages Used
 
-### Apps and Packages
+- [`@nartix/edge-token`](https://www.npmjs.com/package/@nartix/edge-token) (`@nartix/edge-token`): Edge token utilities for secure API access
+- [`@nartix/next-csrf`](https://www.npmjs.com/package/@nartix/next-csrf) (`@nartix/next-csrf`): CSRF protection middleware for Next.js
+- [`@nartix/next-middleware-chain`](https://www.npmjs.com/package/@nartix/next-middleware-chain) (`@nartix/next-middleware-chain`): Middleware chaining for Next.js
+- [`@nartix/next-security`](./packages/next-security): Security headers and best practices
+- [`@nartix/mantine-form-builder`](./packages/mantine-form-builder): Dynamic form builder using Mantine UI
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## Key Dependencies
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- **Next.js 15**
+- **Tailwind CSS**
+- **Mantine UI**
+- **Storybook**: Component development and documentation
+- **PNPM**: Fast, disk-efficient package manager
+- **TurboRepo**: Monorepo build system
 
-### Utilities
+## API Integration
 
-This Turborepo has some additional tools already setup for you:
+- **Spring Boot API**: Consumes a secure REST API for product data, which uses the EAV model and is protected by OpenID Connect and Vault.
+- **Next.js UI**: Connects securely to the API using OpenID Connect for authentication and authorization.
+- **Live API Demo**: <a href='https://spring-boot-api.ferozfaiz.com/swagger-ui.html' target='_blank'>spring-boot-api.ferozfaiz.com</a>
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+## Kubernetes
 
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
-```
-
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+![Kubernetes](kubernetes.png)
