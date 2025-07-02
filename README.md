@@ -8,7 +8,7 @@ This is a modern Next.js UI application designed to interface with a Spring Boot
 
 ## Features
 
-- **Next.js 14 (App Router)**: Server-side rendering, static site generation, and API routes
+- **Next.js 15 (App Router)**: Server-side rendering, static site generation, and API routes
 - **TypeScript**: Type-safe development
 - **Tailwind CSS**: Utility-first styling
 - **Custom Authentication & Authorization**: Secure login and access control
