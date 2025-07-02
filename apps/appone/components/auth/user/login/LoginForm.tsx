@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
-import {  FormBuilder, FormConfigFn } from '@nartix/mantine-form-builder';
+import { FormBuilder, FormConfigFn } from '@nartix/mantine-form-builder';
 import { z } from 'zod';
 import { loginAction } from '@/app/[locale]/(auth)/actions/login-action';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
@@ -38,6 +38,7 @@ export function LoginForm() {
     return {
       title: t('auth.login'),
       // beforeSubmitText: 'Please enter your username and password',
+
       submitText: t('auth.sign_in'),
       afterSubmitText: (
         <Text ta='center' size='sm'>
@@ -49,8 +50,10 @@ export function LoginForm() {
       ),
       sections: [
         {
+          description: 'Username: feroz, Password: password',
           layout: {
             gridProps: { align: 'flex-end', justify: 'flex-start', mb: 'sm' },
+            descriptionProps: { size: 'xs' },
           },
           rows: [
             {
