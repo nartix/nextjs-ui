@@ -9,12 +9,14 @@ import { Header } from '@/components/common/Header/Header';
 
 export function Layout({ children }: { children: ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
-  const pinned = useHeadroom({ fixedAt: 120 });
+  // This is make the header fixed at 120px when scrolled up, disappears when scrolled down
+  // const pinned = useHeadroom({ fixedAt: 120 });
 
   return (
     <AppShell
       //default height was 60
-      header={{ height: 55, collapsed: opened ? false : !pinned, offset: true }}
+      // collapsed: opened ? false : !pinned,
+      header={{ height: 55, offset: true }}
       navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !opened } }}
       padding='md'
       styles={{

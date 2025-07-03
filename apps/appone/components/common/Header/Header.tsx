@@ -60,9 +60,9 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
               <UnstyledButton className={classes.control} component={Link} href='/about'>
                 About
               </UnstyledButton>
-              <UnstyledButton className={classes.control} component={Link} href='/products'>
+              {/* <UnstyledButton className={classes.control} component={Link} href='/products'>
                 Products
-              </UnstyledButton>
+              </UnstyledButton> */}
               <UnstyledButton className={classes.control} component={Link} href='/eav-products'>
                 EAV Products
               </UnstyledButton>
@@ -79,6 +79,9 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
                 }}
                 component={Link}
                 href='#'
+                key={session?.user?.username || 'user-avatar'}
+                name={session?.user?.username || 'User Avatar'}
+                color='initials'
               />
             ) : (
               <Button
@@ -113,7 +116,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
         </Stack>
 
         <Stack gap='0'>
-          <Button
+          {/* <Button
             justify='flex-start'
             leftSection={<IconUser size={18} />}
             component={Link}
@@ -134,7 +137,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
             fullWidth
           >
             Settings
-          </Button>
+          </Button> */}
           <Divider my='xs' />
           <Button
             justify='flex-start'
