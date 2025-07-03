@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { API_CSRF_TOKEN_URL } from '@/config/global-config';
+import { API_CSRF_TOKEN_URL } from '@/config/client-config';
 
 type CSRFContextType = {
   CSRFToken: string | null;

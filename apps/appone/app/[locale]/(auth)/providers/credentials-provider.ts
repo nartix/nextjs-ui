@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { Credentials, Provider } from '@nartix/next-security';
-import { API_URL } from '@/config/global-config';
+import { API_URL } from '@/config/server-config';
 
 import { fetchWrapper } from '@/lib/fetch-wrapper';
 

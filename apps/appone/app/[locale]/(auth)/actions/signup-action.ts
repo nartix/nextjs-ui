@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { ServerActionResponse } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { createSignUpFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 import { fetchWrapper } from '@/lib/fetch-wrapper';
-import { API_URL } from '@/config/global-config';
+import { API_URL } from '@/config/server-config';
 import { handleServerActionError } from '@/lib/server-action-error-handler';
 
 export const signupAction: ServerActionResponse = async (formData) => {

@@ -1,5 +1,5 @@
 import z from 'zod';
-import { MAXIMUM_USERNAME_LENGTH, MINIMUM_USERNAME_LENGTH } from '@/config/global-config';
+import { MAXIMUM_USERNAME_LENGTH, MINIMUM_USERNAME_LENGTH } from '@/config/client-config';
 
 export const emailSchema = z.string().email('Invalid email address');
 export const passwordSchema = z.string().min(6, 'Password must be at least 6 characters long');
