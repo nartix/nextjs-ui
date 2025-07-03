@@ -1,20 +1,27 @@
 'use client';
-import { IconBrandInstagram, IconBrandTwitter, IconBrandYoutube, IconBrandGithub } from '@tabler/icons-react';
+import { IconBrandGithub, IconBrandLinkedin } from '@tabler/icons-react';
 import { ActionIcon, Anchor, Group, Text } from '@mantine/core';
+import { RESUME_LINK } from '@/config/client-config';
 import classes from './Footer.module.css';
 import { Link } from '@/i18n/routing';
 
 const links = [
-  { link: '#', label: 'Contact' },
-  { link: '#', label: 'Privacy' },
-  { link: '#', label: 'Blog' },
-  { link: '#', label: 'Store' },
-  { link: '#', label: 'Careers' },
+  { link: RESUME_LINK, label: 'Resume', target: '_blank' },
+  { link: 'https://ferozfaiz.com', label: 'FerozFaiz.com', target: '_blank' },
 ];
 
 export function Footer() {
   const items = links.map((link) => (
-    <Anchor c='dimmed' key={link.label} href={link.link} lh={1} onClick={(event) => event.preventDefault()} size='sm'>
+    <Anchor
+      component={Link}
+      c='dimmed'
+      key={link.label}
+      href={link.link}
+      lh={1}
+      // onClick={(event) => event.preventDefault()}
+      size='sm'
+      target={link.target ? link.target : '_self'}
+    >
       {link.label}
     </Anchor>
   ));
@@ -23,26 +30,27 @@ export function Footer() {
     <div className={`${classes.footer}`}>
       <div className={classes.inner}>
         <Text c='dimmed' lh={1} size='sm'>
-          Feroz Faiz
+          © {new Date().getFullYear()} Feroz Faiz
         </Text>
 
         <Group className={classes.links}>{items}</Group>
 
         <Group gap='xs' justify='flex-end' wrap='nowrap'>
-          <ActionIcon size='lg' variant='default' radius='xl'>
-            <IconBrandTwitter size={18} stroke={1.5} />
-          </ActionIcon>
-          <ActionIcon size='lg' variant='default' radius='xl'>
-            <IconBrandYoutube size={18} stroke={1.5} />
-          </ActionIcon>
-          <ActionIcon size='lg' variant='default' radius='xl'>
-            <IconBrandInstagram size={18} stroke={1.5} />
+          <ActionIcon
+            size='lg'
+            variant='default'
+            radius='xl'
+            component='a'
+            href='https://www.linkedin.com/in/feroz-faiz/'
+            target='_blank'
+          >
+            <IconBrandLinkedin size={18} stroke={1.5} />
           </ActionIcon>
           <ActionIcon
             size='lg'
             variant='default'
             radius='xl'
-            component={Link}
+            component='a'
             href='https://github.com/nartix/feroz'
             target='_blank'
           >
