@@ -13,25 +13,7 @@ import { signupAction } from '@/app/[locale]/(auth)/actions/signup-action';
 import { checkUsernameAction } from '@/app/[locale]/(auth)/actions/check-username-action';
 import { IconCheck } from '@tabler/icons-react';
 import { z } from 'zod';
-
-// Add this at the top (after the imports)
-function CSRFHiddenInput({ setValue, CSRFToken }: { setValue: (name: string, value: string) => void; CSRFToken?: string }) {
-  useEffect(() => {
-    if (CSRFToken) {
-      setValue('csrf_token', CSRFToken);
-    }
-  }, [CSRFToken, setValue]);
-
-  return (
-    <Controller
-      name='csrf_token'
-      defaultValue={CSRFToken}
-      render={({ field: { onChange, onBlur, value, ref } }) => (
-        <input name='csrf_token' type='hidden' value={value} ref={ref} onChange={onChange} onBlur={onBlur} />
-      )}
-    />
-  );
-}
+import { HiddenCSRFTokenInput } from '@/components/auth/common/HiddenCSRFTokenInput';
 
 export function SignupForm() {
   const t = useTranslations();
@@ -139,7 +121,7 @@ export function SignupForm() {
                   name: 'csrf_token',
                   type: 'component',
                   component: ({ setValue }: { setValue: UseFormReturn<FieldValues>['setValue'] }) => (
-                    <CSRFHiddenInput setValue={setValue} CSRFToken={CSRFToken ?? undefined} />
+                    <HiddenCSRFTokenInput setValue={setValue} CSRFToken={CSRFToken ?? undefined} />
                   ),
                 },
               ],

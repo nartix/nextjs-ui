@@ -6,39 +6,22 @@ import { loginAction } from '@/app/[locale]/(auth)/actions/login-action';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
 import { Text, Anchor, Container, Loader } from '@mantine/core';
 import { Link } from '@/i18n/routing';
-import { Controller } from 'react-hook-form';
 import { useActionHandler } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { useTranslations } from 'next-intl';
 import { createLoginFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
-
-function CSRFInput({ setValue, CSRFToken }: { setValue: (name: string, value: string) => void; CSRFToken?: string }) {
-  useEffect(() => {
-    if (CSRFToken) {
-      setValue('csrf_token', CSRFToken);
-    }
-  }, [CSRFToken, setValue]);
-
-  return (
-    <Controller
-      name='csrf_token'
-      defaultValue={CSRFToken}
-      render={({ field: { onChange, onBlur, value, ref } }) => (
-        <input type='hidden' value={value} ref={ref} onChange={onChange} onBlur={onBlur} />
-      )}
-    />
-  );
-}
+import { HiddenCSRFTokenInput } from '@/components/auth/common/HiddenCSRFTokenInput';
+import { FieldValues, UseFormReturn } from 'react-hook-form';
 
 export function LoginForm() {
   const t = useTranslations();
   const { CSRFToken } = useCSRFToken();
   const loginFormSchema = createLoginFormSchema(t);
   type loginFormType = z.infer<typeof loginFormSchema>;
-  const formConfig2: FormConfigFn<loginFormType> = () => {
+
+  const formConfig: FormConfigFn<loginFormType> = () => {
     return {
       title: t('auth.login'),
       // beforeSubmitText: 'Please enter your username and password',
-
       submitText: t('auth.sign_in'),
       afterSubmitText: (
         <Text ta='center' size='sm'>
@@ -74,36 +57,38 @@ export function LoginForm() {
                 },
               ],
             },
-            {
-              fields: [
-                {
-                  name: 'rememberme',
-                  label: 'Keep me logged in',
-                  type: 'checkbox',
-                  layout: {
-                    gridColProps: { span: 6 },
-                  },
-                },
-                {
-                  name: 'forgotpassword',
-                  type: 'component',
-                  layout: {
-                    gridColProps: { ta: 'right', span: 6 },
-                  },
-                  component: (
-                    <Anchor href='/user/reset-password' component={Link} size='sm'>
-                      Forgot Password
-                    </Anchor>
-                  ),
-                },
-              ],
-            },
+            // {
+            //   fields: [
+            //     {
+            //       name: 'rememberme',
+            //       label: 'Keep me logged in',
+            //       type: 'checkbox',
+            //       layout: {
+            //         gridColProps: { span: 6 },
+            //       },
+            //     },
+            //     {
+            //       name: 'forgotpassword',
+            //       type: 'component',
+            //       layout: {
+            //         gridColProps: { ta: 'right', span: 6 },
+            //       },
+            //       component: (
+            //         <Anchor href='/user/reset-password' component={Link} size='sm'>
+            //           Forgot Password
+            //         </Anchor>
+            //       ),
+            //     },
+            //   ],
+            // },
             {
               fields: [
                 {
                   name: 'csrf_token',
                   type: 'component',
-                  component: ({ setValue }) => <CSRFInput setValue={setValue} CSRFToken={CSRFToken ?? undefined} />,
+                  component: ({ setValue }: { setValue: UseFormReturn<FieldValues>['setValue'] }) => (
+                    <HiddenCSRFTokenInput setValue={setValue} CSRFToken={CSRFToken ?? undefined} />
+                  ),
                 },
               ],
             },
@@ -112,95 +97,6 @@ export function LoginForm() {
       ],
     };
   };
-  /*
-  const formConfig: FormConfig = {
-    title: t('auth.login'),
-    // beforeSubmitText: 'Please enter your username and password',
-    submitText: t('auth.sign_in'),
-    afterSubmitText: (
-      <Text ta='center' size='sm'>
-        Don't have an account?{' '}
-        <Anchor component={Link} href='/user/signup'>
-          Register
-        </Anchor>
-      </Text>
-    ),
-
-    sections: [
-      {
-        layout: {
-          gridProps: { align: 'flex-end', justify: 'flex-start', mb: 'sm' },
-        },
-        rows: [
-          {
-            fields: [
-              {
-                name: 'username',
-                label: 'Username',
-                type: 'text',
-              },
-            ],
-          },
-          {
-            fields: [
-              {
-                name: 'password',
-                label: 'Password',
-                type: 'password',
-              },
-            ],
-          },
-          {
-            fields: [
-              {
-                name: 'rememberme',
-                label: 'Keep me logged in',
-                type: 'checkbox',
-                layout: {
-                  gridColProps: { span: 6 },
-                },
-              },
-              {
-                name: 'forgotpassword',
-                type: 'component',
-                layout: {
-                  gridColProps: { ta: 'right', span: 6 },
-                },
-                component: (
-                  <Anchor href='/user/reset-password' component={Link} size='sm'>
-                    Forgot Password
-                  </Anchor>
-                ),
-              },
-            ],
-          },
-          {
-            fields: [
-              {
-                name: 'csrf_token',
-                type: 'component',
-                component: ({ setValue }) => {
-                  useEffect(() => {
-                    if (CSRFToken) setValue('csrf_token', CSRFToken);
-                  }, [CSRFToken]);
-                  return (
-                    <>
-                      <Controller
-                        name='csrf_token'
-                        defaultValue={CSRFToken}
-                        render={({ field: { value, ref } }) => <input type='hidden' value={value} ref={ref} />}
-                      />
-                    </>
-                  );
-                },
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  };
-  */
 
   // const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -244,7 +140,7 @@ export function LoginForm() {
           <FormBuilder<loginFormType>
             defaultValues={{ username: 'test' }}
             schema={loginFormSchema}
-            config={formConfig2}
+            config={formConfig}
             submitHandler={formAction}
           />
         </Container>
