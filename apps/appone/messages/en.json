@@ -4,12 +4,16 @@
     "username_min_length": "3"
   },
   "common": {
+    "ferozfaiz": "Feroz Faiz",
+    "ferozfaizcom": "FerozFaiz.com",
     "home": "Home",
     "about": "About",
     "contact": "Contact",
     "loading": "Loading...",
     "no_action_provided": "No action provided",
-    "redirecting": "Redirecting..."
+    "redirecting": "Redirecting...",
+    "resume": "Resume",
+    "all_rights_reserved": "All rights reserved."
   },
   "products": {
     "name": "Name",
