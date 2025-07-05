@@ -1,7 +1,7 @@
 'use client';
 
 import { AppShell, UnstyledButton, RemoveScroll, Flex } from '@mantine/core';
-import { useDisclosure, useHeadroom } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
 import { Footer } from '@/components/common/Footer/Footer';
 import classes from '@/components/common/Layout/Layout.module.scss';
 import { ReactNode } from 'react';

@@ -6,7 +6,6 @@ import { createCheckUsernameSchema } from '@/app/[locale]/(common)/form/fieldSch
 import { fetchWrapper } from '@/lib/fetch-wrapper';
 import { API_URL } from '@/config/server-config';
 import { handleServerActionError } from '@/lib/server-action-error-handler';
-import { ZodError } from 'zod';
 
 export const checkUsernameAction: ServerActionResponse = async (formData) => {
   if (!formData || typeof formData !== 'object') {

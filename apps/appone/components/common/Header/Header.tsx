@@ -10,14 +10,12 @@ import {
   Box,
   Divider,
   Button,
-  // List,
-  // ThemeIcon,
   Stack,
 } from '@mantine/core';
 import { useDisclosure, useHover } from '@mantine/hooks';
 import { Link } from '@/i18n/routing';
 import classes from '@/components/common/Layout/Layout.module.scss';
-import { IconLogout, IconSettings, IconUser, IconX } from '@tabler/icons-react';
+import { IconLogout, IconX } from '@tabler/icons-react';
 import { useSession } from '@/app/[locale]/(auth)/context/session-context';
 import { logoutAction } from '@/app/[locale]/(auth)/actions/logout-action';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';

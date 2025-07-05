@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { FormConfig, FormBuilder } from '@nartix/mantine-form-builder';
 import { createSignUpFormSchema } from '@/app/[locale]/(common)/form/fieldSchemas';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
 import { Container, Loader } from '@mantine/core';
 // import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
-import { Controller, FieldValues, UseFormReturn } from 'react-hook-form';
+import { FieldValues, UseFormReturn } from 'react-hook-form';
 import { useActionHandler } from '@/app/[locale]/(common)/handlers/useActionHandler';
 import { signupAction } from '@/app/[locale]/(auth)/actions/signup-action';
 import { checkUsernameAction } from '@/app/[locale]/(auth)/actions/check-username-action';
