@@ -8,8 +8,8 @@ import { headers } from 'next/headers';
 export async function logoutAction(formData: FormData): Promise<void> {
   const requestHeaders = await headers();
   const headersObj: Record<string, string> = Object.fromEntries(requestHeaders);
-  console.log('headersObj', headersObj);
-  console.log('formData', formData);
+  // console.log('headersObj', headersObj);
+  // console.log('formData', formData);
 
   const options = await signOut(authConfig);
 
