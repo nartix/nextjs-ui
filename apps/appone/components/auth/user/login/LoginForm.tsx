@@ -128,6 +128,7 @@ export function LoginForm() {
   const { formAction, isRedirecting } = useActionHandler<loginFormType>({
     action: loginAction,
     onSuccessRedirect: true,
+    defaultRedirect: '/about',
     t,
   });
 

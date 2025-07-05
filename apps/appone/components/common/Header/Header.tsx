@@ -51,8 +51,8 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
         <Group h='100%' px='md' mx='auto'>
           <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
           <Group justify='space-between' style={{ flex: 1 }}>
-            <Anchor href='/' component={Link} underline='never' c='gray'>
-              <Text size='lg' fw={700}>
+            <Anchor href='/about' component={Link} underline='never' c='dark'>
+              <Text size='lg' fw={800}>
                 FEROZ
               </Text>
             </Anchor>
