@@ -11,6 +11,8 @@ import {
   Divider,
   Button,
   Stack,
+  Grid,
+  Flex,
 } from '@mantine/core';
 import { useDisclosure, useHover } from '@mantine/hooks';
 import { Link } from '@/i18n/routing';
@@ -46,56 +48,21 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
   return (
     <>
       <AppShell.Header>
-        <Group h='100%' px='md' mx='auto'>
-          <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
-          <Group justify='space-between' style={{ flex: 1 }}>
-            <Anchor href='/about' component={Link} underline='never' c='dark'>
-              <Text size='lg' fw={800}>
-                FEROZ
-              </Text>
-            </Anchor>
-            <Group ml='xl' gap={0} visibleFrom='sm'>
-              <UnstyledButton className={classes.control} component={Link} href='/about'>
-                About
-              </UnstyledButton>
-              {/* <UnstyledButton className={classes.control} component={Link} href='/products'>
-                Products
-              </UnstyledButton> */}
-              <UnstyledButton className={classes.control} component={Link} href='/eav-products'>
-                EAV Products
-              </UnstyledButton>
-            </Group>
-            {session?.user ? (
-              <Avatar
-                ref={ref}
-                radius='lg'
-                size='md'
-                variant={hovered ? 'filled' : 'light'}
-                onClick={(e: { preventDefault: () => void }) => {
-                  e.preventDefault();
-                  openDrawer();
-                }}
-                component={Link}
-                href='#'
-                key={session?.user?.username || 'user-avatar'}
-                name={session?.user?.username || 'User Avatar'}
-                color='initials'
-              />
-            ) : (
-              <Button
-                component={Link}
-                href='/user/login'
-                variant='default'
-                radius='md'
-                color='gray'
-                px='15'
-                classNames={{ label: '!text-md !font-semibold !text-base' }}
+        <Box px='md' h='100%'>
+          <Grid h='100%'>
+            <Grid.Col h='100%'>
+              <Flex
+                align='center'
+                justify='flex-start'
+                h='100%' // Make Flex fill the header's height
               >
-                Login
-              </Button>
-            )}
-          </Group>
-        </Group>
+                <Text size='lg' fw={800}>
+                  FEROZ
+                </Text>
+              </Flex>
+            </Grid.Col>
+          </Grid>
+        </Box>
       </AppShell.Header>
 
       <Drawer opened={drawerOpened} onClose={closeDrawer} position='right' size='sm' withCloseButton={false} padding='md'>
@@ -153,3 +120,56 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
     </>
   );
 };
+
+// <AppShell.Header>
+//         <Group h='100%' px='md' mx='auto'>
+//           <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
+//           <Group justify='space-between' style={{ flex: 1 }}>
+//             <Anchor href='/about' component={Link} underline='never' c='dark'>
+//               <Text size='lg' fw={800}>
+//                 FEROZ
+//               </Text>
+//             </Anchor>
+//             <Group ml='xl' gap={0} visibleFrom='sm'>
+//               <UnstyledButton className={classes.control} component={Link} href='/about'>
+//                 About
+//               </UnstyledButton>
+//               {/* <UnstyledButton className={classes.control} component={Link} href='/products'>
+//                 Products
+//               </UnstyledButton> */}
+//               <UnstyledButton className={classes.control} component={Link} href='/eav-products'>
+//                 EAV Products
+//               </UnstyledButton>
+//             </Group>
+//             {session?.user ? (
+//               <Avatar
+//                 ref={ref}
+//                 radius='lg'
+//                 size='md'
+//                 variant={hovered ? 'filled' : 'light'}
+//                 onClick={(e: { preventDefault: () => void }) => {
+//                   e.preventDefault();
+//                   openDrawer();
+//                 }}
+//                 component={Link}
+//                 href='#'
+//                 key={session?.user?.username || 'user-avatar'}
+//                 name={session?.user?.username || 'User Avatar'}
+//                 color='initials'
+//               />
+//             ) : (
+//               <Button
+//                 component={Link}
+//                 href='/user/login'
+//                 variant='default'
+//                 radius='md'
+//                 color='gray'
+//                 px='15'
+//                 classNames={{ label: '!text-md !font-semibold !text-base' }}
+//               >
+//                 Login
+//               </Button>
+//             )}
+//           </Group>
+//         </Group>
+//       </AppShell.Header>

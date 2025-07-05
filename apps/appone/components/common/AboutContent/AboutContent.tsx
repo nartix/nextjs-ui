@@ -5,7 +5,7 @@ import { IconBrandNpm, IconBrandGithub, IconBrandMantine, IconShieldLock, IconFo
 
 export function AboutContent() {
   return (
-    <Container size='md' py='lg' px={0}>
+    <Container py='lg' px={0} mx='auto' className='!max-w-2xl'>
       <Stack gap='md'>
         <Title order={3} ta='center' mb='sm'>
           <Anchor href='https://github.com/nartix/nextjs-ui' fw={600} fz='xl' target='_blank' underline='never'>
@@ -28,7 +28,7 @@ export function AboutContent() {
         <Divider label='Key Packages' labelPosition='center' />
 
         <Card shadow='sm' padding='md' radius='md' withBorder>
-          <Group gap='xs' mb={4}>
+          <Group gap='xs' mb='sm'>
             <IconBrandMantine size={20} />
             <Title order={5}>MantineJS</Title>
           </Group>
@@ -38,7 +38,7 @@ export function AboutContent() {
         </Card>
 
         <Card shadow='sm' padding='md' radius='md' withBorder>
-          <Group gap='xs' mb={4}>
+          <Group gap='xs' mb='sm'>
             <IconShieldLock size={20} />
             <Title order={5}>
               <Anchor
@@ -58,7 +58,7 @@ export function AboutContent() {
         </Card>
 
         <Card shadow='sm' padding='md' radius='md' withBorder>
-          <Group gap='xs' mb={4}>
+          <Group gap='xs' mb='sm'>
             <IconShieldLock size={20} />
             <Title order={5}>
               <Anchor
@@ -90,7 +90,7 @@ export function AboutContent() {
         </Card>
 
         <Card shadow='sm' padding='md' radius='md' withBorder>
-          <Group gap='xs' mb={4}>
+          <Group gap='xs' mb='sm'>
             <IconForms size={20} />
             <Title order={5}>
               <Anchor
@@ -110,7 +110,7 @@ export function AboutContent() {
         </Card>
 
         <Card shadow='sm' padding='md' radius='md' withBorder>
-          <Group gap='xs' mb={4}>
+          <Group gap='xs' mb='sm'>
             <IconCode size={20} />
             <Title order={5}>
               <Anchor
@@ -140,7 +140,7 @@ export function AboutContent() {
         </Card>
 
         <Card shadow='sm' padding='md' radius='md' withBorder>
-          <Group gap='xs' mb={4}>
+          <Group gap='xs' mb='sm'>
             <IconCode size={20} />
             <Title order={5}>
               <Anchor
