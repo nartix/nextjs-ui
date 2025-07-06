@@ -18,6 +18,7 @@ export function Layout({ children }: { children: ReactNode }) {
       // collapsed: opened ? false : !pinned,
       header={{ height: 55, offset: true }}
       navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !opened } }}
+      footer={{ height: 50, offset: false }}
       padding='md'
       styles={{
         main: {

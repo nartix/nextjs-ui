@@ -13,6 +13,7 @@ import {
   Stack,
   Grid,
   Flex,
+  SimpleGrid,
 } from '@mantine/core';
 import { useDisclosure, useHover } from '@mantine/hooks';
 import { Link } from '@/i18n/routing';
@@ -48,21 +49,63 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
   return (
     <>
       <AppShell.Header>
-        <Box px='md' h='100%'>
-          <Grid h='100%'>
-            <Grid.Col h='100%'>
-              <Flex
-                align='center'
-                justify='flex-start'
-                h='100%' // Make Flex fill the header's height
-              >
+        <SimpleGrid cols={3} h='100%' px='md'>
+          {/* flex allows the control of exact position of content in the col's context*/}
+          <Flex align='center' justify='flex-start' h='100%'>
+            {/* group adds space between items */}
+            <Group>
+              <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
+              <Anchor href='/about' component={Link} underline='never' c='dark'>
                 <Text size='lg' fw={800}>
                   FEROZ
                 </Text>
-              </Flex>
-            </Grid.Col>
-          </Grid>
-        </Box>
+              </Anchor>
+            </Group>
+          </Flex>
+          <Flex align='center' justify='center' h='100%'>
+            <Group ml='xl' gap={0} visibleFrom='sm'>
+              <UnstyledButton className={classes.control} component={Link} href='/about'>
+                About
+              </UnstyledButton>
+              {/* <UnstyledButton className={classes.control} component={Link} href='/products'>                 Products
+              </UnstyledButton> */}
+              <UnstyledButton className={classes.control} component={Link} href='/eav-products'>
+                EAV Products
+              </UnstyledButton>
+            </Group>
+          </Flex>
+          <Flex align='center' justify='flex-end' h='100%'>
+            {session?.user ? (
+              <Avatar
+                ref={ref}
+                radius='lg'
+                size='md'
+                variant={hovered ? 'filled' : 'light'}
+                onClick={(e: { preventDefault: () => void }) => {
+                  e.preventDefault();
+                  openDrawer();
+                }}
+                component={Link}
+                href='#'
+                key={session?.user?.username || 'user-avatar'}
+                name={session?.user?.username || 'User Avatar'}
+                color='initials'
+              />
+            ) : (
+              <Button
+                component={Link}
+                href='/user/login'
+                variant='default'
+                radius='md'
+                color='gray'
+                px='15'
+                classNames={{ label: '!text-md !font-semibold !text-base' }}
+              >
+                Login
+              </Button>
+            )}
+          </Flex>
+        </SimpleGrid>
       </AppShell.Header>
 
       <Drawer opened={drawerOpened} onClose={closeDrawer} position='right' size='sm' withCloseButton={false} padding='md'>
@@ -121,6 +164,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
   );
 };
 
+// old header that uses group and not equal width cols
 // <AppShell.Header>
 //         <Group h='100%' px='md' mx='auto'>
 //           <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
