@@ -3,6 +3,7 @@
 import React, { useMemo } from 'react';
 import { GenericMantineTable } from '@/components/common/Table/MantineReactTable';
 import type { MRT_ColumnDef } from 'mantine-react-table';
+import { Title } from '@mantine/core';
 
 export interface ProductAttribute {
   attributeName: string;
@@ -139,5 +140,12 @@ export function EAVProductsTable({ data, translations }: ProductsTableProps) {
     []
   );
 
-  return <GenericMantineTable<ProductWithMap> data={dataWithMaps} columns={columns} options={options} />;
+  return (
+    <>
+      <Title order={4} mt='xl'>
+        EAV Products
+      </Title>
+      <GenericMantineTable<ProductWithMap> data={dataWithMaps} columns={columns} options={options} />
+    </>
+  );
 }
