@@ -50,9 +50,9 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
       <AppShell.Header>
         <SimpleGrid cols={3} h='100%' px='md'>
           {/* flex allows the control of exact position of content in the col's context*/}
-          <Flex align='center' justify='flex-start' h='100%'>
+          <Flex align='center' justify='flex-start'>
             {/* group adds space between items */}
-            <Group>
+            <Group wrap='nowrap'>
               <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
               <Anchor href='/about' component={Link} underline='never' c='dark'>
                 <Text size='lg' fw={800}>
@@ -61,8 +61,8 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
               </Anchor>
             </Group>
           </Flex>
-          <Flex align='center' justify='center' h='100%'>
-            <Group ml='xl' gap={0} visibleFrom='sm'>
+          <Flex align='center' justify='center'>
+            <Group gap={0} visibleFrom='sm' wrap='nowrap'>
               <UnstyledButton className={classes.control} component={Link} href='/about'>
                 About
               </UnstyledButton>
@@ -73,7 +73,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
               </UnstyledButton>
             </Group>
           </Flex>
-          <Flex align='center' justify='flex-end' h='100%'>
+          <Flex align='center' justify='flex-end'>
             {session?.user ? (
               <Avatar
                 ref={ref}
