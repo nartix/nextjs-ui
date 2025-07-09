@@ -6,6 +6,7 @@ import { Footer } from '@/components/common/Footer/Footer';
 import classes from '@/components/common/Layout/Layout.module.scss';
 import { ReactNode } from 'react';
 import { Header } from '@/components/common/Header/Header';
+import { Link } from '@/i18n/routing';
 
 export function Layout({ children }: { children: ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
@@ -40,10 +41,12 @@ export function Layout({ children }: { children: ReactNode }) {
         //   transition: 'transform 0.3s ease',
         // }}
       >
-        <UnstyledButton className={classes.control}>Home</UnstyledButton>
-        <UnstyledButton className={classes.control}>Blog</UnstyledButton>
-        <UnstyledButton className={classes.control}>Contacts</UnstyledButton>
-        <UnstyledButton className={classes.control}>Support</UnstyledButton>
+        <UnstyledButton component={Link} className={classes.control} href='/about' onClick={toggle}>
+          About
+        </UnstyledButton>
+        <UnstyledButton component={Link} className={classes.control} href='/eav-products' onClick={toggle}>
+          EAV Products
+        </UnstyledButton>
       </AppShell.Navbar>
       <RemoveScroll enabled={opened}>
         <Flex direction='column' style={{ minHeight: '100vh' }}>

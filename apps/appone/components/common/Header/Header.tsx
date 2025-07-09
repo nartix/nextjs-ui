@@ -22,6 +22,7 @@ import { useSession } from '@/app/[locale]/(auth)/context/session-context';
 import { logoutAction } from '@/app/[locale]/(auth)/actions/logout-action';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
 import { useState } from 'react';
+import { handleLogout } from '@/app/[locale]/(auth)/lib/handle-logout';
 
 export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void }) => {
   const { session } = useSession();
@@ -30,20 +31,6 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { CSRFToken } = useCSRFToken();
-
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
-    try {
-      const formData = new FormData();
-      formData.append('csrf_token', CSRFToken || '');
-      await logoutAction(formData);
-    } catch (error) {
-      console.error('Logout failed:', error);
-    } finally {
-      setIsLoggingOut(false);
-      closeDrawer();
-    }
-  };
 
   return (
     <>
@@ -150,7 +137,14 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
             justify='flex-start'
             leftSection={<IconLogout size={18} />}
             color='red'
-            onClick={async () => await handleLogout()}
+            onClick={async () =>
+              await handleLogout({
+                CSRFToken: CSRFToken || undefined,
+                logoutAction,
+                closeDrawer,
+                setIsLoggingOut,
+              })
+            }
             variant='subtle'
             disabled={isLoggingOut}
             fullWidth

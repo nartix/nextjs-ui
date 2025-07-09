@@ -139,7 +139,7 @@ export function LoginForm() {
       ) : (
         <Container w='100%' size={400} mt='lg'>
           <FormBuilder<loginFormType>
-            defaultValues={{ username: 'test' }}
+            defaultValues={{ username: '', password: '' }}
             schema={loginFormSchema}
             config={formConfig}
             submitHandler={formAction}
