@@ -5,7 +5,7 @@ export async function handleLogout({
   setIsLoggingOut,
 }: {
   CSRFToken: string | undefined;
-  logoutAction: (formData: FormData) => Promise<any>;
+  logoutAction: (formData: FormData) => Promise<unknown>;
   closeDrawer: () => void;
   setIsLoggingOut: (v: boolean) => void;
 }) {
