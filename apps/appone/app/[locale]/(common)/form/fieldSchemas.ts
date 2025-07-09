@@ -65,11 +65,13 @@ export const createSignUpFormSchema = (t: Translator) => {
   return z
     .object({
       username: z
-        .string()
+        .string({ required_error: t('errors.validation.required_field') })
         .min(MINIMUM_USERNAME_LENGTH, t('errors.validation.username_length').replace('zmin', String(MINIMUM_USERNAME_LENGTH))),
-      email: z.string().email(t('errors.validation.email_invalid')),
-      password: z.string().min(6, t('errors.validation.password_length').replace('zmin', '6')),
-      password2: z.string(),
+      email: z.string({ required_error: t('errors.validation.required_field') }).email(t('errors.validation.email_invalid')),
+      password: z
+        .string({ required_error: t('errors.validation.required_field') })
+        .min(6, t('errors.validation.password_length').replace('zmin', '6')),
+      password2: z.string({ required_error: t('errors.validation.required_field') }),
       csrf_token: z.string(),
     })
     .superRefine(async (data, ctx) => {

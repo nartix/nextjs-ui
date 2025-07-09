@@ -21,19 +21,19 @@ export function LoginForm() {
   const formConfig: FormConfigFn<loginFormType> = () => {
     return {
       title: t('auth.login'),
-      // beforeSubmitText: 'Please enter your username and password',
+      // beforeSubmitText: t('auth.enter_credentials'),
       submitText: t('auth.sign_in'),
       afterSubmitText: (
         <Text ta='center' size='sm'>
-          Don&apos;t have an account? &nbsp;
+          {t('auth.no_account')}&nbsp;
           <Anchor component={Link} href='/user/signup'>
-            Register
+            {t('auth.register')}
           </Anchor>
         </Text>
       ),
       sections: [
         {
-          description: 'Username: feroz, Password: password',
+          description: t('auth.demo_credentials'),
           layout: {
             gridProps: { align: 'flex-end', justify: 'flex-start', mb: 'sm' },
             descriptionProps: { size: 'xs' },
@@ -43,7 +43,7 @@ export function LoginForm() {
               fields: [
                 {
                   name: 'username',
-                  label: 'Username',
+                  label: t('auth.username'),
                   type: 'text',
                 },
               ],
@@ -52,7 +52,7 @@ export function LoginForm() {
               fields: [
                 {
                   name: 'password',
-                  label: 'Password',
+                  label: t('auth.password'),
                   type: 'password',
                 },
               ],
@@ -61,7 +61,7 @@ export function LoginForm() {
             //   fields: [
             //     {
             //       name: 'rememberme',
-            //       label: 'Keep me logged in',
+            //       label: t('auth.remember_me'),
             //       type: 'checkbox',
             //       layout: {
             //         gridColProps: { span: 6 },
@@ -75,7 +75,7 @@ export function LoginForm() {
             //       },
             //       component: (
             //         <Anchor href='/user/reset-password' component={Link} size='sm'>
-            //           Forgot Password
+            //           {t('auth.forgot_password')}
             //         </Anchor>
             //       ),
             //     },

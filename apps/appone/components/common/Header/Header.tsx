@@ -23,6 +23,7 @@ import { logoutAction } from '@/app/[locale]/(auth)/actions/logout-action';
 import { useCSRFToken } from '@/app/[locale]/(common)/context/csrf-context';
 import { useState } from 'react';
 import { handleLogout } from '@/app/[locale]/(auth)/lib/handle-logout';
+import { useTranslations } from 'next-intl';
 
 export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void }) => {
   const { session } = useSession();
@@ -31,6 +32,10 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { CSRFToken } = useCSRFToken();
+
+  // Add translation hooks
+  const tCommon = useTranslations('common');
+  const tAuth = useTranslations('auth');
 
   return (
     <>
@@ -51,12 +56,12 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
           <Flex align='center' justify='center'>
             <Group gap={0} visibleFrom='sm' wrap='nowrap'>
               <UnstyledButton className={classes.control} component={Link} href='/about'>
-                About
+                {tCommon('about')}
               </UnstyledButton>
               {/* <UnstyledButton className={classes.control} component={Link} href='/products'>                 Products
               </UnstyledButton> */}
               <UnstyledButton className={classes.control} component={Link} href='/eav-products'>
-                EAV Products
+                {tCommon('eav_products')}
               </UnstyledButton>
             </Group>
           </Flex>
@@ -87,7 +92,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
                 px='15'
                 classNames={{ label: '!text-md !font-semibold !text-base' }}
               >
-                Login
+                {tAuth('login')}
               </Button>
             )}
           </Flex>
@@ -149,7 +154,7 @@ export const Header = ({ opened, toggle }: { opened: boolean; toggle: () => void
             disabled={isLoggingOut}
             fullWidth
           >
-            Logout
+            {tAuth('logout')}
           </Button>
         </Stack>
       </Drawer>

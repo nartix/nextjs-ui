@@ -1,6 +1,75 @@
 {
+  "variables": {
+    "password_min_length": "8",
+    "username_min_length": "3"
+  },
+  "common": {
+    "ferozfaiz": "Feroz Faiz",
+    "ferozfaizcom": "FerozFaiz.com",
+    "home": "Accueil",
+    "about": "À propos",
+    "contact": "Contact",
+    "loading": "Chargement...",
+    "no_action_provided": "Aucune action fournie",
+    "redirecting": "Redirection...",
+    "resume": "Curriculum Vitae",
+    "all_rights_reserved": "Tous droits réservés.",
+    "eav_products": "Produits EAV"
+  },
+  "products": {
+    "name": "Nom",
+    "title": "Nom",
+    "price": "Prix",
+    "category": "Catégorie",
+    "year": "Année",
+    "manufacturer": "Fabricant",
+    "brand": "Marque",
+    "color": "Couleur",
+    "quantity": "Quantité"
+  },
   "HomePage": {
-    "title": "Hallo Welt!",
-    "about": "Go to the about page"
+    "title": "Bonjour le monde!",
+    "about": "Aller à la page à propos"
+  },
+  "auth": {
+    "sign_in": "Se connecter",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "register": "S'inscrire",
+    "auth_failed": "Échec de l'authentification",
+    "no_credentials": "Aucun identifiant fourni",
+    "error_invalid_credentials": "Nom d'utilisateur ou mot de passe invalide.",
+    "error_invalid_response": "Réponse invalide du serveur d'authentification.",
+    "error_fetch_user_info": "Échec de la récupération de l'utilisateur",
+    "error_in_authorize": "Erreur lors de l'autorisation :",
+    "error_invalid_form_data": "Données de formulaire invalides",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "email": "Courriel",
+    "forgot_password": "Mot de passe oublié",
+    "demo_credentials": "Nom d'utilisateur : feroz, Mot de passe : password",
+    "no_account": "Vous n'avez pas de compte?",
+    "password_mismatch": "Confirmer le mot de passe"
+  },
+  "errors": {
+    "404": "Page non trouvée",
+    "resource_not_found": "Ressource non trouvée.",
+    "an_error_occurred": "Une erreur s'est produite.",
+    "error_unexpected": "Une erreur inattendue s'est produite.",
+    "failed_to_submit_form": "Échec de l'envoi du formulaire. Veuillez réessayer plus tard.",
+    "action_failed": "L'action a échoué. Veuillez réessayer plus tard.",
+    "validation": {
+      "min": "Ce champ doit contenir au moins zmin caractères.",
+      "max": "Ce champ doit contenir au plus zmax caractères.",
+      "email_invalid": "Adresse courriel invalide.",
+      "username_length": "Le nom d'utilisateur doit contenir au moins zmin caractères.",
+      "password_length": "Le mot de passe doit contenir au moins zmin caractères.",
+      "password_mismatch": "Les mots de passe ne correspondent pas.",
+      "required": "Ce champ est requis.",
+      "invalid": "Valeur invalide.",
+      "username_exists": "Ce nom d'utilisateur est déjà pris.",
+      "username_available": "Super! Nom d'utilisateur disponible",
+      "required_field": "Ce champ est obligatoire."
+    }
   }
 }

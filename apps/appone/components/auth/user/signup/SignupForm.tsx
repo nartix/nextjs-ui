@@ -68,8 +68,8 @@ export function SignupForm() {
       layout: {
         errorAlertProps: { classNames: { message: 'text-red-700' } },
       },
-      title: 'Sign Up',
-      submitText: 'Sign Up',
+      title: t('auth.register'),
+      submitText: t('auth.register'),
       sections: [
         {
           layout: {
@@ -80,7 +80,7 @@ export function SignupForm() {
               fields: [
                 {
                   name: 'username',
-                  label: 'Username',
+                  label: t('auth.username'),
                   type: 'text',
                   layout: {
                     props: {
@@ -100,21 +100,15 @@ export function SignupForm() {
                       },
                     },
                   },
-                  // onChange: (m) => {
-                  //   setCheckUsername(false);
-                  // },
-                  // onBlur: async (e: React.FocusEvent<HTMLElement>) => {
-                  //   setCheckUsername(true);
-                  // },
                   onBlur: async (e: React.FocusEvent<HTMLElement>) => {
                     await handleUsernameCheck((e.target as HTMLInputElement).value, methods);
                   },
                 },
               ],
             },
-            { fields: [{ name: 'email', label: 'Email', type: 'text' }] },
-            { fields: [{ name: 'password', label: 'Password', type: 'password' }] },
-            { fields: [{ name: 'password2', label: 'Confirm Password', type: 'password' }] },
+            { fields: [{ name: 'email', label: t('auth.email'), type: 'text' }] },
+            { fields: [{ name: 'password', label: t('auth.password'), type: 'password' }] },
+            { fields: [{ name: 'password2', label: t('auth.password_mismatch'), type: 'password' }] },
             {
               fields: [
                 {

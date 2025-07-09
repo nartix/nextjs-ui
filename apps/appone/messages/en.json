@@ -13,7 +13,8 @@
     "no_action_provided": "No action provided",
     "redirecting": "Redirecting...",
     "resume": "Resume",
-    "all_rights_reserved": "All rights reserved."
+    "all_rights_reserved": "All rights reserved.",
+    "eav_products": "EAV Products"
   },
   "products": {
     "name": "Name",
@@ -41,7 +42,14 @@
     "error_invalid_response": "Invalid response from authentication server.",
     "error_fetch_user_info": "Failed to fetch user",
     "error_in_authorize": "Error in authorize:",
-    "error_invalid_form_data": "Invalid form data"
+    "error_invalid_form_data": "Invalid form data",
+    "username": "Username",
+    "password": "Password",
+    "email": "Email",
+    "forgot_password": "Forgot Password",
+    "demo_credentials": "Username: feroz, Password: password",
+    "no_account": "Don't have an account?",
+    "password_mismatch": "Confirm Password"
   },
   "errors": {
     "404": "Page not found",
@@ -60,7 +68,8 @@
       "required": "This field is required.",
       "invalid": "Invalid value.",
       "username_exists": "That username is already taken.",
-      "username_available": "Nice! Username available"
+      "username_available": "Nice! Username available",
+      "required_field": "Required."
     }
   }
 }

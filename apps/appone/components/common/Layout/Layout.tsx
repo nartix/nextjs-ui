@@ -7,11 +7,15 @@ import classes from '@/components/common/Layout/Layout.module.scss';
 import { ReactNode } from 'react';
 import { Header } from '@/components/common/Header/Header';
 import { Link } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 
 export function Layout({ children }: { children: ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
   // This is make the header fixed at 120px when scrolled up, disappears when scrolled down
   // const pinned = useHeadroom({ fixedAt: 120 });
+
+  // Add translation hook
+  const tCommon = useTranslations('common');
 
   return (
     <AppShell
@@ -42,10 +46,10 @@ export function Layout({ children }: { children: ReactNode }) {
         // }}
       >
         <UnstyledButton component={Link} className={classes.control} href='/about' onClick={toggle}>
-          About
+          {tCommon('about')}
         </UnstyledButton>
         <UnstyledButton component={Link} className={classes.control} href='/eav-products' onClick={toggle}>
-          EAV Products
+          {tCommon('eav_products')}
         </UnstyledButton>
       </AppShell.Navbar>
       <RemoveScroll enabled={opened}>
