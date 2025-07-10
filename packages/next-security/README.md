@@ -2,6 +2,8 @@
 
 A modular authentication and security package for Next.js 15+ applications, inspired by the NextAuth.js npm package. This package was created because NextAuth.js does not support database sessions for credential logins. As a result, @nartix/next-security is built on similar concepts but provides full support for database-backed sessions with credential authentication, along with session management, provider-based authentication, and secure cookie handling.
 
+This package can also serve as a great starter for building your own custom authentication, authorization, and security solutions tailored to your application's needs.
+
 ## Features
 
 - Pluggable authentication providers (credentials, JWT, OAuth, etc.)
