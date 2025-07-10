@@ -1,6 +1,6 @@
 'use client';
 import { IconBrandGithub, IconBrandLinkedin } from '@tabler/icons-react';
-import { ActionIcon, Anchor, Group, Text } from '@mantine/core';
+import { ActionIcon, Anchor, Flex, Group, SimpleGrid, Text } from '@mantine/core';
 import { RESUME_LINK, GITHUB_LINK, LINKEDIN_LINK, FEROZ_FAIZ_LINK } from '@/config/client-config';
 import classes from './Footer.module.css';
 import { Link } from '@/i18n/routing';
@@ -30,22 +30,48 @@ export function Footer() {
 
   return (
     <div className={classes.footer}>
-      <div className={classes.inner}>
-        <Text c='dimmed' lh={1} size='sm'>
-          © {new Date().getFullYear()} {t('ferozfaiz')}. {t('all_rights_reserved')}
-        </Text>
+      <SimpleGrid cols={{ base: 1, md: 3 }} h='100%' p='md' verticalSpacing={{ base: 'md', md: 'md' }}>
+        <Flex align='center' justify={{ base: 'center', md: 'flex-start' }}>
+          <Text c='dimmed' lh={1} size='sm'>
+            © {new Date().getFullYear()} {t('ferozfaiz')}. {t('all_rights_reserved')}
+          </Text>
+        </Flex>
 
-        <Group className={classes.links}>{items}</Group>
+        <Flex align='center' justify='center'>
+          <Group>{items}</Group>
+        </Flex>
 
-        <Group gap='xs' justify='flex-end' wrap='nowrap'>
+        <Flex align='center' justify={{ base: 'center', md: 'flex-end' }} gap='xs' wrap='nowrap'>
           <ActionIcon size='lg' variant='default' radius='xl' component='a' href={LINKEDIN_LINK} target='_blank'>
             <IconBrandLinkedin size={18} stroke={1.5} />
           </ActionIcon>
           <ActionIcon size='lg' variant='default' radius='xl' component='a' href={GITHUB_LINK} target='_blank'>
             <IconBrandGithub size={18} stroke={1.5} />
           </ActionIcon>
-        </Group>
-      </div>
+        </Flex>
+      </SimpleGrid>
     </div>
   );
 }
+
+// old responsive footer code
+// return (
+//   <div className={classes.footer}>
+//     <div className={classes.inner}>
+//       <Text c='dimmed' lh={1} size='sm'>
+//         © {new Date().getFullYear()} {t('ferozfaiz')}. {t('all_rights_reserved')}
+//       </Text>
+
+//       <Group className={classes.links}>{items}</Group>
+
+//       <Group gap='xs' justify='flex-end' wrap='nowrap'>
+//         <ActionIcon size='lg' variant='default' radius='xl' component='a' href={LINKEDIN_LINK} target='_blank'>
+//           <IconBrandLinkedin size={18} stroke={1.5} />
+//         </ActionIcon>
+//         <ActionIcon size='lg' variant='default' radius='xl' component='a' href={GITHUB_LINK} target='_blank'>
+//           <IconBrandGithub size={18} stroke={1.5} />
+//         </ActionIcon>
+//       </Group>
+//     </div>
+//   </div>
+// );
