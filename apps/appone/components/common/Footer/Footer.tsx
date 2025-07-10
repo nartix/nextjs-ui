@@ -29,7 +29,7 @@ export function Footer() {
   ));
 
   return (
-    <div className={`${classes.footer}`}>
+    <div className={classes.footer}>
       <div className={classes.inner}>
         <Text c='dimmed' lh={1} size='sm'>
           © {new Date().getFullYear()} {t('ferozfaiz')}. {t('all_rights_reserved')}
