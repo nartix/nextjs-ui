@@ -25,7 +25,7 @@ export default async function EAVProductsPage() {
 
   return (
     <SessionContainer justify='flex-start' align='center'>
-      <Container size='md' w='100%'>
+      <Container size='md' w='100%' px={0} pb='lg'>
         <EAVProductsTable
           data={eavData}
           translations={{

@@ -114,7 +114,7 @@ export function AboutContent() {
             <IconCode size={20} />
             <Title order={5}>
               <Anchor
-                href='https://www.npmjs.com/package/@nartix/next-middleware-chain'
+                href='https://github.com/nartix/nextjs-ui/tree/main/packages/next-middleware-chain'
                 target='_blank'
                 underline='never'
                 fw={600}
@@ -123,7 +123,7 @@ export function AboutContent() {
               </Anchor>
             </Title>
             <Anchor
-              href='https://github.com/nartix/nextjs-ui/tree/main/packages/next-middleware-chain'
+              href='https://www.npmjs.com/package/@nartix/next-middleware-chain'
               target='_blank'
               underline='always'
               ml='auto'
