@@ -121,6 +121,7 @@ export function EAVProductsTable({ data, translations }: ProductsTableProps) {
       },
       layoutMode: 'grid' as const,
       enableSorting: true,
+      enableDensityToggle: false,
       paginationDisplayMode: 'pages' as const,
       mantinePaperProps: {
         style: { border: 'none', boxShadow: 'none' },

@@ -1,5 +1,5 @@
 # ct "docker-compose.yml:temp.yml" && sudo docker compose -f temp.yml up nextjs-ui --build; rm temp.yml
-# docker exec -it nextjs-ui  envconsul -config=envconsul-config.hcl sh
+# docker exec -it nextjs-ui envconsul -config=envconsul-config.hcl sh
 
 services:
   nextjs-ui:
