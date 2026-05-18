@@ -1,0 +1,55 @@
+x-app-base: &app-base
+  build:
+    context: .
+    dockerfile: Dockerfile
+  image: nextjs-ui:local
+  restart: unless-stopped
+  environment:
+    VAULT_ENV_FILE: /vault/secrets/app.env
+    VAULT_ENV_TIMEOUT: "180"
+  volumes:
+    - nextjs-ui-vault-secrets:/vault/secrets:ro
+  depends_on:
+    vault-agent:
+      condition: service_healthy
+
+services:
+  vault-agent:
+    image: hashicorp/vault:1.21.4
+    container_name: nextjs-ui-vault-agent
+    user: "0:0"
+    entrypoint: ["vault"]
+    command: ["agent", "-config=/vault/config/agent.hcl", "-log-level=info"]
+    environment:
+      VAULT_ADDR: ${VAULT_ADDR:?Set VAULT_ADDR before starting Docker Compose}
+    secrets:
+      - source: vault-token
+        target: vault-token
+    volumes:
+      - ./vault-agent/agent.hcl:/vault/config/agent.hcl:ro
+      - ./vault-agent/templates:/vault/templates:ro
+      - nextjs-ui-vault-secrets:/vault/secrets
+    healthcheck:
+      test: ["CMD-SHELL", "test -s /vault/secrets/app.env"]
+      interval: 5s
+      timeout: 3s
+      retries: 24
+    restart: unless-stopped
+
+  nextjs-ui:
+    <<: *app-base
+    container_name: nextjs-ui-web
+    ports:
+      - "127.0.0.1:${NEXTJS_UI_PORT:-13000}:3000"
+
+volumes:
+  nextjs-ui-vault-secrets:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: size=16m,mode=0700
+
+secrets:
+  vault-token:
+    file: ${VAULT_TOKEN_FILE:-./vault-agent/.vault-token}

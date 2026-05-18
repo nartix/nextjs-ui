@@ -2,9 +2,10 @@
 FROM node:24-alpine AS base
 
 ENV PNPM_HOME="/var/lib/pnpm"
-ENV PATH="${PNPM_HOME}:$PATH"
+ENV PATH="${PNPM_HOME}/bin:${PNPM_HOME}:$PATH"
 
 RUN corepack enable \
+ && pnpm config set global-bin-dir "${PNPM_HOME}/bin" \
  && pnpm add -g turbo
 
 # ──────────────── Builder: Prune monorepo ────────────────
@@ -18,8 +19,6 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 
 COPY apps/appone ./apps/appone
 COPY packages ./packages
-
-COPY envconsul-config.hcl ./envconsul-config.hcl
 
 RUN turbo prune appone --docker --use-gitignore=false
 
@@ -36,37 +35,32 @@ COPY --from=builder /app/out/full ./
 
 RUN pnpm install --frozen-lockfile
 
-RUN pnpm turbo run build --filter=appone...
+RUN NEXT_SECURITY_SECRET=build-time-placeholder \
+    CSRF_SECRET=build-time-placeholder \
+    pnpm turbo run build --filter=appone...
 
 # ──────────────── Runner: Production image ────────────────
 FROM node:24-alpine AS runner
 
-ENV ENVCONSUL_VERSION=0.13.2
-RUN apk add --no-cache wget unzip xdg-utils \
-    && if [ ! -f /usr/local/bin/envconsul ]; then \
-    wget "https://releases.hashicorp.com/envconsul/${ENVCONSUL_VERSION}/envconsul_${ENVCONSUL_VERSION}_linux_amd64.zip" \
-    && unzip "envconsul_${ENVCONSUL_VERSION}_linux_amd64.zip" -d /usr/local/bin \
-    && chmod +x /usr/local/bin/envconsul \
-    && rm -f "envconsul_${ENVCONSUL_VERSION}_linux_amd64.zip"; \
-    fi     
+RUN apk add --no-cache su-exec
 
 WORKDIR /app
 
 RUN addgroup --system --gid 1001 nodejs \
  && adduser  --system --uid 1001 nextjs
 
-USER nextjs
-
 COPY --from=installer --chown=nextjs:nodejs /app/apps/appone/.next/standalone ./
 COPY --from=installer --chown=nextjs:nodejs /app/apps/appone/.next/static   ./apps/appone/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/appone/public          ./apps/appone/public
 
-COPY --from=builder /app/envconsul-config.hcl /etc/envconsul.hcl       
+COPY docker-entrypoint.prod.mjs /usr/local/bin/docker-entrypoint.prod.mjs
 
 EXPOSE 3000
 
 ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
-ENTRYPOINT ["envconsul", "-config", "/etc/envconsul.hcl", "--"]
+ENTRYPOINT ["node", "/usr/local/bin/docker-entrypoint.prod.mjs"]
 
 CMD ["node", "apps/appone/server.js"]
