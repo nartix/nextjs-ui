@@ -5,6 +5,23 @@ let accessToken: string | null = null;
 let tokenExpiry: number | null = null; // Expiration timestamp in milliseconds
 let tokenFetchPromise: Promise<string> | null = null; // Shared promise for token fetching to prevent concurrent requests
 
+function getSafeApiBaseUrlLabel() {
+  if (!API_BASE_URL) {
+    return 'unset';
+  }
+
+  try {
+    const url = new URL(API_BASE_URL);
+    return `${url.protocol}//${url.host}`;
+  } catch {
+    return 'invalid-url';
+  }
+}
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
+
 // expires earlier than actual expiry to avoid token expiry during request
 // const CLOCK_SKEW_BUFFER = 60 * 1000; // 60 seconds buffer
 
@@ -57,6 +74,11 @@ async function fetchNewToken(): Promise<string> {
     });
 
     if (!response.ok) {
+      console.error('Token endpoint returned an error', {
+        apiBaseUrl: getSafeApiBaseUrlLabel(),
+        status: response.status,
+        statusText: response.statusText,
+      });
       throw new Error(`Failed to fetch token: ${response.statusText}`);
     }
 
@@ -72,7 +94,10 @@ async function fetchNewToken(): Promise<string> {
 
     return accessToken ?? '';
   } catch (error) {
-    console.error('Error fetching new token:', error);
+    console.error('Error fetching new token', {
+      apiBaseUrl: getSafeApiBaseUrlLabel(),
+      error: getErrorMessage(error),
+    });
     throw new Error('Could not fetch access token');
   }
 }

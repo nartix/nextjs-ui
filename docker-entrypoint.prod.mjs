@@ -5,6 +5,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 const DEFAULT_ENV_FILE = "/vault/secrets/app.env";
 const DEFAULT_TIMEOUT_SECONDS = 120;
 const WAIT_INTERVAL_MS = 2000;
+const DISABLED_ENV_FILE_VALUES = new Set(["", "0", "false", "none", "off"]);
 
 function log(message) {
   console.log(`[entrypoint] ${message}`);
@@ -21,6 +22,10 @@ function waitForEnvFile(path, timeoutSeconds) {
     log(`Waiting for Vault env file at ${path}`);
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, WAIT_INTERVAL_MS);
   }
+}
+
+function shouldLoadEnvFile(path) {
+  return !DISABLED_ENV_FILE_VALUES.has(path.trim().toLowerCase());
 }
 
 function parseEnvValue(value) {
@@ -101,6 +106,11 @@ const timeoutSeconds = Number.parseInt(
   10,
 );
 
-waitForEnvFile(envFile, timeoutSeconds);
-loadEnvFile(envFile);
+if (shouldLoadEnvFile(envFile)) {
+  waitForEnvFile(envFile, timeoutSeconds);
+  loadEnvFile(envFile);
+} else {
+  log("Skipping Vault env file loading because VAULT_ENV_FILE is disabled");
+}
+
 runCommand(process.argv.slice(2));

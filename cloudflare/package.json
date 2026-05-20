@@ -1,0 +1,23 @@
+{
+  "name": "nextjs-ui-cloudflare",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy --config wrangler.jsonc",
+    "deploy:production": "wrangler deploy --config wrangler.jsonc",
+    "deploy:staging": "wrangler deploy --config wrangler.jsonc --env staging",
+    "dev": "wrangler dev --config wrangler.jsonc",
+    "secrets:sync": "node scripts/sync-vault-secrets.mjs",
+    "secrets:sync:production": "node scripts/sync-vault-secrets.mjs",
+    "secrets:sync:staging": "CLOUDFLARE_ENV=staging node scripts/sync-vault-secrets.mjs",
+    "types": "wrangler types --config wrangler.jsonc"
+  },
+  "dependencies": {
+    "@cloudflare/containers": "^0.2.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4",
+    "typescript": "^5",
+    "wrangler": "^4"
+  }
+}
