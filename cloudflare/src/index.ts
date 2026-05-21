@@ -100,7 +100,7 @@ function getContainerInstanceCount(envSource: Env): number {
 
 export class NextjsUI extends Container {
   defaultPort = 3000;
-  sleepAfter = "10m";
+  sleepAfter = "5m";
   envVars = buildContainerEnv(workerEnv as unknown as SecretBindings);
 
   override onStart() {
